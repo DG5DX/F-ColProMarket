@@ -64,13 +64,22 @@
             <div class="sideR">
               <img class="imG" :src="imagenSeleccionada" />
             </div>
-          </div><br><br>
+          </div>
 
-          <div class="row justify-around full-width">
+          <div class="row1 ">
             <q-btn flat icon="favorite_border" label="Favoritos" />
             <q-btn flat icon="flag" label="Reportar" />
             <q-btn flat icon="share" label="Compartir" />
           </div>
+
+
+        <!-- Calificación -->
+        <div class="row2">
+              <div class="q-px-sm q-py-xs text-subtitle1 bg-yellow text-dark"
+                style="border: 2px solid black; border-radius: 8px;">
+                {{ producto.calificacion }} {{ mostrarEstrellas(producto.calificacion) }}
+              </div>
+            </div>
 
           <div class="reviews">
             <div class="contemReviews">
@@ -93,48 +102,8 @@
           </div>
         </div>
 
-        <div class="medium"><br><br>
-          <div class="contemMmedium">
-            <!-- Descripción principal -->
-            <div class="text-body1 q-mb-md">
-              {{ producto.descripcion }}
-            </div>
-
-            <!-- Calificación -->
-            <div class="row items-center q-gutter-sm q-mb-md">
-              <div class="q-px-sm q-py-xs text-subtitle1 bg-yellow text-dark"
-                style="border: 2px solid black; border-radius: 8px;">
-                {{ producto.calificacion }} {{ mostrarEstrellas(producto.calificacion) }}
-              </div>
-            </div>
-
-            <!-- Precio -->
-            <div class="text-h6 text-bold q-mb-md">
-              {{ formatearPrecio(producto.precio) }}
-            </div>
-
-            <!-- Modelos -->
-            <div class="text-subtitle2 text-center q-mb-sm">MODELOS</div>
-            <div class="row">
-              <img v-for="(imagen, index) in producto.imagenes" :key="index" :class="`modelo ${index + 1}`"
-                :src="imagen" @click="seleccionarImagen(index)" />
-            </div><br>
-
-            <!-- Detalles del producto -->
-            <q-card class="bg-grey-3 q-pa-md">
-              <div class="text-subtitle2 text-negative q-mb-sm">Detalles</div>
-              <div v-for="(valor, clave) in producto.detalles" :key="clave" class="q-mb-sm">
-                <span class="text-bold" :class="colorDetalles(clave)">{{ clave }}:</span> {{ valor }}
-              </div>
-
-              <div class="q-mt-md text-bold text-red">Sobre este artículo</div>
-              <div class="q-mt-sm" v-html="producto.sobreEsteArticulo"></div>
-            </q-card>
-          </div>
-        </div>
-
-        <div class="end">
-          <q-card class="bg-grey-3-q-pa-md" style="max-width: 300px">
+        <div class="medium">
+          <q-card class="bg-grey-3-q-pa-md" >
             <!-- Precio -->
             <div class="text-h6 text-bold q-mb-sm">Precio: {{ formatearPrecio(producto.precio) }}</div>
 
@@ -149,12 +118,6 @@
             <!-- Selector de cantidad -->
             <q-select filled v-model="cantidad" :options="cantidades" label="Cantidad" dense class="q-mb-md" />
 
-            <!-- Información de envío -->
-            <div class="text-blue">Enviado por:</div>
-            <div class="q-mb-sm">{{ producto.enviadoPor }}</div>
-
-            <div class="text-blue">Vendido por:</div>
-            <div class="q-mb-sm">{{ producto.vendidoPor }}</div>
 
             <div class="text-blue">Devoluciones:</div>
             <div class="q-mb-md">{{ producto.politicaDevolucion }}</div>
@@ -181,7 +144,31 @@
               </div>
             </div>
           </q-card>
+          
+          <br><br>
+          <div class="contemMmedium">
+            <!-- Descripción principal -->
+            <div class="text-body1 q-mb-md">
+              {{ producto.descripcion }}
+            </div>
+
+            
+
+            <br>
+
+            <!-- Detalles del producto -->
+            <q-card class="bg-grey-3 q-pa-md">
+              <div class="text-subtitle2 text-negative q-mb-sm">Detalles</div>
+              <div v-for="(valor, clave) in producto.detalles" :key="clave" class="q-mb-sm">
+                <span class="text-bold" :class="colorDetalles(clave)">{{ clave }}:</span> {{ valor }}
+              </div>
+
+              <div class="q-mt-md text-bold text-red">Sobre este artículo</div>
+              <div class="q-mt-sm" v-html="producto.sobreEsteArticulo"></div>
+            </q-card>
+          </div>
         </div>
+
       </div>
     </q-page-container>
   </q-layout>
@@ -314,6 +301,14 @@ const colorDetalles = (clave) => {
 </script>
 
 <style scoped>
+
+.row1{
+  margin-left: 20%;
+  margin-top: 26%;
+}
+.q-mb-md{
+  width:70%;
+}
 .row {
   display: grid;
   grid-template-columns: 25% 25% 25% 25%;
@@ -321,16 +316,20 @@ const colorDetalles = (clave) => {
 
 .contemMmedium {
   width: 90%;
-  margin-left: 10%;
+  margin: 10px auto;
+  
+}
+.text-body1{
+  width: 100%;
 }
 
 .bg-grey-3-q-pa-md {
-  background: gainsboro;
-  margin-left: 20%;
-  margin-top: 10%;
+  width: 90%;
+  margin-left: 2%;
+  margin-top: 2%;
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 .coment {
@@ -413,11 +412,13 @@ const colorDetalles = (clave) => {
 
 .ContainerMedium {
   margin-top: 2%;
-  width: 100%;
+  width: 90%;
+  margin: 10px auto;
+  margin-top: 3%;
   min-height: 100vh;
   background-color: white;
   display: grid;
-  grid-template-columns: 33% 34% 33%;
+  grid-template-columns: 50% 50%;
 }
 
 .q-img {
@@ -426,7 +427,6 @@ const colorDetalles = (clave) => {
 }
 
 .start {
-  border-right: 1px gray solid;
   padding-right: 15px;
 }
 

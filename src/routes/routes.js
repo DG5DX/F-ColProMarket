@@ -3,7 +3,7 @@ import Cart from "../views/CART.vue"
 import Seeproduct from "../views/SEEPRODUCT.vue"
 import Admin from "../views/Admin.vue"
 import {createRouter, createWebHashHistory} from "vue-router"
-import PaymentGateway from "../views/PAYMENT GATEWAY.vue"
+import PaymentGateway from "../views/paymentGateway.vue"
   
 const routes = [
   { path: '/', component: Home },

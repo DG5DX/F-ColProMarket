@@ -46,25 +46,11 @@
           </q-item-section>
           <q-item-section>Contacto</q-item-section>
         </q-item>
-
-        <q-separator class="q-my-sm" />
-
-        <q-item
-          clickable
-          v-ripple
-          class="drawer-item"
-          @click="openRegisterDialog"
-        >
-          <q-item-section avatar>
-            <q-icon name="person_add" />
-          </q-item-section>
+        <hr />
+        <q-item clickable v-ripple class="drawer-item" @click="Dialog('openRegister')">
           <q-item-section>Registrarse</q-item-section>
         </q-item>
-
-        <q-item clickable v-ripple class="drawer-item" @click="openLoginDialog">
-          <q-item-section avatar>
-            <q-icon name="login" />
-          </q-item-section>
+        <q-item clickable v-ripple class="drawer-item" @click="Dialog('openLogin')">
           <q-item-section>Iniciar Sesión</q-item-section>
         </q-item>
 
@@ -184,9 +170,9 @@
             >
               <q-card-section class="q-pa-none">
                 <q-img
-                  :src="producto.imagen"
-                  :alt="producto.nombre"
-                  style="height: 200px"
+                  :src="producto.images[0].urlImage"
+                  :alt="producto.name"
+                  style="height: 200px;"
                   fit="cover"
                 >
                   <template v-slot:loading>
@@ -196,12 +182,12 @@
               </q-card-section>
 
               <q-card-section>
-                <div class="text-h6">{{ producto.nombre }}</div>
-                <div class="text-subtitle2 text-grey">                </div>
+                <div class="text-h6">{{ producto.name }}</div>
+                <div class="text-subtitle2 text-grey">{{ producto.description }}</div>
               </q-card-section>
 
               <q-card-section class="text-h6" style="color: red; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                ${{ producto.precio.toFixed(2) }}
+                ${{ producto.price.toFixed(2) }}
               </q-card-section>
 
               <q-card-actions align="center">
@@ -316,7 +302,7 @@
         </q-card-section>
 
         <q-card-actions>
-          <q-btn label="Cerrar" color="secondary" @click="closeLoginDialog" />
+          <q-btn label="Cerrar" color="secondary" @click="Dialog('closeLogin')" />
           <q-btn label="Iniciar sesión" color="primary" @click="login" />
         </q-card-actions>
       </q-card>
@@ -330,40 +316,15 @@
         </q-card-section>
 
         <q-card-section>
-          <q-input v-model="registerName" label="Nombre"></q-input>
-          <q-select
-            v-model="registerType"
-            :options="registerTypeOptions"
-            label="Tipo de Usuario"
-            :rules="[val => !!val || 'Campo obligatorio']"
-          ></q-select>
-          <q-input
-            v-model="registerEmail"
-            label="Correo Electrónico"
-            type="email"
-            :rules="[val => !!val || 'Campo obligatorio']"
-          />
-          <q-input
-            v-model="registerPassword"
-            label="Contraseña"
-            type="password"
-            :rules="[val => !!val || 'Campo obligatorio']"
-          />
-          <q-input
-            v-model="registerConfirmPassword"
-            label="Confirmar Contraseña"
-            type="password"
-            :rules="[val => !!val || 'Campo obligatorio']"
-          />
+          <q-input v-model="user.name" label="Nombre" type="text" />
+          <q-input v-model="user.email" label="Correo Electrónico" type="email" />
+          <q-input v-model="user.password" label="Contraseña" type="password" />
+          <q-input v-model="user.ConfirmPassword" label="Confirmar Contraseña" type="password" />
         </q-card-section>
 
         <q-card-actions>
-          <q-btn
-            label="Cerrar"
-            color="secondary"
-            @click="closeRegisterDialog"
-          />
-          <q-btn label="Registrarse" color="primary" @click="register" />
+          <q-btn label="Cerrar" color="secondary" @click="Dialog('closeRegister')" />
+          <q-btn label="Registrarse" color="primary" @click="registerUser()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -371,44 +332,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref, toRaw } from 'vue'
+import { getData, postData } from '../service/service'
 
 const slide = ref(1);
 const autoplay = ref(true);
 const search = ref("");
 const rightDrawerOpen = ref(false);
 
-// Productos
-const productos = ref([
-  {
-    nombre: "Producto A",
-    descripcion: "Descripción del producto A.",
-    precio: 19.99,
-    imagen:
-      "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg",
-  },
-  {
-    nombre: "Producto B",
-    descripcion: "Descripción del producto B.",
-    precio: 29.99,
-    imagen:
-      "https://centraldesuministrosgs.com/wp-content/uploads/2022/02/totto-morral-con-porta-pc-ribbon-negro-negro-black-negro-negro-black_1-1.jpg",
-  },
-  {
-    nombre: "Producto C",
-    descripcion: "Descripción del producto C.",
-    precio: 9.99,
-    imagen:
-      "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/3bbecbdf584e40398446a8bf0117cf62_9366/Tenis_Samba_OG_Blanco_B75806_01_00_standard.jpg",
-  },
-  {
-    nombre: "Producto D",
-    descripcion: "Descripción del producto D.",
-    precio: 39.99,
-    imagen:
-      "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg",
-  },
-]);
+const productos = ref([])
 
 const productosEspeciales = ref([
   {
@@ -427,52 +359,66 @@ const productosEspeciales = ref([
   },
 ]);
 
-// Modals Login Y Registro
-const loginDialog = ref(false);
-const registerDialog = ref(false);
+const user = ref({});
 
-const registerName = ref("");
-const registerType = ref("");
-const registerTypeOptions = ref(["Usuario", "Administrador"]);
-const loginEmail = ref("");
-const loginPassword = ref("");
-const registerEmail = ref("");
-const registerPassword = ref("");
-const registerConfirmPassword = ref("");
+async function registerUser() {
+  try {
+    if(user.value.password !== user.value.ConfirmPassword){
+      throw new Error ('Constraine must be the same')
+    }
+    console.log(user.value.name);
+    const response = await postData("/users",{
+      data:toRaw(user.value)
+    })
 
-const openLoginDialog = () => {
-  loginDialog.value = true;
-};
+    console.log(response);
 
-const openRegisterDialog = () => {
-  registerDialog.value = true;
-};
+  }catch (error) {
+    console.log(error.message);
+  }
+}
 
-const closeLoginDialog = () => {
-  loginDialog.value = false;
-};
 
-const closeRegisterDialog = () => {
-  registerDialog.value = false;
-};
+async function products() {
+  try {
+    const response = await getData("/product");
+    productos.value = response.data
+  } catch (error) {
+    console.error('error when bringing products')
+  }
+}
 
-const login = () => {
-  console.log(
-    `Iniciar sesión con ${loginEmail.value} y ${loginPassword.value}`
-  );
-  closeLoginDialog();
-};
+function Dialog(action){
+  switch (action){
+    case "openLogin":
+      loginDialog.value = true
+    break;
 
-const register = () => {
-  console.log(
-    `Registrarse con ${registerEmail.value}, ${registerPassword.value} y ${registerConfirmPassword.value}`
-  );
-  closeRegisterDialog();
-};
+    case "openRegister":
+    registerDialog.value = true
+    break;
+
+    case "closeLogin":
+    loginDialog.value = false
+    break;
+
+    case "closeRegister":
+    registerDialog.value = false
+    break;
+  }
+} 
+
+
 
 const agregarAlCarrito = (producto) => {
-  console.log("Agregado al carrito:", producto.nombre);
-};
+  console.log('Agregado al carrito:', producto.nombre)
+}
+
+
+onMounted(()=>{
+  products();
+})
+
 </script>
 
 <style scoped>

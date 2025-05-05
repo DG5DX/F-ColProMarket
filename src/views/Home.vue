@@ -46,33 +46,11 @@
           </q-item-section>
           <q-item-section>Contacto</q-item-section>
         </q-item>
-<<<<<<< HEAD
         <hr />
         <q-item clickable v-ripple class="drawer-item" @click="Dialog('openRegister')">
           <q-item-section>Registrarse</q-item-section>
         </q-item>
         <q-item clickable v-ripple class="drawer-item" @click="Dialog('openLogin')">
-=======
-
-        <q-separator class="q-my-sm" />
-
-        <q-item
-          clickable
-          v-ripple
-          class="drawer-item"
-          @click="openRegisterDialog"
-        >
-          <q-item-section avatar>
-            <q-icon name="person_add" />
-          </q-item-section>
-          <q-item-section>Registrarse</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item" @click="openLoginDialog">
-          <q-item-section avatar>
-            <q-icon name="login" />
-          </q-item-section>
->>>>>>> main
           <q-item-section>Iniciar Sesión</q-item-section>
         </q-item>
 

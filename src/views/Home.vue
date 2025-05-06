@@ -370,7 +370,7 @@ onMounted(()=>{
 
 .q-carousel-slide,.q-carousel{
   border-radius: 15px;
-  background-color: black;
+  background-color: #121212;
   box-shadow: none;
   border: none;
 }

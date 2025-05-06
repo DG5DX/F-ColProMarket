@@ -1,162 +1,37 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-    <!-- Drawer -->
-    <q-drawer
-      v-model="rightDrawerOpen"
-      side="right"
-      :show-if-above="false"
-      :breakpoint="900"
-      bordered
-      class="custom-drawer"
-    >
-      <div class="drawer-header q-pa-md flex items-center">
-        <img
-          src="../assets/MiniLogo.jpeg"
-          alt="Logo"
-          class="mini-logo q-mr-md"
-        />
-        <h3 class="text-h6 q-ma-none">Menú</h3>
-      </div>
-      <q-separator />
-      <q-list>
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="shopping_bag" />
-          </q-item-section>
-          <q-item-section>Productos</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="groups" />
-          </q-item-section>
-          <q-item-section>Comunidad</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="local_offer" />
-          </q-item-section>
-          <q-item-section>Rebajas</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="contact_mail" />
-          </q-item-section>
-          <q-item-section>Contacto</q-item-section>
-        </q-item>
-        <hr />
-        <q-item clickable v-ripple class="drawer-item" @click="Dialog('openRegister')">
-          <q-item-section>Registrarse</q-item-section>
-        </q-item>
-        <q-item clickable v-ripple class="drawer-item" @click="Dialog('openLogin')">
-          <q-item-section>Iniciar Sesión</q-item-section>
-        </q-item>
-
-        <q-separator class="q-my-sm" />
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="help_outline" />
-          </q-item-section>
-          <q-item-section>Ayuda</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="wallet" />
-          </q-item-section>
-          <q-item-section>Metodo De Pago</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="shopping_cart" />
-          </q-item-section>
-          <q-item-section>Carrito</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="local_mall" />
-          </q-item-section>
-          <q-item-section>
-            <router-link to="/admin" style="text-decoration: none; color:inherit">Vender</router-link></q-item-section>
-        </q-item>
-
-        <q-separator class="q-my-sm" />
-      </q-list>
-    </q-drawer>
-
-    <!-- Header -->
-    <q-header elevated>
-      <div id="app">
-        <router-link to="/" id="logo" style="text-decoration: none">
-          <img src="../assets/Logo ColProMarket.jpeg" alt="logo" />
-        </router-link>
-        <div id="search">
-          <q-input v-model="search" filled type="search" placeholder="Buscar">
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </div>
-        <div id="nav-buttons">
-          <q-btn-group push>
-            <q-btn push label="Productos" color="grey" />
-            <q-btn push label="Comunidad" color="grey" />
-            <q-btn push label="Rebajas" color="grey" />
-            <q-btn push label="Contacto" color="grey" />
-          </q-btn-group>
-        </div>
-        <div id="menu">
-          <q-btn
-            color="dark"
-            icon="menu"
-            @click="rightDrawerOpen = !rightDrawerOpen"
-            flat
-            round
-          />
-        </div>
-      </div>
-    </q-header>
-
+  
     <!-- Contenido principal -->
     <q-page-container>
       <div class="Home">
         <!-- Carrusel -->
         <div class="carrusel">
-          <q-carousel
-            animated
-            v-model="slide"
-            navigation
-            infinite
-            :autoplay="autoplay"
-            arrows
-            transition-prev="slide-right"
-            transition-next="slide-left"
-            @mouseenter="autoplay = false"
-            @mouseleave="autoplay = true"
-          >
-            <q-carousel-slide
-              :name="1"
-              img-src="https://i.revistapym.com.co/cms/2023/11/16171723/Plantilla-nota-7.png?w=412&d=2.625"
-            />
-            <q-carousel-slide
-              :name="2"
-              img-src="https://imagenes.eltiempo.com/files/image_1200_600/uploads/2018/01/25/5a6a513f2f1fc.jpeg"
-            />
-            <q-carousel-slide
-              :name="3"
-              img-src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/c1074d118179925.6084033e823f0.jpg"
-            />
-            <q-carousel-slide
-              :name="4"
-              img-src="https://newsletters.pcel.com/assets/templates/template-6633/banner-landing-dell-0203_2022.jpg"
-            />
-          </q-carousel>
+    <q-carousel
+      animated
+      v-model="slide"
+      navigation
+      infinite
+      :autoplay="autoplay"
+      arrows
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      @mouseenter="autoplay = false"
+      @mouseleave="autoplay = true"
+      height="500px"
+      class="carrusel-container"
+    >
+      <q-carousel-slide
+        v-for="(imagen, index) in imagenesCarrusel" 
+        :key="index"
+        :name="index + 1"
+        class="carrusel-slide"
+      >
+        <div class="carrusel-image-container">
+          <img :src="imagen.src" :alt="imagen.alt" class="carrusel-image" />
         </div>
+      </q-carousel-slide>
+    </q-carousel>
+  </div>
 
         <!-- Productos -->
         <div class="productos-wrapper">
@@ -167,6 +42,7 @@
               class="my-card"
               bordered
               flat
+              @click="verDetalleProducto(producto)"
             >
               <q-card-section class="q-pa-none">
                 <q-img
@@ -191,9 +67,7 @@
               </q-card-section>
 
               <q-card-actions align="center">
-                <q-btn color="grey" icon="visibility" />
-                <q-btn color="primary" icon="shopping_cart" @click="agregarAlCarrito(producto)"
-                />
+                <q-btn color="primary" icon="shopping_cart" @click.stop="agregarAlCarrito(producto)" />
               </q-card-actions>
             </q-card>
           </div>
@@ -209,6 +83,7 @@
             class="especial-card col-12 col-sm-6"
             flat
             bordered
+            @click="verDetalleProducto(producto)"
           >
             <q-card-section class="special row no-wrap">
               <q-img
@@ -225,10 +100,7 @@
                 </div>
                 <div class="text-subtitle2">{{ producto.descripcion }}</div>
                 <q-card-actions align="center">
-                  <q-btn icon="visibility" color="grey" />
-                  <q-btn icon="shopping_cart" color="primary"
-                    @click="agregarAlCarrito(producto)"
-                  />
+                  <q-btn icon="shopping_cart" color="primary" @click.stop="agregarAlCarrito(producto)" />
                 </q-card-actions>
               </div>
             </q-card-section>
@@ -334,37 +206,45 @@
 <script setup>
 import { onMounted, ref, toRaw } from 'vue'
 import { getData, postData } from '../service/service'
+import { router } from '../routes/routes';
 
 const slide = ref(1);
 const autoplay = ref(true);
 const search = ref("");
 const rightDrawerOpen = ref(false);
-
-const productos = ref([])
-
-const productosEspeciales = ref([
-  {
-    nombre: "Producto Especial 1",
-    descripcion: "Descripción del producto especial 1.",
-    precio: 299.99,
-    imagen:
-      "https://geprofile.lat/medias/1200Wx1200H-GEAppliances-Refrigeradores-755LT-Inoxidable-GNM26AETFSS-Izquierda.jpg?context=bWFzdGVyfHJvb3R8MjczODE4fGltYWdlL2pwZWd8YUdGbEwyZ3dZUzh4TVRVMU9EYzVOVEl4TkRnM09DOHhNakF3VjNneE1qQXdTRjlIUlVGd2NHeHBZVzVqWlhNdFVtVm1jbWxuWlhKaFpHOXlaWE10TnpVMVRGUXRTVzV2ZUdsa1lXSnNaUzFIVGsweU5rRkZWRVpUVXkxSmVuRjFhV1Z5WkdFdWFuQm58ODJhNWQ0OTU3NzFkMjNmYTQwNzI5ZmNhYzQwM2JhM2M5MjhkN2Q3ZTRkZmVjMzQ5ODhhNDdjMWM0NDFiYWU4Nw",
-  },
-  {
-    nombre: "Producto Especial 2",
-    descripcion: "Descripción del producto especial 2.",
-    precio: 399.99,
-    imagen:
-      "https://panamericana.vtexassets.com/arquivos/ids/531492/impresora-todo-en-uno-hp-smart-tank-580-196068963507.jpg?v=638435460263070000",
-  },
-]);
-
+const loginDialog = ref(false);
+const registerDialog = ref(false);
+const loginEmail = ref("");
+const loginPassword = ref("");
+const productos = ref([]);
 const user = ref({});
 
+
+// Imágenes del carrusel optimizadas
+const imagenesCarrusel = ref([
+  {
+    src: "https://media.about.nike.com/img/926f7aaf-ea24-4cea-a1ec-473c7dd16056/snkrs-showcase.jpeg?m=eyJlZGl0cyI6eyJqcGVnIjp7InF1YWxpdHkiOjEwMH0sIndlYnAiOnsicXVhbGl0eSI6MTAwfSwiZXh0cmFjdCI6eyJsZWZ0Ijo4NTAsInRvcCI6ODQ5LCJ3aWR0aCI6MTUwMSwiaGVpZ2h0Ijo5OTh9LCJyZXNpemUiOnsid2lkdGgiOjM4NDB9fX0%3D&s=5c9910ec7c174510040f154caa5ca9962b07f1dd09d48f7004fe69ea1b040747",
+    alt: "Nike Showcase"
+  },
+  {
+    src: "https://i.pinimg.com/736x/36/6a/f4/366af481af06ea25f237391aba3cca52.jpg",
+    alt: "Gaming Laptop"
+  },
+  {
+    src: "https://ocelot.com.mx/wp-content/uploads/2024/12/PHANTOM-HD-3.jpg",
+    alt: "Phantom HD"
+  },
+  {
+    src: "https://i.pinimg.com/736x/e8/c1/cc/e8c1cc33de371ba441feb9d041f63024.jpg",
+    alt: "Product Image"
+  }
+]);
+
+// Función para registrar usuario
 async function registerUser() {
   try {
     if(user.value.password !== user.value.ConfirmPassword){
-      throw new Error ('Constraine must be the same')
+      throw new Error ('Contraseñas deben ser iguales')
     }
     console.log(user.value.name);
     const response = await postData("/users",{
@@ -372,6 +252,7 @@ async function registerUser() {
     })
 
     console.log(response);
+    Dialog('closeRegister');
 
   }catch (error) {
     console.log(error.message);
@@ -379,14 +260,21 @@ async function registerUser() {
 }
 
 
+function login() {
+  console.log('Iniciando sesión con:', loginEmail.value);
+  Dialog('closeLogin');
+}
+
+// Función para cargar productos
 async function products() {
   try {
     const response = await getData("/product");
     productos.value = response.data
   } catch (error) {
-    console.error('error when bringing products')
+    console.error('Error al cargar productos:', error)
   }
 }
+
 
 function Dialog(action){
   switch (action){
@@ -408,12 +296,25 @@ function Dialog(action){
   }
 } 
 
-
-
+// Función para agregar al carrito
 const agregarAlCarrito = (producto) => {
-  console.log('Agregado al carrito:', producto.nombre)
+  console.log('Agregado al carrito:', producto.nombre || producto.name);
+  event.stopPropagation();
 }
 
+// Función para ver el detalle del producto
+const verDetalleProducto = (producto) => {
+  // Guardar información del producto en localStorage para usarla en la página de detalles
+  if (producto && (producto.id || producto.name)) {
+    localStorage.setItem('selectedProduct', JSON.stringify(producto));
+  }
+  // Redireccionar a la página de detalles
+  window.location.href = 'http://localhost:5173/#/seeproduct';
+
+  router.push({
+    path:"/seeproduct", query:{data:JSON.stringify(producto)}
+  });
+}
 
 onMounted(()=>{
   products();
@@ -422,6 +323,60 @@ onMounted(()=>{
 </script>
 
 <style scoped>
+/* Estilos optimizados para el carrusel */
+.carrusel {
+  width: 98%;
+  margin: 1% auto;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.carrusel-slide {
+  height: 100%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+}
+
+.carrusel-image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  
+}
+
+.carrusel-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain; 
+  max-height: 100%; 
+    
+}
+
+
+.q-carousel-slide, .q-carousel {
+  border-radius: 15px;
+  box-shadow: none;
+  border: none;
+}
+
+
+.q-carousel-slide,.q-carousel{
+  border-radius: 15px;
+  background-color: black;
+  box-shadow: none;
+  border: none;
+}
+.carrusel{
+  margin-top: 1%;
+}
 #body {
   background: linear-gradient(
     to right,
@@ -512,27 +467,270 @@ onMounted(()=>{
   background-color: #e0e0e0;
 }
 
+/* Contenedores de productos */
 .productos-wrapper {
-  overflow-x: auto;
+  overflow-x: hidden;
   margin-top: 3vh;
+  width: 98%;
+  margin-left: 1%;
+  padding: 20px 0;
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .productos {
   flex-wrap: wrap;
-  overflow-x: auto;
   display: flex;
-  white-space: nowrap;
-  justify-content: space-evenly;
-  background: rgba(255, 255, 255, 0.1);
+  justify-content: center;
+  gap: 30px;
+  padding: 20px;
 }
 
 .especial {
-  display: grid;
-  overflow-x: auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  margin-top: 30px;
 }
 
-.especial .especial-card {
+/* Tarjetas de productos regulares */
+.my-card {
+  flex: 0 0 auto;
+  width: 280px;
+  text-align: center;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  background: white;
+  position: relative;
+  cursor: pointer; /* Cursor pointer para indicar que es clicable */
+}
+
+.my-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagen del producto */
+.my-card .q-img {
+  height: 220px !important;
+  transition: transform 0.5s ease;
+}
+
+.my-card:hover .q-img {
+  transform: scale(1.05);
+}
+
+/* Título del producto */
+.my-card .text-h6 {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Descripción del producto */
+.my-card .text-subtitle2 {
+  color: #666;
+  font-size: 0.9rem;
+  height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Precio */
+.my-card .text-h6[style*="color: red"] {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e53935 !important;
+  margin: 10px 0;
+}
+
+/* Botones */
+.my-card .q-card-actions {
+  padding: 8px 16px 16px;
   display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.my-card .q-btn {
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.my-card .q-btn[icon="shopping_cart"] {
+  background: #1976d2;
+  color: white;
+  padding: 8px 12px;
+}
+
+.my-card .q-btn[icon="shopping_cart"]:hover {
+  background: #0d47a1;
+  transform: scale(1.05);
+}
+
+.my-card::before {
+  content: "Nuevo";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e53935;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.3s ease;
+}
+
+.my-card:hover::before {
+  opacity: 0.9;
+  transform: translateX(0);
+}
+
+/* Tarjetas de productos especiales */
+.especial-card {
+  transition: all 0.3s ease;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+  border: none !important;
+  cursor: pointer; /* Cursor pointer para indicar que es clicable */
+}
+
+.especial-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.especial-card .q-img {
+  border-radius: 8px !important;
+  overflow: hidden;
+  transition: transform 0.5s;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.especial-card:hover .q-img {
+  transform: scale(1.03);
+}
+
+.especial-card .text-h6 {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.especial-card .text-h6::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: #1976d2;
+}
+
+.especial-card .text-h6[style*="color: red"] {
+  font-size: 1.4rem;
+  color: #e53935 !important;
+  margin: 12px 0;
+}
+
+.especial-card .text-subtitle2 {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.especial-card .q-card-actions {
+  margin-top: 5px;
+}
+
+.especial-card .q-btn {
+  border-radius: 8px;
+  transition: all 0.2s;
+  margin: 0 5px;
+}
+
+.especial-card .q-btn[icon="shopping_cart"] {
+  background: #1976d2;
+  color: white;
+  padding: 8px 15px;
+}
+
+.especial-card .q-btn[icon="shopping_cart"]:hover {
+  background: #0d47a1;
+  transform: scale(1.05);
+}
+
+/* Mejoras para efectos de clic */
+.my-card:active, .especial-card:active {
+  transform: scale(0.98) !important;
+  transition: transform 0.1s;
+}
+
+/* Efecto de overlay al hacer hover para indicar que es clicable */
+.my-card::after, .especial-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.my-card:hover::after, .especial-card:hover::after {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Solo mantener el botón del carrito */
+.my-card .q-card-actions, .especial-card .q-card-actions {
+  padding: 8px 16px 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Hacer que el botón del carrito se mantenga por encima para capturar su propio clic */
+.my-card .q-btn, .especial-card .q-btn {
+  z-index: 2;
+  position: relative;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .my-card {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  
+  .especial-card .text-h6::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.especial .especial-card{
   min-width: 330px;
   max-width: 40%;
   margin-right: 16px;
@@ -545,83 +743,6 @@ onMounted(()=>{
   width: 100%;
   height: 100%;
   padding: 0%;
-}
-
-.especial-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.especial-card .q-card-section.row {
-  display: flex;
-  flex-direction: row;
-}
-
-.especial-card .col.q-pa-md {
-  padding: 16px;
-}
-
-.especial-card .text-h6 {
-  font-weight: bold;
-}
-
-.especial-card .text-subtitle2 {
-  margin-top: 5px;
-  color: #666;
-}
-
-.especial-card .q-btn-group {
-  margin-top: 15px;
-}
-
-.especial-card .q-btn {
-  margin-bottom: 10px;
-}
-
-@media (max-width: 786px) {
-  .especial .especial-card{
-    min-width: 90%;
-  }
-  .especial-card .q-img {
-    height: 150px !important;
-  }
-  .especial-card .q-card-section.row {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .especial-card .col.q-pa-md {
-    padding: 16px 8px !important;
-  }
-  .especial-card .q-btn-group {
-    flex-direction: column;
-  }
-  .especial-card .q-btn {
-    margin-bottom: 8px;
-  }
-  .especial {
-    margin-top: 20px;
-  }
-  .especial-card {
-    margin-bottom: 20px;
-  }
-}
-
-.my-card {
-  flex: 0 0 auto;
-  width: 250px;
-  text-align: center;
-}
-
-.my-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.productos .q-btn {
-  margin: 10px;
 }
 
 .q-carousel-slide {
@@ -655,6 +776,36 @@ onMounted(()=>{
     max-height: 6vh;
   }
 }
+
+@media (max-width: 786px) {
+  .especial .especial-card{
+    min-width: 90%;
+  }
+  .especial-card .q-img {
+    height: 150px !important;
+  }
+  .especial-card .q-card-section.row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .especial-card .col.q-pa-md {
+    padding: 16px 8px !important;
+  }
+  .especial-card .q-btn-group {
+    flex-direction: column;
+  }
+  .especial-card .q-btn {
+    margin-bottom: 8px;
+  }
+  .especial {
+    margin-top: 20px;
+  }
+  .especial-card {
+    margin-bottom: 20px;
+  }
+}
+
 @media (max-width: 550px) {
   .especial .especial-card{
     min-width: 90%;

@@ -422,242 +422,135 @@ onMounted(()=>{
 </script>
 
 <style scoped>
+/* Estilos generales */
 #body {
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 0, 0.5),
-    rgba(0, 0, 255, 0.5),
-    rgba(255, 0, 0, 0.5)
-  );
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f5;
 }
 
+/* Header */
 #app {
   display: flex;
-  justify-content: space-between;
-  flex-direction: row;
   align-items: center;
-  padding: 5px;
-  gap: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: white;
 }
 
 #logo img {
-  max-height: 10vh;
+  height: 50px;
   object-fit: contain;
-}
-
-#footer {
-  background-color: #f9f9f9;
-}
-
-.mini-logo {
-  height: 40px;
-  object-fit: contain;
-  border-radius: 4px;
 }
 
 #search {
   flex: 1;
-  min-width: 200px;
-  max-width: 400px;
-  display: flex;
-  justify-content: center;
+  margin: 0 30px;
 }
 
 #nav-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  justify-content: center;
-  align-items: center;
-  margin-left: 7vh;
+  display: none;
 }
 
 #menu {
-  margin-left: auto;
+  margin-left: 10px;
 }
 
-#header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.custom-drawer {
-  background: linear-gradient(to bottom, #ffffff, #f9f9f9);
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-}
-
-.drawer-header {
-  background-color: #f1f1f1;
-  padding: 5px;
-  border-bottom: 1px solid #ddd;
-}
-
-.drawer-item {
-  padding: 10px 16px;
-  font-size: 15px;
-  border-radius: 8px;
-  margin: 4px 8px;
-  transition: background-color 0.2s ease;
-}
-
-.drawer-item:hover {
-  background-color: #f5f5f5;
-}
-
-.drawer-item:active {
-  background-color: #e0e0e0;
-}
-
-.productos-wrapper {
-  overflow-x: auto;
-  margin-top: 3vh;
-}
-
-.productos {
-  flex-wrap: wrap;
-  overflow-x: auto;
-  display: flex;
-  white-space: nowrap;
-  justify-content: space-evenly;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.especial {
-  display: grid;
-  overflow-x: auto;
-}
-
-.especial .especial-card {
-  display: flex;
-  min-width: 330px;
-  max-width: 40%;
-  margin-right: 16px;
-  vertical-align: top;
-  flex-wrap: wrap;
-}
-
-.special {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  padding: 0%;
-}
-
-.especial-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.especial-card .q-card-section.row {
-  display: flex;
-  flex-direction: row;
-}
-
-.especial-card .col.q-pa-md {
-  padding: 16px;
-}
-
-.especial-card .text-h6 {
-  font-weight: bold;
-}
-
-.especial-card .text-subtitle2 {
-  margin-top: 5px;
-  color: #666;
-}
-
-.especial-card .q-btn-group {
-  margin-top: 15px;
-}
-
-.especial-card .q-btn {
-  margin-bottom: 10px;
-}
-
-@media (max-width: 786px) {
-  .especial .especial-card{
-    min-width: 90%;
-  }
-  .especial-card .q-img {
-    height: 150px !important;
-  }
-  .especial-card .q-card-section.row {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .especial-card .col.q-pa-md {
-    padding: 16px 8px !important;
-  }
-  .especial-card .q-btn-group {
-    flex-direction: column;
-  }
-  .especial-card .q-btn {
-    margin-bottom: 8px;
-  }
-  .especial {
-    margin-top: 20px;
-  }
-  .especial-card {
-    margin-bottom: 20px;
-  }
-}
-
-.my-card {
-  flex: 0 0 auto;
-  width: 250px;
-  text-align: center;
-}
-
-.my-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.productos .q-btn {
-  margin: 10px;
-}
-
-.q-carousel-slide {
-  max-height: 500px;
-}
-
-.q-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-bottom: 1px solid #ccc;
-}
-
-@media (max-width: 990px) {
+/* Mostrar botones solo en pantallas grandes */
+@media (min-width: 900px) {
   #nav-buttons {
-    margin: 0%;
-  }
-  #menu {
     display: block;
   }
-}
 
-@media (max-width: 900px) {
-  #nav-buttons {
+  #menu {
     display: none;
   }
 }
 
-@media (max-width: 500px) {
-  #logo img {
-    max-height: 6vh;
-  }
+/* Drawer */
+.custom-drawer {
+  background-color: #ffffff;
+  width: 270px;
 }
-@media (max-width: 550px) {
-  .especial .especial-card{
-    min-width: 90%;
-  }
+
+.drawer-header {
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
 }
+
+.drawer-item {
+  transition: background-color 0.2s;
+}
+
+.drawer-item:hover {
+  background-color: #e0e0e0;
+}
+
+.mini-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* Carrusel */
+.carrusel {
+  margin-top: 20px;
+}
+
+.q-carousel__slide img {
+  border-radius: 8px;
+}
+
+/* Cards de productos */
+.my-card,
+.especial-card {
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background-color: #ffffff;
+}
+
+.my-card:hover,
+.especial-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.text-h6 {
+  font-weight: 600;
+}
+
+.productos-wrapper {
+  background-color: #ffffff;
+  padding: 40px 0;
+}
+
+/* Especiales */
+.especial {
+  background-color: #fafafa;
+  padding-top: 30px;
+}
+
+.special {
+  align-items: center;
+}
+
+/* Footer */
+#footer {
+  background-color: #212121;
+  color: white;
+  padding: 40px 20px;
+}
+
+#footer .text-bold {
+  font-size: 1.1rem;
+}
+
+#footer .text-caption {
+  color: #cfcfcf;
+  margin-bottom: 5px;
+}
+
+#footer .q-btn {
+  margin-right: 10px;
+}
+
 </style>

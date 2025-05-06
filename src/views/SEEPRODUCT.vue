@@ -1,56 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <!-- Drawer -->
-    <q-drawer v-model="rightDrawerOpen" side="right" :show-if-above="false" :breakpoint="900" bordered
-            class="custom-drawer">
-            <div class="drawer-header q-pa-md flex items-center">
-                <img src="../assets/MiniLogo.jpeg" alt="Logo" class="mini-logo q-mr-md" />
-                <h3 class="text-h6 q-ma-none">Menú</h3>
-            </div>
-            <q-separator />
-            <q-list>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Productos</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Comunidad</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Rebajas</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Contacto</q-item-section>
-                </q-item>
-            </q-list>
-        </q-drawer>
-
-        <!-- Header -->
-        <q-header elevated>
-            <div id="app">
-                <router-link to="/" id="logo" style="text-decoration: none;">
-                    <img src="../assets/Logo ColProMarket.jpeg" alt="logo" />
-                </router-link>
-                <div id="search">
-                    <q-input v-model="search" filled type="search" placeholder="Buscar">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                </div>
-                <div id="nav-buttons">
-                    <q-btn-group push>
-                        <q-btn push label="Productos" color="grey" />
-                        <q-btn push label="Comunidad" color="grey" />
-                        <q-btn push label="Rebajas" color="grey" />
-                        <q-btn push label="Contacto" color="grey" />
-                    </q-btn-group>
-                </div>
-                <div id="menu">
-                    <q-btn color="dark" icon="menu" @click="rightDrawerOpen = !rightDrawerOpen" flat round />
-                </div>
-            </div>
-        </q-header>
-
+ 
 
     <!-- Contenedor de página -->
     <q-page-container class="theContainer">
@@ -65,6 +15,7 @@
               <img class="imG" :src="imagenSeleccionada" />
             </div>
           </div>
+          
 
           <div class="row1 ">
             <q-btn flat icon="favorite_border" label="Favoritos" />
@@ -73,26 +24,57 @@
           </div>
 
 
-        <!-- Calificación -->
-        <div class="row2">
-              <div class="q-px-sm q-py-xs text-subtitle1 bg-yellow text-dark"
-                style="border: 2px solid black; border-radius: 8px;">
-                {{ producto.calificacion }} {{ mostrarEstrellas(producto.calificacion) }}
-              </div>
-            </div>
+       
 
+          <!-- Sección de reseñas -->
           <div class="reviews">
             <div class="contemReviews">
-              <br><br><label class="reviewsText">Reseñas</label>
+              <label class="reviewsText">Reseñas</label>
 
-              <div v-for="(review, index) in producto.resenas" :key="index" class="RVW"><br>
-                <label>{{ review.usuario }}</label><br>
-                <label class="coment">{{ review.comentario }}</label>
+              <!-- Lista de reseñas existentes -->
+              <div v-for="(review, index) in producto.resenas" :key="index" class="RVW q-pa-md">
+                <div class="flex items-center q-mb-sm">
+                  <q-avatar color="primary" text-color="white" size="sm">
+                    {{ review.usuario.charAt(0) }}
+                  </q-avatar>
+                  <span class="q-ml-sm text-weight-bold">{{ review.usuario }}</span>
+                </div>
+                
+                <q-rating
+                  v-model="review.calificacion"
+                  size="1em"
+                  color="black"
+                  icon="star_border"
+                  icon-selected="star"
+                  readonly
+                  class="q-mb-sm"
+                />
+                
+                <div class="coment">{{ review.comentario }}</div>
               </div>
 
-              <br><br>
-              <div class="input-container">
-                <q-input class="inputText" v-model="nuevoComentario" placeholder="Escribir comentario" outlined>
+              <!-- Formulario para nueva reseña -->
+              <div class="input-containerq-mt-lg">
+                <div class="flex items-center q-gutter-sm q-mb-sm">
+                  <span>Tu calificación:</span>
+                  <q-rating
+                    v-model="ratingModel"
+                    max="5"
+                    size="2em"
+                    color="black"
+                    icon="star_border"
+                    icon-selected="star"
+                  />
+                </div>
+                
+                <q-input 
+                  class="Testo"
+                  v-model="nuevoComentario" 
+                  placeholder="Escribe tu reseña..." 
+                  outlined
+                  type="textarea"
+                  rows="3"
+                >
                   <template v-slot:append>
                     <q-btn round dense flat icon="send" @click="agregarComentario" />
                   </template>
@@ -104,6 +86,8 @@
 
         <div class="medium">
           <q-card class="bg-grey-3-q-pa-md" >
+            <!-- Titulo -->
+            <div class="text-h6 text-bold q-mb-sm">{{ (producto.nombre) }}</div>
             <!-- Precio -->
             <div class="text-h6 text-bold q-mb-sm">Precio: {{ formatearPrecio(producto.precio) }}</div>
 
@@ -112,11 +96,25 @@
               Entrega <b>GRATIS</b> en todo el país, por compras superiores a $100.000 en artículos elegibles
             </div>
 
+             <!-- Calificación -->
+        <div class="row2-q-mb-md">
+            <div class="flex ">
+              <span class="text-subtitle1" style="color:black"><h3>{{ producto.calificacion }}</h3></span>
+              <q-rating
+                v-model="ratingProducto"
+                size="3em"
+                color="black"
+                icon="star_border"
+                icon-selected="star"
+                readonly
+              />
+            </div>
+          </div>
+
             <!-- Disponible -->
             <div :class="disponibilidadClase" class="text-subtitle2 q-mb-sm">{{ producto.disponibilidad }}</div>
 
-            <!-- Selector de cantidad -->
-            <q-select filled v-model="cantidad" :options="cantidades" label="Cantidad" dense class="q-mb-md" />
+            
 
 
             <div class="text-blue">Devoluciones:</div>
@@ -177,131 +175,143 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
-
+import { useRoute } from 'vue-router'
 
 const $q = useQuasar()
+const route = useRoute()
 
-// Array con la información del producto
-const productos = [
-  {
-    id: 1,
-    nombre: 'BERIBES Auriculares Bluetooth',
-    descripcion: 'BERIBES Auriculares Bluetooth sobre la oreja, tiempo de reproducción de 65 horas y 3 modos de música ecualizador, auriculares inalámbricos con micrófono, auriculares estéreo de alta fidelidad plegables ligeros, graves profundos para el hogar, oficina, teléfono celular, PC y TV',
-    precio: 358000,
-    calificacion: 4.0,
-    disponibilidad: 'DISPONIBLE',
-    imagenes: [
-      'https://www.compudemano.com/wp-content/uploads/2022/01/auriculares-inalambricos-belkin-de-diadema-para-ninos-azul-1.png.webp',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGaYXDiuQWqfV3VwFb7mu5BLbVUkQQRM8Vu9TMA8Okc7l0qhjecq6JOUvmCFeb4j_PTZo&usqp=CAU',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpyCnc-YSBzhS61Im2MO8AIJxSIvMJ7jRNVmacXDHRV16XjWAVXc7c3zaMItuj4J7-1io&usqp=CAU',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeLvoKxl7mbXOrVdh5NO6EEokKE4Kwkp8Vr7WFZIbzOEFeTo6eNMx3jrIvIVEwWNMyYjk&usqp=CAU'
-    ],
-    detalles: {
-      'Marca': 'BERIBES',
-      'Color': 'Negro',
-      'Impedancia': '2215 ohmio',
-      'Conectividad': 'Bluetooth 5.0',
-      'Autonomía': '65 horas'
-    },
-    sobreEsteArticulo: '🔥 <strong>[ 3 modos de música opcionales]</strong> Simplemente cambia los auriculares entre sonido equilibrado, graves extra potentes y modos de mejora de agudos medios. BERIBES siempre se ha comprometido a proporcionar a nuestros clientes una mejor calidad de sonido como el punto focal de nuestra ingeniería.',
-    enviadoPor: 'ColProMarket',
-    vendidoPor: 'Capibara.inc',
-    politicaDevolucion: 'Reintegro o Reemplazo en 30 días',
-    resenas: [
-      {
-        usuario: 'Roberto Rodriguez',
-        comentario: 'Excelente producto, me gustó, es de muy buena calidad.'
-      }
-    ]
-  },
-
-]
+// Variables de estado
+const producto = ref({
+  id: '',
+  nombre: '',
+  descripcion: '',
+  precio: 0,
+  calificacion: 0,
+  disponibilidad: 'DISPONIBLE',
+  imagenes: [],
+  detalles: {},
+  politicaDevolucion: 'Reintegro o Reemplazo en 30 días',
+  resenas: []
+})
 
 const search = ref('')
 const rightDrawerOpen = ref(false)
-const producto = ref(productos[0])
 const cantidad = ref(1)
 const cantidades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const agregarRecibo = ref(false)
 const nuevoComentario = ref('')
-const imagenSeleccionada = ref(productos[0].imagenes[0])
-const menuItems = ['Productos', 'Comunidad', 'Rebajas', 'Contacto']
+const imagenSeleccionada = ref('')
+const ratingModel = ref(0)
+const ratingProducto = ref(0)
 
-
+// Funciones
 const formatearPrecio = (precio) => {
-  return '$' + precio.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  return '$' + precio.toLocaleString('es-CO')
 }
-
-
-const mostrarEstrellas = (calificacion) => {
-  const estrellas = '★★★★★'
-  return estrellas.substring(0, Math.floor(calificacion))
-}
-
 
 const seleccionarImagen = (index) => {
   imagenSeleccionada.value = producto.value.imagenes[index]
 }
 
-// Función para agregar un comentario
 const agregarComentario = () => {
-  if (nuevoComentario.value.trim() === '') return
+  if (nuevoComentario.value.trim() === '') {
+    $q.notify({
+      message: 'Por favor escribe un comentario',
+      color: 'negative',
+      position: 'top'
+    })
+    return
+  }
 
   producto.value.resenas.push({
-    usuario: 'Usuario',
-    comentario: nuevoComentario.value
+    usuario: 'Usuario Anónimo',
+    comentario: nuevoComentario.value,
+    calificacion: ratingModel.value || 5
   })
 
+  actualizarCalificacionPromedio()
   nuevoComentario.value = ''
+  ratingModel.value = 0
 
   $q.notify({
-    message: 'Comentario agregado con éxito',
+    message: 'Reseña agregada con éxito',
     color: 'positive',
-    position: 'top',
-    timeout: 2000
+    position: 'top'
   })
 }
 
-// Función para agregar al carrito
+const actualizarCalificacionPromedio = () => {
+  if (producto.value.resenas.length === 0) {
+    producto.value.calificacion = 0
+    ratingProducto.value = 0
+    return
+  }
+  
+  const suma = producto.value.resenas.reduce((acc, review) => acc + review.calificacion, 0)
+  producto.value.calificacion = parseFloat((suma / producto.value.resenas.length).toFixed(1))
+  ratingProducto.value = producto.value.calificacion
+}
+
 const agregarAlCarrito = () => {
   $q.notify({
-    message: `${cantidad.value} ${cantidad.value > 1 ? 'unidades' : 'unidad'} agregada al carrito`,
+    message: `Agregado al carrito: ${cantidad.value} unidad(es)`,
     color: 'positive',
-    position: 'top',
-    timeout: 2000
+    position: 'top'
   })
 }
 
-// Función para comprar ahora
 const comprarAhora = () => {
   $q.notify({
-    message: 'Redirigiendo al proceso de compra...',
+    message: 'Procediendo al pago...',
     color: 'primary',
-    position: 'top',
-    timeout: 2000
+    position: 'top'
   })
 }
-
 
 const disponibilidadClase = computed(() => {
   return producto.value.disponibilidad === 'DISPONIBLE' ? 'text-positive' : 'text-negative'
 })
 
-// Función para asignar color según el tipo de detalle
 const colorDetalles = (clave) => {
   const colores = {
     'Marca': 'text-primary',
     'Color': 'text-blue',
-    'Impedancia': 'text-indigo',
-    'Conectividad': 'text-purple',
-    'Autonomía': 'text-deep-orange'
+    'Stock': 'text-green',
+    'Categoría': 'text-purple'
   }
   return colores[clave] || 'text-dark'
 }
+
+// Inicialización
+onMounted(() => {
+  const productoData = JSON.parse(route.query.data || '{}')
+  
+  if (productoData) {
+    const imagenesMapeadas = productoData.images?.map(img => img.urlImage) || []
+    
+    producto.value = {
+      id: productoData._id,
+      nombre: productoData.name,
+      descripcion: productoData.description,
+      precio: productoData.price,
+      imagenes: imagenesMapeadas,
+      detalles: {
+        'Marca': productoData.brand || 'Genérica',
+        'Stock': productoData.stock || 0
+      },
+      resenas: productoData.reviews?.map(r => ({
+        usuario: r.usuario || 'Anónimo',
+        comentario: r.comentario,
+        calificacion: r.calificacion || 5
+      })) || []
+    }
+    
+    imagenSeleccionada.value = imagenesMapeadas[0] || ''
+    actualizarCalificacionPromedio()
+  }
+})
 </script>
-
 <style scoped>
-
 .row1{
   margin-left: 20%;
   margin-top: 26%;
@@ -322,6 +332,9 @@ const colorDetalles = (clave) => {
 .text-body1{
   width: 100%;
 }
+.flex{
+margin-left: -12;
+}
 
 .bg-grey-3-q-pa-md {
   width: 90%;
@@ -335,9 +348,13 @@ const colorDetalles = (clave) => {
 .coment {
   font-size: large;
 }
+.input-containerq-mt-lg{
+  width:360%;
+  margin:5%;
+}
 
 .input-container {
-  width: 90%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -393,6 +410,7 @@ const colorDetalles = (clave) => {
   display: grid;
   grid-template-columns: 20% 80%;
   height: 350px;
+ 
 }
 
 .imG {
@@ -466,5 +484,48 @@ const colorDetalles = (clave) => {
     margin-left: 2.5%;
     width: 95%;
   }
+}
+.row2 {
+  margin-left: 20%;
+  margin-top: 5%;
+}
+.text-subtitle1{
+  
+}
+
+.RVW {
+  background: white;
+  border-radius: 10px;
+  width: 90%;
+  margin: 10px auto;
+  padding: 15px;
+  text-align: start;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #1976D2;
+}
+
+.coment {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.input-container {
+  width: 90%;
+  margin: 20px auto;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.inputText {
+  width: 100%;
+}
+
+.reviewsText {
+  font-size: 1.25rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 20px;
 }
 </style>

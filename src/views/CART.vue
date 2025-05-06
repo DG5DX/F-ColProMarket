@@ -1,56 +1,5 @@
 <template>
     <q-layout view="hHh lpR fFf">
-        <!-- Drawer -->
-        <q-drawer v-model="rightDrawerOpen" side="right" :show-if-above="false" :breakpoint="900" bordered
-            class="custom-drawer">
-            <div class="drawer-header q-pa-md flex items-center">
-                <img src="../assets/MiniLogo.jpeg" alt="Logo" class="mini-logo q-mr-md" />
-                <h3 class="text-h6 q-ma-none">Menú</h3>
-            </div>
-            <q-separator />
-            <q-list>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Productos</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Comunidad</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Rebajas</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Contacto</q-item-section>
-                </q-item>
-            </q-list>
-        </q-drawer>
-
-        <!-- Header -->
-        <q-header elevated>
-            <div id="app">
-                <router-link to="/" id="logo" style="text-decoration: none;">
-                    <img src="../assets/Logo ColProMarket.jpeg" alt="logo" />
-                </router-link>
-                <div id="search">
-                    <q-input v-model="search" filled type="search" placeholder="Buscar">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                </div>
-                <div id="nav-buttons">
-                    <q-btn-group push>
-                        <q-btn push label="Productos" color="grey" />
-                        <q-btn push label="Comunidad" color="grey" />
-                        <q-btn push label="Rebajas" color="grey" />
-                        <q-btn push label="Contacto" color="grey" />
-                    </q-btn-group>
-                </div>
-                <div id="menu">
-                    <q-btn color="dark" icon="menu" @click="rightDrawerOpen = !rightDrawerOpen" flat round />
-                </div>
-            </div>
-        </q-header>
-
         <!-- Contenedor de página -->
         <q-page-container class="theContainer">
             <div class="containerMedium">
@@ -110,7 +59,7 @@
                                 <span>{{ calculateTotal() }}</span>
                             </div>
                             <q-btn color="yellow-8" text-color="black" class="full-width q-mt-lg"
-                                label="Proceder al pago" :disable="cartItems.length === 0" />
+                                label="Proceder al pago" :disable="cartItems.length === 0" @click = pago() />
                         </div>
                     </div>
                 </div>
@@ -171,6 +120,11 @@ onMounted(() => {
     // En un caso real, aquí obtendrías los productos del carrito desde una API o localStorage
     cartItems.value = productos.value.map(p => ({...p, cantidad: 1}))
 })
+
+
+async function pago() {
+    window.location.href = 'http://localhost:5173/#/gateway';
+}
 
 // Función para formatear precio
 const formatPrice = (price) => {
@@ -270,6 +224,7 @@ const onLoad = (index, done) => {
     background-color: white;
     display: grid;
     grid-template-rows: 20% 80%;
+    border-radius: 15px;
 }
 
 .theContainer {

@@ -1,526 +1,355 @@
 <template>
-    <q-layout view="hHh lpR fFf" id="body">
-      <!-- Drawer -->
-      <q-drawer
-        v-model="rightDrawerOpen"
-        side="right"
-        :show-if-above="false"
-        :breakpoint="900"
-        bordered
-        class="custom-drawer"
-      >
-        <div class="drawer-header q-pa-md flex items-center">
-          <img
-            src="../assets/MiniLogo.jpeg"
-            alt="Logo"
-            class="mini-logo q-mr-md"
-          />
-          <h3 class="text-h6 q-ma-none">Menú</h3>
-        </div>
-        <q-separator />
-        <q-list>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="shopping_bag" />
-            </q-item-section>
-            <q-item-section>Productos</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="groups" />
-            </q-item-section>
-            <q-item-section>Comunidad</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="local_offer" />
-            </q-item-section>
-            <q-item-section>Rebajas</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="contact_mail" />
-            </q-item-section>
-            <q-item-section>Contacto</q-item-section>
-          </q-item>
-          <q-separator class="q-my-sm" />
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="help_outline" />
-            </q-item-section>
-            <q-item-section>Ayuda</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="wallet" />
-            </q-item-section>
-            <q-item-section>Metodo De Pago</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="shopping_cart" />
-            </q-item-section>
-            <q-item-section>Carrito</q-item-section>
-          </q-item>
-          <q-separator class="q-my-sm" />
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="logout" color="red" />
-            </q-item-section>
-            <q-item-section style="color: red;">Cerrar Sesión</q-item-section>
-          </q-item>
-          <q-separator class="q-my-sm" />
-        </q-list>
-      </q-drawer>
-  
-      <!-- Header -->
-      <q-header elevated>
-        <div id="app">
-          <router-link to="/" id="logo" style="text-decoration: none">
-            <img src="../assets/Logo ColProMarket.jpeg" alt="logo" />
-          </router-link>
-          <div id="search">
-            <q-input v-model="search" filled type="search" placeholder="Buscar">
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input>
+  <q-layout view="hHh lpR fFf" id="body">
+    <q-page-container>
+      <q-page class="q-pa-md">
+        <q-card class="q-pa-lg shadow-2 q-mx-auto" style="max-width: 1100px; width: 100%; margin-top: 50px;">
+          <div class="row items-center justify-between q-mb-md">
+            <div class="text-h5 text-weight-bold" style="font-size: 4vh;">📦 Lista de Productos</div>
           </div>
-          <div id="nav-buttons">
-            <q-btn-group push>
-              <q-btn push label="Productos" color="grey" />
-              <q-btn push label="Comunidad" color="grey" />
-              <q-btn push label="Rebajas" color="grey" />
-              <q-btn push label="Contacto" color="grey" />
-            </q-btn-group>
+
+          <!-- Buscador y Botón -->
+          <div class="row q-mb-md items-center q-gutter-md">
+            <q-input filled dense debounce="300" v-model="search" label="Buscar producto" clearable
+              prepend-inner-icon="search" class="col" />
+            <q-btn label="Crear Producto" color="primary" icon="add" @click="productDialog = true" class="col-auto" />
           </div>
-          <div id="menu">
-            <q-btn
-              color="dark"
-              icon="menu"
-              @click="rightDrawerOpen = !rightDrawerOpen"
-              flat
-              round
-            />
-          </div>
-        </div>
-      </q-header>
-  
-      <!-- Contenido principal -->
-      <q-page-container>
-        <q-page class="q-pa-md flex flex-center">
-          <q-card
-            class="q-pa-md shadow-2 q-mx-auto"
-            style="max-width: 1000px; width: 100%"
-          >
-            <div class="row justify-between items-center q-mb-md">
-              <div class="text-h6">Lista de Productos</div>
-              <q-btn
-                label="Crear Producto"
-                color="primary"
-                icon="add"
-                @click="productDialog = true"
-              />
-            </div>
-  
-            <q-table
-              :rows="productos"
-              :columns="columns"
-              row-key="nombre"
-              flat
-              bordered
-              wrap-cells
-              class="bg-white"
-            >
-              <template v-slot:body-cell-imagen="props">
-                <q-td :props="props">
-                  <q-img
-                    :src="props.row.imagen"
-                    contain
-                    style="width: 60px; height: 60px"
-                  />
-                </q-td>
-              </template>
-  
-              <template v-slot:body-cell-acciones="props">
-                <q-td :props="props">
-                  <q-btn
-                    icon="visibility"
-                    flat
-                    dense
-                    color="primary"
-                    @click="verDetalle(props.row)"
-                  />
-                  <q-btn
-                    icon="edit"
-                    flat
-                    dense
-                    color="warning"
-                    @click="editarProducto(props.row)"
-                  />
-                  <q-btn
-                    icon="delete"
-                    flat
-                    dense
-                    color="negative"
-                    @click="eliminarProducto(props.row)"
-                  />
-                </q-td>
-              </template>
-            </q-table>
-          </q-card>
-        </q-page>
-      </q-page-container>
-  
-      <!-- Footer -->
-      <div
-        class="row justify-around items-start q-gutter-md full-width"
-        id="footer"
-      >
-        <!-- Footer content omitted for brevity -->
-      </div>
-  
-      <!-- Modal Crear Producto -->
-      <q-dialog v-model="productDialog" persistent>
-        <q-card style="min-width: 350px">
-          <q-card-section>
-            <div class="text-h6">Agregar Producto</div>
-          </q-card-section>
-          <q-card-section>
-            <q-input v-model="nuevoProducto.nombre" label="Nombre del Producto" />
-            <q-input
-              v-model="nuevoProducto.descripcion"
-              label="Descripción"
-              type="textarea"
-            />
-            <q-input
-              v-model="nuevoProducto.precio"
-              label="Precio"
-              type="number"
-            />
-            <q-input v-model="nuevoProducto.imagen" label="URL de Imagen" />
-          </q-card-section>
-          <q-card-actions>
-            <q-btn
-              label="Cerrar"
-              color="secondary"
-              @click="productDialog = false"
-            />
-            <q-btn label="Guardar" color="primary" @click="guardarProducto" />
-          </q-card-actions>
+
+
+          <!-- Tabla -->
+          <q-table :rows="productosFiltrados" :columns="columns" row-key="nombre" flat bordered wrap-cells
+            class="bg-white" separator="horizontal" no-data-label="No hay productos que coincidan con la búsqueda">
+            <template v-slot:body-cell-imagen="props">
+              <q-td :props="props">
+                <q-img :src="props.row.imagen" contain style="max-width: 80px; max-height: 80px;" />
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-estado="props">
+              <q-td :props="props">
+                <q-badge :color="props.row.estado === 'Disponible' ? 'green' : 'red'" text-color="white" class="q-pa-sm"
+                  style="border-radius: 6px;">
+                  {{ props.row.estado }}
+                </q-badge>
+              </q-td>
+            </template>
+
+            <template v-slot:body-cell-acciones="props">
+              <q-td :props="props">
+                <q-btn icon="visibility" flat dense color="primary" @click="verDetalle(props.row)" />
+                <q-btn icon="edit" flat dense color="warning" @click="editarProducto(props.row)" />
+                <q-btn icon="delete" flat dense color="negative" @click="eliminarProducto(props.row)" />
+              </q-td>
+            </template>
+          </q-table>
         </q-card>
-      </q-dialog>
-  <!-- Modal Detalle del Producto -->
-  <q-dialog v-model="detalleDialog" persistent>
-    <q-card class="q-pa-md" style="min-width: 400px; max-width: 600px;">
-      <q-card-section class="text-h6 text-primary">Detalle del Producto</q-card-section>
-      <q-separator />
-      <q-card-section class="q-gutter-md">
-        <q-img
-          :src="productoSeleccionado.imagen"
-          style="width: 100%; height: 250px"
-          class="rounded-borders"
-          contain
-        />
-        <div>
-          <div><strong>Nombre:</strong> {{ productoSeleccionado.nombre }}</div>
-          <div><strong>Descripción:</strong> {{ productoSeleccionado.descripcion }}</div>
-          <div><strong>Precio:</strong> ${{ productoSeleccionado.precio }}</div>
-        </div>
-      </q-card-section>
-      <q-card-actions align="right">
-        <q-btn flat label="Cerrar" color="primary" v-close-popup />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-  <!-- Modal Editar Producto -->
-  <q-dialog v-model="editarDialog" persistent>
-    <q-card style="min-width: 400px">
-      <q-card-section class="text-h6 text-warning">Editar Producto</q-card-section>
-      <q-separator />
-      <q-card-section class="q-gutter-md">
-        <q-input v-model="productoEditado.nombre" label="Nombre del Producto" />
-        <q-input v-model="productoEditado.descripcion" label="Descripción" type="textarea" />
-        <q-input v-model="productoEditado.precio" label="Precio" type="number" />
-        <q-input v-model="productoEditado.imagen" label="URL de Imagen" />
-      </q-card-section>
-      <q-card-actions align="right">
-        <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-        <q-btn flat label="Guardar Cambios" color="primary" @click="actualizarProducto" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-    </q-layout>
-  </template>
-    
-  <script setup>
-  import { ref } from 'vue'
-  import { Notify } from 'quasar'
-  
-  // Estado de interfaz
-  const rightDrawerOpen = ref(false)
-  const search = ref('')
-  
-  // Diálogos
-  const productDialog = ref(false)
-  const detalleDialog = ref(false)
-  const editarDialog = ref(false)
-  
-  // Lista de productos
-  const productos = ref([
-    {
-      nombre: "Producto A",
-      descripcion: "Descripción del producto A.",
-      precio: 19.99,
-      imagen: "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg"
-    },
-    {
-      nombre: "Producto B",
-      descripcion: "Descripción del producto B.",
-      precio: 29.99,
-      imagen: "https://centraldesuministrosgs.com/wp-content/uploads/2022/02/totto-morral-con-porta-pc-ribbon-negro-negro-black-negro-negro-black_1-1.jpg"
-    }
-  ])
-  
-  // Nuevos datos para crear producto
-  const nuevoProducto = ref({
-    nombre: "",
-    descripcion: "",
-    precio: null,
-    imagen: ""
-  })
-  
-  // Datos para ver o editar
-  const productoSeleccionado = ref({})
-  const productoEditado = ref({})
-  
-  // Columnas de la tabla
-  const columns = [
-    { name: "nombre", label: "Nombre", field: "nombre", align: "left" },
-    { name: "descripcion", label: "Descripción", field: "descripcion", align: "left" },
-    { name: "precio", label: "Precio", field: "precio", align: "left" },
-    { name: "imagen", label: "Imagen", field: "imagen", align: "center" },
-    { name: "acciones", label: "Acciones", field: "acciones", align: "center" }
-  ]
-  
-  // Ver detalles del producto
-  function verDetalle(producto) {
-    productoSeleccionado.value = { ...producto }
-    detalleDialog.value = true
+      </q-page>
+    </q-page-container>
+
+    <!-- Modal Crear Producto -->
+    <q-dialog v-model="productDialog" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Agregar Producto</div>
+        </q-card-section>
+        <q-card-section>
+          <q-input v-model="nuevoProducto.nombre" label="Nombre del Producto" />
+          <q-input v-model="nuevoProducto.descripcion" label="Descripción" type="textarea" />
+          <q-select v-model="productoEditado.estado" label="Estado" :options="estados"></q-select>
+          <q-input v-model="nuevoProducto.precio" label="Precio" type="number" />
+          <q-input v-model="imagenUrl" label="Imagen URL" type="url">
+            <template v-slot:append>
+              <q-btn round dense icon="add_link" @click="agregarImagenUrl" />
+            </template>
+          </q-input>
+
+          <q-uploader label="Subir Imágenes" accept="image/*" multiple auto-expand :auto-upload="false" :factory="null"
+            @added="handleImageUpload" />
+
+          <div class="row q-gutter-sm q-mt-sm">
+            <div v-for="(img, index) in imagenesPreview" :key="index" class="relative-position">
+              <q-img :src="img" style="width: 80px; height: 80px" class="rounded-borders" />
+              <q-btn dense round flat icon="close" color="negative" size="sm" class="absolute-top-right"
+                @click="eliminarImagen(index)" />
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-actions>
+          <q-btn label="Cerrar" color="negative" @click="productDialog = false" />
+          <q-btn label="Guardar" color="primary" @click="guardarProducto" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!-- Modal Detalle del Producto -->
+    <q-dialog v-model="detalleDialog" persistent>
+      <q-card class="q-pa-md" style="min-width: 400px; max-width: 600px;">
+        <q-card-section class="text-h6 text-primary"> {{ productoSeleccionado.nombre }}</q-card-section>
+        <q-separator />
+        <q-card-section class="q-gutter-md" id="detalle-producto">
+          <q-img :src="productoSeleccionado.imagen" style="width: 100%; height: 250px" class="rounded-borders"
+            contain />
+          <div>
+            <div style="display: grid; justify-content: center; color: red; font-size: 3vh;"><strong> ${{
+              productoSeleccionado.precio }} </strong></div>
+            <div><strong>Descripción:</strong> {{ productoSeleccionado.descripcion }}</div>
+            <div style="display: grid; justify-content: center;">{{ productoSeleccionado.estado }}</div>
+          </div>
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-btn label="Cerrar" color="negative" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!-- Modal Editar Producto -->
+    <q-dialog v-model="editarDialog" persistent>
+      <q-card style="min-width: 400px">
+        <q-card-section class="text-h6 text-warning">Editar Producto</q-card-section>
+        <q-separator />
+        <q-card-section class="q-gutter-md">
+          <q-input v-model="productoEditado.nombre" label="Nombre del Producto" />
+          <q-input v-model="productoEditado.descripcion" label="Descripción" type="textarea" />
+          <q-select v-model="productoEditado.estado" :options="estados"></q-select>
+          <q-input v-model="productoEditado.precio" label="Precio" type="number" />
+          <q-input v-model="imagenUrl" label="Imagen URL" type="url">
+            <template v-slot:append>
+              <q-btn round dense icon="add_link" @click="agregarImagenUrl" />
+            </template>
+          </q-input>
+
+          <q-uploader label="Subir Imágenes" accept="image/*" multiple auto-expand :auto-upload="false" :factory="null"
+            @added="handleImageUpload" />
+
+          <div class="row q-gutter-sm q-mt-sm">
+            <div v-for="(img, index) in imagenesPreview" :key="index" class="relative-position">
+              <q-img :src="img" style="width: 80px; height: 80px" class="rounded-borders" />
+              <q-btn dense round flat icon="close" color="negative" size="sm" class="absolute-top-right"
+                @click="eliminarImagen(index)" />
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-actions align="left">
+          <q-btn label="Cerrar" color="negative" v-close-popup />
+          <q-btn label="Guardar Cambios" color="primary" @click="actualizarProducto" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </q-layout>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { Notify } from 'quasar'
+
+// Estado del buscador
+const search = ref('')
+
+// Diálogos
+const productDialog = ref(false)
+const detalleDialog = ref(false)
+const editarDialog = ref(false)
+
+// Lista de productos
+const productos = ref([
+  {
+    nombre: "Producto A",
+    descripcion: "Descripción del producto A.",
+    estado: "Disponible",
+    precio: 19.99,
+    imagen: "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg"
+  },
+  {
+    nombre: "Producto B",
+    descripcion: "Descripción del producto B.",
+    estado: "Agotado",
+    precio: 29.99,
+    imagen: "https://centraldesuministrosgs.com/wp-content/uploads/2022/02/totto-morral-con-porta-pc-ribbon-negro-negro-black-negro-negro-black_1-1.jpg"
   }
-  
-  // Crear producto
-  function guardarProducto() {
-    if (
-      !nuevoProducto.value.nombre ||
-      !nuevoProducto.value.descripcion ||
-      !nuevoProducto.value.precio ||
-      !nuevoProducto.value.imagen
-    ) {
-      Notify.create({
-        type: "negative",
-        message: "Por favor completa todos los campos"
-      })
-      return
+])
+
+// Filtro dinámico de productos
+const productosFiltrados = computed(() => {
+  const texto = search.value.trim().toLowerCase()
+  if (!texto) return productos.value
+  return productos.value.filter(p =>
+    p.nombre.toLowerCase().includes(texto) ||
+    p.descripcion.toLowerCase().includes(texto)
+  )
+})
+
+// Columnas de la tabla
+const columns = [
+  { name: "nombre", label: "Nombre", field: "nombre", align: "center", sortable: true },
+  { name: "descripcion", label: "Descripción", field: "descripcion", align: "center" },
+  { name: "creación", label: "Fecha De Creación", field: "Creación", aling: "center" },
+  { name: "estado", label: "Estado", field: "estado", align: "center", sortable: true },
+  { name: "precio", label: "Precio", field: "precio", align: "center", sortable: true },
+  { name: "imagen", label: "Imagen", field: "imagen", align: "center" },
+  { name: "acciones", label: "Acciones", field: "acciones", align: "center" }
+]
+
+// Estado del nuevo producto
+const nuevoProducto = ref({
+  nombre: "",
+  descripcion: "",
+  precio: null,
+  imagen: ""
+})
+
+// Estados disponibles
+const estados = ["Disponible", "Agotado"]
+
+// Vista previa de imágenes
+const imagenesPreview = ref([])
+
+// Producto seleccionado
+const productoSeleccionado = ref({})
+const productoEditado = ref({})
+
+// Ver detalle
+function verDetalle(producto) {
+  productoSeleccionado.value = { ...producto }
+  detalleDialog.value = true
+}
+
+// Guardar nuevo producto
+function guardarProducto() {
+  if (
+    !nuevoProducto.value.nombre ||
+    !nuevoProducto.value.descripcion ||
+    !nuevoProducto.value.precio ||
+    imagenesPreview.value.length === 0
+  ) {
+    Notify.create({
+      type: "negative",
+      message: "Por favor completa todos los campos e incluye al menos una imagen"
+    })
+    return
+  }
+
+  productos.value.push({
+    ...nuevoProducto.value,
+    imagen: imagenesPreview.value[0],
+    estado: "Disponible"
+  })
+
+  Notify.create({
+    type: "positive",
+    message: "Producto agregado exitosamente"
+  })
+
+  nuevoProducto.value = { nombre: "", descripcion: "", precio: null, imagen: "" }
+  imagenesPreview.value = []
+  productDialog.value = false
+}
+
+// Editar producto
+function editarProducto(producto) {
+  productoEditado.value = { ...producto }
+  imagenesPreview.value = [producto.imagen]
+  editarDialog.value = true
+}
+
+// Actualizar producto
+function actualizarProducto() {
+  const index = productos.value.findIndex(p => p.nombre === productoEditado.value.nombre)
+  if (index !== -1) {
+    productos.value[index] = {
+      ...productoEditado.value,
+      imagen: imagenesPreview.value[0]
     }
-  
-    productos.value.push({ ...nuevoProducto.value })
-  
+
     Notify.create({
       type: "positive",
-      message: "Producto agregado exitosamente"
+      message: "Producto actualizado correctamente"
     })
-  
-    // Limpiar y cerrar
-    nuevoProducto.value = { nombre: "", descripcion: "", precio: null, imagen: "" }
-    productDialog.value = false
+
+    editarDialog.value = false
+    imagenesPreview.value = []
   }
-  
-  // Abrir modal para editar
-  function editarProducto(producto) {
-    productoEditado.value = { ...producto }
-    editarDialog.value = true
+}
+
+// Eliminar producto
+function eliminarProducto(producto) {
+  productos.value = productos.value.filter(p => p.nombre !== producto.nombre)
+
+  Notify.create({
+    type: "warning",
+    message: "Producto eliminado"
+  })
+}
+
+// Cargar imagen por URL
+const imagenUrl = ref("")
+function agregarImagenUrl() {
+  if (imagenUrl.value) {
+    imagenesPreview.value.push(imagenUrl.value)
+    imagenUrl.value = ""
   }
-  
-  // Guardar cambios al editar
-  function actualizarProducto() {
-    const index = productos.value.findIndex(p => p.nombre === productoEditado.value.nombre)
-  
-    if (index !== -1) {
-      productos.value[index] = { ...productoEditado.value }
-  
-      Notify.create({
-        type: "positive",
-        message: "Producto actualizado correctamente"
-      })
-      editarDialog.value = false
-    } else {
-      Notify.create({
-        type: "negative",
-        message: "Error al actualizar el producto"
-      })
+}
+
+// Cargar imagen desde uploader
+function handleImageUpload(files) {
+  Array.from(files).forEach(file => {
+    const reader = new FileReader()
+    reader.onload = e => {
+      imagenesPreview.value.push(e.target.result)
     }
-  }
-  
-  // Eliminar producto
-  function eliminarProducto(producto) {
-    const index = productos.value.indexOf(producto)
-  
-    if (index !== -1) {
-      productos.value.splice(index, 1)
-      Notify.create({
-        type: "warning",
-        message: "Producto eliminado"
-      })
-    }
-  }
-  </script>
-  
-    
-    <style scoped>
-  #body {
-    background: linear-gradient(
-      to right,
+    reader.readAsDataURL(file)
+  })
+}
+
+// Eliminar imagen individual
+function eliminarImagen(index) {
+  imagenesPreview.value.splice(index, 1)
+}
+</script>
+
+<style scoped>
+#body {
+  background: linear-gradient(to right,
       rgba(255, 255, 0, 0.5),
       rgba(0, 0, 255, 0.5),
-      rgba(255, 0, 0, 0.5)
-    );
-  }
-  #app {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    padding: 5px;
-    gap: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  #logo img {
-    max-height: 10vh;
-    object-fit: contain;
-  }
-  
-  #footer {
-    background-color: #f9f9f9;
-  }
-  
-  .mini-logo {
-    height: 40px;
-    object-fit: contain;
-    border-radius: 4px;
-  }
-  
-  #search {
-    flex: 1;
-    min-width: 200px;
-    max-width: 400px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  #nav-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-    margin-left: 7vh;
-  }
-  
-  #menu {
-    margin-left: auto;
-  }
-  
-  #header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .custom-drawer {
-    background: linear-gradient(to bottom, #ffffff, #f9f9f9);
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .drawer-header {
-    background-color: #f1f1f1;
-    padding: 16px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .drawer-item {
-    padding: 10px 16px;
-    font-size: 15px;
-    border-radius: 8px;
-    margin: 4px 8px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .drawer-item:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .drawer-item:active {
-    background-color: #e0e0e0;
-  }
-  
-  .productos-wrapper {
-    background-color: #f0f0f0;
-    overflow-x: auto;
-    margin-top: 3vh;
-    margin-bottom: 5vh;
-  }
-  
-  .productos {
-    flex-wrap: wrap;
-    overflow-x: auto;
-    display: flex;
-    white-space: nowrap;
-    justify-content: space-evenly;
-  }
-  
-  .my-card {
-    flex: 0 0 auto;
-    width: 250px;
-    text-align: center;
-  }
-  
-  .productos .q-btn {
-    margin: 10px;
-  }
-  
-  .q-carousel-slide {
-    max-height: 500px;
-  }
-  
-  .q-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  @media (max-width: 990px) {
-    #nav-buttons {
-      margin: 0%;
-    }
-    #menu {
-      display: block;
-    }
-  }
-  
-  @media (max-width: 900px) {
-    #nav-buttons {
-      display: none;
-    }
-  }
-  
-  @media (max-width: 500px) {
-    #logo img {
-      max-height: 6vh;
-    }
-  }
-  </style>
+      rgba(255, 0, 0, 0.5));
+}
+
+.productos-wrapper {
+  background-color: #f0f0f0;
+  overflow-x: auto;
+  margin-top: 3vh;
+  margin-bottom: 5vh;
+}
+
+.productos {
+  flex-wrap: wrap;
+  overflow-x: auto;
+  display: flex;
+  white-space: nowrap;
+  justify-content: space-evenly;
+}
+
+.my-card {
+  flex: 0 0 auto;
+  width: 250px;
+  text-align: center;
+}
+
+#detalle-producto {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+}
+
+.productos .q-btn {
+  margin: 10px;
+}
+
+.q-carousel-slide {
+  max-height: 500px;
+}
+
+.q-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-bottom: 1px solid #ccc;
+}
+</style>

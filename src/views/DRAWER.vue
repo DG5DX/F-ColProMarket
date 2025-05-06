@@ -49,10 +49,16 @@
   
           <!-- Formulario de autenticación -->
           <q-item clickable v-ripple class="drawer-item" @click="Dialog('openRegister')">
-            <q-item-section>Registrarse</q-item-section>
+                <q-item-section avatar>
+              <q-icon name="login" />
+            </q-item-section>
+            <q-item-section>Iniciar Sesión</q-item-section>
           </q-item>
           <q-item clickable v-ripple class="drawer-item" @click="Dialog('openLogin')">
-            <q-item-section>Iniciar Sesión</q-item-section>
+                <q-item-section avatar>
+              <q-icon name="person_add" />
+            </q-item-section>
+            <q-item-section>Registrarse</q-item-section>
           </q-item>
   
           <q-separator class="q-my-sm" />
@@ -76,15 +82,6 @@
             </q-item-section>
             <q-item-section>Carrito</q-item-section>
           </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="local_mall" />
-            </q-item-section>
-            <q-item-section>
-              <router-link to="/admin" style="text-decoration: none; color:inherit">Vender</router-link>
-            </q-item-section>
-          </q-item>
-  
           <q-separator class="q-my-sm" />
         </q-list>
       </q-drawer>

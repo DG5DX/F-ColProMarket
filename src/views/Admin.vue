@@ -304,52 +304,5 @@ function eliminarImagen(index) {
 </script>
 
 <style scoped>
-#body {
-  background: linear-gradient(to right,
-      rgba(255, 255, 0, 0.5),
-      rgba(0, 0, 255, 0.5),
-      rgba(255, 0, 0, 0.5));
-}
-
-.productos-wrapper {
-  background-color: #f0f0f0;
-  overflow-x: auto;
-  margin-top: 3vh;
-  margin-bottom: 5vh;
-}
-
-.productos {
-  flex-wrap: wrap;
-  overflow-x: auto;
-  display: flex;
-  white-space: nowrap;
-  justify-content: space-evenly;
-}
-
-.my-card {
-  flex: 0 0 auto;
-  width: 250px;
-  text-align: center;
-}
-
-#detalle-producto {
-  display: grid;
-  justify-content: center;
-  justify-items: center;
-}
-
-.productos .q-btn {
-  margin: 10px;
-}
-
-.q-carousel-slide {
-  max-height: 500px;
-}
-
-.q-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-bottom: 1px solid #ccc;
-}
+@import url('../style/Admin.css');
 </style>

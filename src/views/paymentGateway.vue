@@ -1,41 +1,74 @@
 <template>
-  <div class="payment-container">
-    <div class="payment-box">
-      <h2 class="title">Método de pago</h2>
-      <p class="subtitle">Seleccione su forma de pago preferida</p>
+  <div class="checkout-container">
+    <h2>Tu pedido</h2>
+    <table class="order-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in orderItems" :key="index">
+          <td>{{ item.name }} × {{ item.quantity }}</td>
+          <td>{{ formatPrice(item.price * item.quantity) }}</td>
+        </tr>
+        <tr>
+          <td><strong>Subtotal</strong></td>
+          <td><strong>{{ formatPrice(total) }}</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td><strong>{{ formatPrice(total) }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
 
-      <div v-if="amount !== null" class="payment-buttons">
-        <div ref="paypalRef" class="paypal-button"></div>
-        <button class="buy-btn" @click="handleCardPayment">Pagar con tarjeta</button>
-      </div>
-      <p v-else>Cargando precio...</p>
+    <div class="payment-info">
+      <h3>Transferencia bancaria directa</h3>
+      <p>
+        Realiza tu pago directamente en nuestra cuenta bancaria. Por favor, usa el número del pedido como referencia de pago. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
+      </p>
     </div>
+
+    <div class="customer-info">
+      <p><strong>Nombre:</strong> Juan Pérez</p>
+      <p><strong>Email:</strong> juan@example.com</p>
+    </div>
+
+    <label class="terms">
+      <input type="checkbox" v-model="acceptedTerms" />
+      He leído y estoy de acuerdo con los <a href="#">términos y condiciones</a> de la web
+    </label>
+
+    <div ref="paypalRef" class="paypal-button"></div>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 
 export default {
   data() {
     return {
-      amount: null,
+      orderItems: [
+        { name: 'Curso 1', quantity: 1, price: 8.0 }
+      ],
+      acceptedTerms: false,
       paypalRef: null
     }
   },
+  computed: {
+    total() {
+      return this.orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    }
+  },
   methods: {
-    async fetchAmount() {
-      try {
-        const response = await axios.get('https://elbackend.com/api/precio') //Capi esto aqui va el axios lo puse a que funcionara asi mire a ver si esa monda sirve
-        this.amount = response.data.amount
-        this.renderPayPalButton()
-      } catch (error) {
-        console.error('❌ Error al obtener el monto:', error)
-      }
+    formatPrice(value) {
+      return `${value.toFixed(2)}€`
     },
     renderPayPalButton() {
-      if (!window.paypal || !window.paypal.Buttons || this.amount === null) {
+      if (!window.paypal || !window.paypal.Buttons) {
         setTimeout(this.renderPayPalButton, 250)
         return
       }
@@ -44,167 +77,133 @@ export default {
         createOrder: (data, actions) => {
           return actions.order.create({
             purchase_units: [{
-              amount: { value: this.amount.toFixed(2) }
+              amount: { value: this.total.toFixed(2) }
             }]
           })
         },
         onApprove: async (data, actions) => {
           const details = await actions.order.capture()
           alert(`✅ Pago completado por ${details.payer.name.given_name}`)
-          this.savePurchase('PayPal', details)
+          this.savePurchase(details)
         },
         onError: (err) => {
           console.error('❌ Error en PayPal:', err)
         }
       }).render(this.paypalRef)
     },
-    handleCardPayment() {
-      const dummyDetails = {
-        method: 'Tarjeta de crédito',
-        transactionId: 'manual-1234',
-        buyer: 'Usuario tarjeta'
-      }
-      alert('✅ Pago con tarjeta procesado')
-      this.savePurchase('Tarjeta', dummyDetails)
-    },
-    savePurchase(method, details) {
-      console.log('📝 Guardando compra...', {
-        metodo: method,
+    savePurchase(details) {
+      console.log('📝 Compra registrada:', {
+        metodo: 'PayPal',
         detalles: details,
-        monto: this.amount
+        monto: this.total
       })
-
     }
   },
   mounted() {
     this.paypalRef = this.$refs.paypalRef
-    this.fetchAmount()
+    this.renderPayPalButton()
   }
 }
 </script>
 
 <style scoped>
-.payment-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #f0f2f5;
-  padding: 20px;
-}
-
-.payment-box {
-  background: white;
-  border-radius: 16px;
-  padding: 40px 30px;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.title {
-  font-size: 24px;
-  margin-bottom: 8px;
+.checkout-container {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 0, 0.2),
+    rgba(0, 0, 255, 0.2),
+    rgba(255, 0, 0, 0.2)
+  );
+  border-radius: 20px;
+  font-family: 'Montserrat', 'Playfair Display', 'Roboto', sans-serif;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
   color: #333;
 }
 
-.subtitle {
-  font-size: 14px;
-  margin-bottom: 30px;
-  color: #666;
+h2, h3 {
+  font-family: 'Playfair Display', serif;
+  color: #222;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.3rem;
 }
 
-.payment-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.buy-btn {
-  padding: 12px 24px;
-  font-size: 16px;
-  background-color: #0070ba;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.order-table {
   width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.buy-btn:hover {
-  background-color: #005c9e;
+.order-table th,
+.order-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.order-table th {
+  background-color: rgba(240, 240, 240, 0.6);
+  font-weight: 600;
+}
+
+.payment-info {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.customer-info {
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.terms {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.terms a {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.terms a:hover {
+  text-decoration: none;
 }
 
 .paypal-button {
-  width: 100%;
-}
-
-.payment-container {
-  width: 100%;
-  background: linear-gradient(to right, rgba(255, 255, 0, 0.5), rgba(0, 0, 255, 0.5), rgba(255, 0, 0, 0.5));
-  padding: 5rem;
-  border-radius: 10px;
-}
-
-.progress-bar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  align-items: center;
-}
-
-.step {
   text-align: center;
-  flex: 1;
+  margin-top: 1rem;
 }
 
-.circle {
-  width: 20px;
-  height: 20px;
-  border: 2px solid gray;
-  border-radius: 50%;
-  margin: auto;
-  background: white;
+.paypal-button > div {
+  transition: transform 0.3s ease;
 }
 
-.circle.active {
-  background: #3f51b5;
-  border-color: #3f51b5;
+.paypal-button > div:hover {
+  transform: scale(1.03);
 }
-
-.payment-box {
-  background: #e0e0e0;
-  padding: 2rem;
-  border-radius: 10px;
-}
-
-.methods {
-  display: flex;
-  justify-content: space-around;
-  margin: 1rem 0;
-}
-
-.method-btn {
-  background: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 10px;
-  width: 150px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.method-btn:hover {
-  background: #ddd;
-}
-
-.card-details {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  margin: 2rem 0;
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&family=Roboto&display=swap');
 </style>

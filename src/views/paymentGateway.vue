@@ -1,41 +1,74 @@
 <template>
-  <div class="payment-container">
-    <div class="payment-box">
-      <h2 class="title">Método de pago</h2>
-      <p class="subtitle">Seleccione su forma de pago preferida</p>
+  <div class="checkout-container">
+    <h2>Tu pedido</h2>
+    <table class="order-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in orderItems" :key="index">
+          <td>{{ item.name }} × {{ item.quantity }}</td>
+          <td>{{ formatPrice(item.price * item.quantity) }}</td>
+        </tr>
+        <tr>
+          <td><strong>Subtotal</strong></td>
+          <td><strong>{{ formatPrice(total) }}</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td><strong>{{ formatPrice(total) }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
 
-      <div v-if="amount !== null" class="payment-buttons">
-        <div ref="paypalRef" class="paypal-button"></div>
-        <button class="buy-btn" @click="handleCardPayment">Pagar con tarjeta</button>
-      </div>
-      <p v-else>Cargando precio...</p>
+    <div class="payment-info">
+      <h3>Transferencia bancaria directa</h3>
+      <p>
+        Realiza tu pago directamente en nuestra cuenta bancaria. Por favor, usa el número del pedido como referencia de pago. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
+      </p>
     </div>
+
+    <div class="customer-info">
+      <p><strong>Nombre:</strong> Juan Pérez</p>
+      <p><strong>Email:</strong> juan@example.com</p>
+    </div>
+
+    <label class="terms">
+      <input type="checkbox" v-model="acceptedTerms" />
+      He leído y estoy de acuerdo con los <a href="#">términos y condiciones</a> de la web
+    </label>
+
+    <div ref="paypalRef" class="paypal-button"></div>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 
 export default {
   data() {
     return {
-      amount: null,
+      orderItems: [
+        { name: 'Curso 1', quantity: 1, price: 8.0 }
+      ],
+      acceptedTerms: false,
       paypalRef: null
     }
   },
+  computed: {
+    total() {
+      return this.orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    }
+  },
   methods: {
-    async fetchAmount() {
-      try {
-        const response = await axios.get('https://elbackend.com/api/precio') //Capi esto aqui va el axios lo puse a que funcionara asi mire a ver si esa monda sirve
-        this.amount = response.data.amount
-        this.renderPayPalButton()
-      } catch (error) {
-        console.error('❌ Error al obtener el monto:', error)
-      }
+    formatPrice(value) {
+      return `${value.toFixed(2)}€`
     },
     renderPayPalButton() {
-      if (!window.paypal || !window.paypal.Buttons || this.amount === null) {
+      if (!window.paypal || !window.paypal.Buttons) {
         setTimeout(this.renderPayPalButton, 250)
         return
       }
@@ -44,45 +77,33 @@ export default {
         createOrder: (data, actions) => {
           return actions.order.create({
             purchase_units: [{
-              amount: { value: this.amount.toFixed(2) }
+              amount: { value: this.total.toFixed(2) }
             }]
           })
         },
         onApprove: async (data, actions) => {
           const details = await actions.order.capture()
           alert(`✅ Pago completado por ${details.payer.name.given_name}`)
-          this.savePurchase('PayPal', details)
+          this.savePurchase(details)
         },
         onError: (err) => {
           console.error('❌ Error en PayPal:', err)
         }
       }).render(this.paypalRef)
     },
-    handleCardPayment() {
-      const dummyDetails = {
-        method: 'Tarjeta de crédito',
-        transactionId: 'manual-1234',
-        buyer: 'Usuario tarjeta'
-      }
-      alert('✅ Pago con tarjeta procesado')
-      this.savePurchase('Tarjeta', dummyDetails)
-    },
-    savePurchase(method, details) {
-      console.log('📝 Guardando compra...', {
-        metodo: method,
+    savePurchase(details) {
+      console.log('📝 Compra registrada:', {
+        metodo: 'PayPal',
         detalles: details,
-        monto: this.amount
+        monto: this.total
       })
-
     }
   },
   mounted() {
     this.paypalRef = this.$refs.paypalRef
-    this.fetchAmount()
+    this.renderPayPalButton()
   }
 }
 </script>
 
-<style scoped>
-@import url('../style/paymentGateway.css');
-</style>
+

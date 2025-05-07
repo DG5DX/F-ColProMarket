@@ -187,26 +187,66 @@
             <div class="text-h6">Agregar Producto</div>
           </q-card-section>
           <q-card-section>
-            <q-input v-model="nuevoProducto.nombre" label="Nombre del Producto" />
+            <q-input v-model="dataProduct.name" label="Nombre del Producto" />
             <q-input
-              v-model="nuevoProducto.descripcion"
+              v-model="dataProduct.description"
               label="Descripción"
               type="textarea"
             />
             <q-input
-              v-model="nuevoProducto.precio"
+              v-model="dataProduct.price"
               label="Precio"
               type="number"
             />
-            <q-input v-model="nuevoProducto.imagen" label="URL de Imagen" />
           </q-card-section>
+
+    <!-- Input para múltiples imágenes -->
+
+
+          <div class="q-pa-md">
+    <q-file
+      v-model="files"
+      label="Seleccionar imágenes"
+      multiple
+      accept="image/*"
+      @update:model-value="handleFiles"
+      style="max-width: 300px"
+    >
+      <template v-slot:prepend>
+        <q-icon name="attach_file" />
+      </template>
+    </q-file>
+
+    <!-- Vista previa de imágenes seleccionadas -->
+    <div class="q-mt-md row q-gutter-sm">
+      <q-img
+        v-for="(image, index) in previewImages"
+        :key="index"
+        :src="image"
+        style="height: 100px; width: 100px"
+        class="rounded-borders"
+      >
+        <q-btn
+          dense
+          round
+          icon="close"
+          color="negative"
+          class="absolute-top-right"
+          @click="removeImage(index)"
+        />
+      </q-img>
+    </div>
+
+    <!-- Botón para subir las imágenes -->
+
+  </div>
           <q-card-actions>
             <q-btn
               label="Cerrar"
               color="secondary"
               @click="productDialog = false"
             />
-            <q-btn label="Guardar" color="primary" @click="guardarProducto" />
+            <q-btn label="Guardar" color="primary" @click="saveProduct()" />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -256,7 +296,14 @@
   <script setup>
   import { ref } from 'vue'
   import { Notify } from 'quasar'
-  
+import { postData } from '../service/service';
+const files = ref([]);
+const dataProduct = ref({
+  categoryId:"64bfc6a3e9e6f3a8d1e55c21",
+  stock:12,
+  user:"64bfc6a3e9e6f3a8d1e55c22"
+});
+const previewImages = ref([]);
   // Estado de interfaz
   const rightDrawerOpen = ref(false)
   const search = ref('')
@@ -265,6 +312,59 @@
   const productDialog = ref(false)
   const detalleDialog = ref(false)
   const editarDialog = ref(false)
+
+
+
+const handleFiles = (selectedFiles) => {
+  previewImages.value = [];
+  
+  if (!selectedFiles) return;
+  
+  Array.from(selectedFiles).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImages.value.push(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+const removeImage = (index) => {
+  previewImages.value.splice(index, 1);
+  files.value.splice(index, 1);
+};
+
+
+const saveProduct = async () => {
+  try {
+    const formData = new FormData();
+    Array.from(files.value).forEach((file, index) => {
+      formData.append('images', file);
+    });
+
+    formData.append('data', JSON.stringify(dataProduct.value))
+    const response = await postData("/product", formData);
+
+    
+    if(response){
+      Notify.create({
+        type: "positive",
+        message: "producto creado correctamente"
+      })
+    }
+    
+    files.value = [];
+    previewImages.value = [];
+    
+  } catch (error) {
+    Notify.create({
+        type: "positive",
+        message: "Error al crear producto"
+      })
+    console.error('Error uploading images:', error);
+  }
+};
+
   
   // Lista de productos
   const productos = ref([
@@ -283,12 +383,7 @@
   ])
   
   // Nuevos datos para crear producto
-  const nuevoProducto = ref({
-    nombre: "",
-    descripcion: "",
-    precio: null,
-    imagen: ""
-  })
+
   
   // Datos para ver o editar
   const productoSeleccionado = ref({})

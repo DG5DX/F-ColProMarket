@@ -1,162 +1,37 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-    <!-- Drawer -->
-    <q-drawer
-      v-model="rightDrawerOpen"
-      side="right"
-      :show-if-above="false"
-      :breakpoint="900"
-      bordered
-      class="custom-drawer"
-    >
-      <div class="drawer-header q-pa-md flex items-center">
-        <img
-          src="../assets/MiniLogo.jpeg"
-          alt="Logo"
-          class="mini-logo q-mr-md"
-        />
-        <h3 class="text-h6 q-ma-none">Menú</h3>
-      </div>
-      <q-separator />
-      <q-list>
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="shopping_bag" />
-          </q-item-section>
-          <q-item-section>Productos</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="groups" />
-          </q-item-section>
-          <q-item-section>Comunidad</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="local_offer" />
-          </q-item-section>
-          <q-item-section>Rebajas</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="contact_mail" />
-          </q-item-section>
-          <q-item-section>Contacto</q-item-section>
-        </q-item>
-        <hr />
-        <q-item clickable v-ripple class="drawer-item" @click="Dialog('openRegister')">
-          <q-item-section>Registrarse</q-item-section>
-        </q-item>
-        <q-item clickable v-ripple class="drawer-item" @click="Dialog('openLogin')">
-          <q-item-section>Iniciar Sesión</q-item-section>
-        </q-item>
-
-        <q-separator class="q-my-sm" />
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="help_outline" />
-          </q-item-section>
-          <q-item-section>Ayuda</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="wallet" />
-          </q-item-section>
-          <q-item-section>Metodo De Pago</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="shopping_cart" />
-          </q-item-section>
-          <q-item-section>Carrito</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple class="drawer-item">
-          <q-item-section avatar>
-            <q-icon name="local_mall" />
-          </q-item-section>
-          <q-item-section>
-            <router-link to="/admin" style="text-decoration: none; color:inherit">Vender</router-link></q-item-section>
-        </q-item>
-
-        <q-separator class="q-my-sm" />
-      </q-list>
-    </q-drawer>
-
-    <!-- Header -->
-    <q-header elevated>
-      <div id="app">
-        <router-link to="/" id="logo" style="text-decoration: none">
-          <img src="../assets/Logo ColProMarket.jpeg" alt="logo" />
-        </router-link>
-        <div id="search">
-          <q-input v-model="search" filled type="search" placeholder="Buscar">
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </div>
-        <div id="nav-buttons">
-          <q-btn-group push>
-            <q-btn push label="Productos" color="grey" />
-            <q-btn push label="Comunidad" color="grey" />
-            <q-btn push label="Rebajas" color="grey" />
-            <q-btn push label="Contacto" color="grey" />
-          </q-btn-group>
-        </div>
-        <div id="menu">
-          <q-btn
-            color="dark"
-            icon="menu"
-            @click="rightDrawerOpen = !rightDrawerOpen"
-            flat
-            round
-          />
-        </div>
-      </div>
-    </q-header>
-
+  
     <!-- Contenido principal -->
     <q-page-container>
       <div class="Home">
         <!-- Carrusel -->
         <div class="carrusel">
-          <q-carousel
-            animated
-            v-model="slide"
-            navigation
-            infinite
-            :autoplay="autoplay"
-            arrows
-            transition-prev="slide-right"
-            transition-next="slide-left"
-            @mouseenter="autoplay = false"
-            @mouseleave="autoplay = true"
-          >
-            <q-carousel-slide
-              :name="1"
-              img-src="https://i.revistapym.com.co/cms/2023/11/16171723/Plantilla-nota-7.png?w=412&d=2.625"
-            />
-            <q-carousel-slide
-              :name="2"
-              img-src="https://imagenes.eltiempo.com/files/image_1200_600/uploads/2018/01/25/5a6a513f2f1fc.jpeg"
-            />
-            <q-carousel-slide
-              :name="3"
-              img-src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/c1074d118179925.6084033e823f0.jpg"
-            />
-            <q-carousel-slide
-              :name="4"
-              img-src="https://newsletters.pcel.com/assets/templates/template-6633/banner-landing-dell-0203_2022.jpg"
-            />
-          </q-carousel>
+    <q-carousel
+      animated
+      v-model="slide"
+      navigation
+      infinite
+      :autoplay="autoplay"
+      arrows
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      @mouseenter="autoplay = false"
+      @mouseleave="autoplay = true"
+      height="500px"
+      class="carrusel-container"
+    >
+      <q-carousel-slide
+        v-for="(imagen, index) in imagenesCarrusel" 
+        :key="index"
+        :name="index + 1"
+        class="carrusel-slide"
+      >
+        <div class="carrusel-image-container">
+          <img :src="imagen.src" :alt="imagen.alt" class="carrusel-image" />
         </div>
+      </q-carousel-slide>
+    </q-carousel>
+  </div>
 
         <!-- Productos -->
         <div class="productos-wrapper">
@@ -167,6 +42,7 @@
               class="my-card"
               bordered
               flat
+              @click="verDetalleProducto(producto)"
             >
               <q-card-section class="q-pa-none">
                 <q-img
@@ -191,9 +67,7 @@
               </q-card-section>
 
               <q-card-actions align="center">
-                <q-btn color="grey" icon="visibility" />
-                <q-btn color="primary" icon="shopping_cart" @click="agregarAlCarrito(producto)"
-                />
+                <q-btn color="primary" icon="shopping_cart" @click.stop="agregarAlCarrito(producto)" />
               </q-card-actions>
             </q-card>
           </div>
@@ -209,6 +83,7 @@
             class="especial-card col-12 col-sm-6"
             flat
             bordered
+            @click="verDetalleProducto(producto)"
           >
             <q-card-section class="special row no-wrap">
               <q-img
@@ -225,10 +100,7 @@
                 </div>
                 <div class="text-subtitle2">{{ producto.descripcion }}</div>
                 <q-card-actions align="center">
-                  <q-btn icon="visibility" color="grey" />
-                  <q-btn icon="shopping_cart" color="primary"
-                    @click="agregarAlCarrito(producto)"
-                  />
+                  <q-btn icon="shopping_cart" color="primary" @click.stop="agregarAlCarrito(producto)" />
                 </q-card-actions>
               </div>
             </q-card-section>
@@ -334,37 +206,46 @@
 <script setup>
 import { onMounted, ref, toRaw } from 'vue'
 import { getData, postData } from '../service/service'
+import { router } from '../routes/routes';
+import ColorThief from 'colorthief';
 
 const slide = ref(1);
 const autoplay = ref(true);
 const search = ref("");
 const rightDrawerOpen = ref(false);
-
-const productos = ref([])
-
-const productosEspeciales = ref([
-  {
-    nombre: "Producto Especial 1",
-    descripcion: "Descripción del producto especial 1.",
-    precio: 299.99,
-    imagen:
-      "https://geprofile.lat/medias/1200Wx1200H-GEAppliances-Refrigeradores-755LT-Inoxidable-GNM26AETFSS-Izquierda.jpg?context=bWFzdGVyfHJvb3R8MjczODE4fGltYWdlL2pwZWd8YUdGbEwyZ3dZUzh4TVRVMU9EYzVOVEl4TkRnM09DOHhNakF3VjNneE1qQXdTRjlIUlVGd2NHeHBZVzVqWlhNdFVtVm1jbWxuWlhKaFpHOXlaWE10TnpVMVRGUXRTVzV2ZUdsa1lXSnNaUzFIVGsweU5rRkZWRVpUVXkxSmVuRjFhV1Z5WkdFdWFuQm58ODJhNWQ0OTU3NzFkMjNmYTQwNzI5ZmNhYzQwM2JhM2M5MjhkN2Q3ZTRkZmVjMzQ5ODhhNDdjMWM0NDFiYWU4Nw",
-  },
-  {
-    nombre: "Producto Especial 2",
-    descripcion: "Descripción del producto especial 2.",
-    precio: 399.99,
-    imagen:
-      "https://panamericana.vtexassets.com/arquivos/ids/531492/impresora-todo-en-uno-hp-smart-tank-580-196068963507.jpg?v=638435460263070000",
-  },
-]);
-
+const loginDialog = ref(false);
+const registerDialog = ref(false);
+const loginEmail = ref("");
+const loginPassword = ref("");
+const productos = ref([]);
 const user = ref({});
 
+
+// Imágenes del carrusel optimizadas
+const imagenesCarrusel = ref([
+  {
+    src: "https://alavista.co/wp-content/uploads/2022/03/H220_Themis_PNGWEB-4.png",
+    alt: "Nike Showcase"
+  },
+  {
+    src: "https://portal-center.com/wp-content/uploads/2020/09/PC-GAMER.png",
+    alt: "Gaming Laptop"
+  },
+  {
+    src: "https://www.claroshop.com/c/algolia/assets/portada/deportes-tenis.webp",
+    alt: "Phantom HD"
+  },
+  {
+    src: "https://img.fcbayern.com/image/upload/f_auto,q_auto,w_1280/eCommerce/produkte/51116",
+    alt: "Product Image"
+  }
+]);
+
+// Función para registrar usuario
 async function registerUser() {
   try {
     if(user.value.password !== user.value.ConfirmPassword){
-      throw new Error ('Constraine must be the same')
+      throw new Error ('Contraseñas deben ser iguales')
     }
     console.log(user.value.name);
     const response = await postData("/users",{
@@ -372,6 +253,7 @@ async function registerUser() {
     })
 
     console.log(response);
+    Dialog('closeRegister');
 
   }catch (error) {
     console.log(error.message);
@@ -379,14 +261,21 @@ async function registerUser() {
 }
 
 
+function login() {
+  console.log('Iniciando sesión con:', loginEmail.value);
+  Dialog('closeLogin');
+}
+
+// Función para cargar productos
 async function products() {
   try {
     const response = await getData("/product");
     productos.value = response.data
   } catch (error) {
-    console.error('error when bringing products')
+    console.error('Error al cargar productos:', error)
   }
 }
+
 
 function Dialog(action){
   switch (action){
@@ -408,12 +297,25 @@ function Dialog(action){
   }
 } 
 
-
-
+// Función para agregar al carrito
 const agregarAlCarrito = (producto) => {
-  console.log('Agregado al carrito:', producto.nombre)
+  console.log('Agregado al carrito:', producto.nombre || producto.name);
+  event.stopPropagation();
 }
 
+// Función para ver el detalle del producto
+const verDetalleProducto = (producto) => {
+  // Guardar información del producto en localStorage para usarla en la página de detalles
+  if (producto && (producto.id || producto.name)) {
+    localStorage.setItem('selectedProduct', JSON.stringify(producto));
+  }
+  // Redireccionar a la página de detalles
+  window.location.href = 'http://localhost:5173/#/seeproduct';
+
+  router.push({
+    path:"/seeproduct", query:{data:JSON.stringify(producto)}
+  });
+}
 
 onMounted(()=>{
   products();
@@ -422,242 +324,5 @@ onMounted(()=>{
 </script>
 
 <style scoped>
-#body {
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 0, 0.5),
-    rgba(0, 0, 255, 0.5),
-    rgba(255, 0, 0, 0.5)
-  );
-}
-
-#app {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  align-items: center;
-  padding: 5px;
-  gap: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#logo img {
-  max-height: 10vh;
-  object-fit: contain;
-}
-
-#footer {
-  background-color: #f9f9f9;
-}
-
-.mini-logo {
-  height: 40px;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-#search {
-  flex: 1;
-  min-width: 200px;
-  max-width: 400px;
-  display: flex;
-  justify-content: center;
-}
-
-#nav-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  justify-content: center;
-  align-items: center;
-  margin-left: 7vh;
-}
-
-#menu {
-  margin-left: auto;
-}
-
-#header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.custom-drawer {
-  background: linear-gradient(to bottom, #ffffff, #f9f9f9);
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-}
-
-.drawer-header {
-  background-color: #f1f1f1;
-  padding: 5px;
-  border-bottom: 1px solid #ddd;
-}
-
-.drawer-item {
-  padding: 10px 16px;
-  font-size: 15px;
-  border-radius: 8px;
-  margin: 4px 8px;
-  transition: background-color 0.2s ease;
-}
-
-.drawer-item:hover {
-  background-color: #f5f5f5;
-}
-
-.drawer-item:active {
-  background-color: #e0e0e0;
-}
-
-.productos-wrapper {
-  overflow-x: auto;
-  margin-top: 3vh;
-}
-
-.productos {
-  flex-wrap: wrap;
-  overflow-x: auto;
-  display: flex;
-  white-space: nowrap;
-  justify-content: space-evenly;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.especial {
-  display: grid;
-  overflow-x: auto;
-}
-
-.especial .especial-card {
-  display: flex;
-  min-width: 330px;
-  max-width: 40%;
-  margin-right: 16px;
-  vertical-align: top;
-  flex-wrap: wrap;
-}
-
-.special {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  padding: 0%;
-}
-
-.especial-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.especial-card .q-card-section.row {
-  display: flex;
-  flex-direction: row;
-}
-
-.especial-card .col.q-pa-md {
-  padding: 16px;
-}
-
-.especial-card .text-h6 {
-  font-weight: bold;
-}
-
-.especial-card .text-subtitle2 {
-  margin-top: 5px;
-  color: #666;
-}
-
-.especial-card .q-btn-group {
-  margin-top: 15px;
-}
-
-.especial-card .q-btn {
-  margin-bottom: 10px;
-}
-
-@media (max-width: 786px) {
-  .especial .especial-card{
-    min-width: 90%;
-  }
-  .especial-card .q-img {
-    height: 150px !important;
-  }
-  .especial-card .q-card-section.row {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .especial-card .col.q-pa-md {
-    padding: 16px 8px !important;
-  }
-  .especial-card .q-btn-group {
-    flex-direction: column;
-  }
-  .especial-card .q-btn {
-    margin-bottom: 8px;
-  }
-  .especial {
-    margin-top: 20px;
-  }
-  .especial-card {
-    margin-bottom: 20px;
-  }
-}
-
-.my-card {
-  flex: 0 0 auto;
-  width: 250px;
-  text-align: center;
-}
-
-.my-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.productos .q-btn {
-  margin: 10px;
-}
-
-.q-carousel-slide {
-  max-height: 500px;
-}
-
-.q-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-bottom: 1px solid #ccc;
-}
-
-@media (max-width: 990px) {
-  #nav-buttons {
-    margin: 0%;
-  }
-  #menu {
-    display: block;
-  }
-}
-
-@media (max-width: 900px) {
-  #nav-buttons {
-    display: none;
-  }
-}
-
-@media (max-width: 500px) {
-  #logo img {
-    max-height: 6vh;
-  }
-}
-@media (max-width: 550px) {
-  .especial .especial-card{
-    min-width: 90%;
-  }
-}
+@import url("../style/Home.css");
 </style>

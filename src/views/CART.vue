@@ -1,56 +1,5 @@
 <template>
     <q-layout view="hHh lpR fFf">
-        <!-- Drawer -->
-        <q-drawer v-model="rightDrawerOpen" side="right" :show-if-above="false" :breakpoint="900" bordered
-            class="custom-drawer">
-            <div class="drawer-header q-pa-md flex items-center">
-                <img src="../assets/MiniLogo.jpeg" alt="Logo" class="mini-logo q-mr-md" />
-                <h3 class="text-h6 q-ma-none">Menú</h3>
-            </div>
-            <q-separator />
-            <q-list>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Productos</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Comunidad</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Rebajas</q-item-section>
-                </q-item>
-                <q-item clickable v-ripple class="drawer-item">
-                    <q-item-section>Contacto</q-item-section>
-                </q-item>
-            </q-list>
-        </q-drawer>
-
-        <!-- Header -->
-        <q-header elevated>
-            <div id="app">
-                <router-link to="/" id="logo" style="text-decoration: none;">
-                    <img src="../assets/Logo ColProMarket.jpeg" alt="logo" />
-                </router-link>
-                <div id="search">
-                    <q-input v-model="search" filled type="search" placeholder="Buscar">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                </div>
-                <div id="nav-buttons">
-                    <q-btn-group push>
-                        <q-btn push label="Productos" color="grey" />
-                        <q-btn push label="Comunidad" color="grey" />
-                        <q-btn push label="Rebajas" color="grey" />
-                        <q-btn push label="Contacto" color="grey" />
-                    </q-btn-group>
-                </div>
-                <div id="menu">
-                    <q-btn color="dark" icon="menu" @click="rightDrawerOpen = !rightDrawerOpen" flat round />
-                </div>
-            </div>
-        </q-header>
-
         <!-- Contenedor de página -->
         <q-page-container class="theContainer">
             <div class="containerMedium">
@@ -110,7 +59,7 @@
                                 <span>{{ calculateTotal() }}</span>
                             </div>
                             <q-btn color="yellow-8" text-color="black" class="full-width q-mt-lg"
-                                label="Proceder al pago" :disable="cartItems.length === 0" />
+                                label="Proceder al pago" :disable="cartItems.length === 0" @click = pago() />
                         </div>
                     </div>
                 </div>
@@ -172,6 +121,11 @@ onMounted(() => {
     cartItems.value = productos.value.map(p => ({...p, cantidad: 1}))
 })
 
+
+async function pago() {
+    window.location.href = 'http://localhost:5173/#/gateway';
+}
+
 // Función para formatear precio
 const formatPrice = (price) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price)
@@ -207,205 +161,6 @@ const onLoad = (index, done) => {
 }
 </script>
 
-<style>
-.q-mb-md {
-    width: 50%;
-}
-
-.nameProduct {
-    font-size: x-large;
-}
-
-.information {
-    margin-top: 5%;
-    padding-left: 10px;
-}
-
-.imgproduct {
-    width: 60%;
-    margin-left: 20%;
-    margin-top: 5%;
-}
-
-.tarjeta {
-    display: flex;
-    justify-content: center;
-}
-
-.producto {
-    box-shadow: 0px 10px 10px 1px gray;
-    margin-bottom: 3%;
-    border-radius: 10px;
-    width: 90%;
-    height: auto;
-    min-height: 280px;
-    display: grid;
-    grid-template-columns: 50% 50%;
-}
-
-.Text {
-    margin: 0% 0% 0% 5%;
-    font-size: larger;
-}
-
-.Title {
-    margin: 0% 0% 0% 5%;
-    font-size: xx-large;
-}
-
-.titleOne {
-    padding-top: 2.5%;
-}
-
-.viewProduct {
-    display: grid;
-    grid-template-columns: 50% 50%;
-}
-
-.containerMedium {
-    margin-left: 5%;
-    margin-top: 2%;
-    width: 90%;
-    min-height: 90vh;
-    background-color: white;
-    display: grid;
-    grid-template-rows: 20% 80%;
-}
-
-.theContainer {
-    background: linear-gradient(to right,
-            rgba(255, 255, 0, 0.5),
-            rgba(0, 0, 255, 0.5),
-            rgba(255, 0, 0, 0.5));
-    min-height: 110vh;
-}
-
-.empty-cart {
-    margin: 10% 8%;
-    padding: 30px;
-    border-radius: 8px;
-    border: 1px dashed #ddd;
-}
-
-.cart-summary {
-    border-radius: 8px;
-    margin: 0% 8% 0% 2%;
-    padding: 20px;
-}
-
-#app {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#logo img {
-    max-height: 10vh;
-    object-fit: contain;
-}
-
-.mini-logo {
-    height: 40px;
-    object-fit: contain;
-    border-radius: 4px;
-}
-
-#search {
-    flex: 1;
-    min-width: 200px;
-    max-width: 400px;
-}
-
-#nav-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    justify-content: center;
-    align-items: center;
-}
-
-#menu {
-    margin-left: auto;
-}
-
-.custom-drawer {
-    background-color: #ffffff;
-    color: #333;
-    width: 260px;
-    font-family: 'Roboto', sans-serif;
-}
-
-.drawer-header {
-    background-color: #f1f1f1;
-    padding: 16px;
-    border-bottom: 1px solid #ddd;
-}
-
-.drawer-item {
-    padding: 12px 16px;
-    font-size: 16px;
-    transition: background-color 0.2s ease;
-}
-
-.drawer-item:hover {
-    background-color: #f0f0f0;
-}
-
-.drawer-item:active {
-    background-color: #e0e0e0;
-}
-
-.productos-wrapper {
-    background-color: #f0f0f0;
-    overflow-x: auto;
-}
-
-.productos {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    display: flex;
-    white-space: nowrap;
-}
-
-.my-card {
-    flex: 0 0 auto;
-    width: 250px;
-    text-align: center;
-}
-
-.q-carousel-slide {
-    max-height: 500px;
-}
-
-.q-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-bottom: 1px solid #ccc;
-}
-
-@media (max-width:1024) {
-    .theContainer {
-        height: 100vh;
-    }
-}
-
-@media (max-width: 900px) {
-    #nav-buttons {
-        display: none;
-    }
-
-    #menu {
-        display: block;
-    }
-}
-
-@media (max-width: 450px) {
-    #logo img {
-        max-height: 8vh;
-    }
-}
+<style scoped>
+@import url('../style/CART.css');
 </style>

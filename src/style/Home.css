@@ -52,9 +52,7 @@
   .carrusel{
     margin-top: 1%;
   }
-  body {
-    background-color: var(--five-color) !important;
-  }
+
   
   #app {
     display: flex;

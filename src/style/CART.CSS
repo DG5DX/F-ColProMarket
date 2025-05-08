@@ -1,3 +1,6 @@
+
+
+
 .q-mb-md {
     width: 50%;
 }
@@ -57,18 +60,14 @@
     margin-top: 2%;
     width: 90%;
     min-height: 90vh;
-    background-color: white;
+    background-color: var(--five-color);
     display: grid;
     grid-template-rows: 20% 80%;
     border-radius: 15px;
 }
-
+  
 .theContainer {
-    background: linear-gradient(to right,
-            rgba(255, 255, 0, 0.5),
-            rgba(0, 0, 255, 0.5),
-            rgba(255, 0, 0, 0.5));
-    min-height: 110vh;
+    background-color: var(--five-color) 
 }
 
 .empty-cart {

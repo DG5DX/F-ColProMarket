@@ -4,6 +4,11 @@ import { createApp } from 'vue'
 import {router} from "./routes/routes.js"
 import { Quasar, Notify, Dialog } from 'quasar'
 
+
+
+// Importa tu archivo CSS global con las variables
+import './style.css'
+
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'
 import '@quasar/extras/material-icons-outlined/material-icons-outlined.css'

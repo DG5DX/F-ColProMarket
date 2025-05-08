@@ -67,7 +67,7 @@
               </q-card-section>
 
               <q-card-actions align="center">
-                <q-btn color="primary" icon="shopping_cart" @click.stop="agregarAlCarrito(producto)" />
+                <q-btn color="primary" icon="shopping_cart" @click.stop="addToTheCart(producto)" />
               </q-card-actions>
             </q-card>
           </div>
@@ -78,6 +78,7 @@
       <div class="especial q-pa-xl">
         <div class="row q-col-gutter-md justify-center">
           <q-card
+          
             v-for="(producto, index) in productosEspeciales"
             :key="'especial-' + index"
             class="especial-card col-12 col-sm-6"
@@ -100,7 +101,7 @@
                 </div>
                 <div class="text-subtitle2">{{ producto.descripcion }}</div>
                 <q-card-actions align="center">
-                  <q-btn icon="shopping_cart" color="primary" @click.stop="agregarAlCarrito(producto)" />
+                  <q-btn icon="shopping_cart" color="primary" @click.stop="addToTheCart(producto)" />
                 </q-card-actions>
               </div>
             </q-card-section>
@@ -206,9 +207,11 @@
 <script setup>
 import { onMounted, ref, toRaw } from 'vue'
 import { getData, postData } from '../service/service'
+import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
+import { Notify } from 'quasar';
 import ColorThief from 'colorthief';
-
+const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);
 const search = ref("");
@@ -298,9 +301,14 @@ function Dialog(action){
 } 
 
 // Función para agregar al carrito
-const agregarAlCarrito = (producto) => {
-  console.log('Agregado al carrito:', producto.nombre || producto.name);
-  event.stopPropagation();
+const addToTheCart = (producto) => {
+  store.addToCart(producto)
+  console.log("producto en home", producto);
+  Notify.create({
+        type: "positive",
+        message: "Producto agregado al carrito"
+      })
+  console.log('Agregado al carrito:', producto.name);
 }
 
 // Función para ver el detalle del producto

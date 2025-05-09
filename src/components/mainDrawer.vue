@@ -25,7 +25,7 @@
                 <div class="row items-center menu-right">
                     <q-btn flat label="Ingresar" to="/login" class="text-white" />
                     <q-btn flat label="Registro" to="/register" class="text-white" />
-                    <q-btn flat round icon="shopping_cart" class="text-white">
+                    <q-btn flat round icon="shopping_cart" class="text-white" @click="cart()">
                         <q-badge color="orange" floating>3</q-badge>
                     </q-btn>
                 </div>
@@ -78,6 +78,9 @@ import { ref } from 'vue'
 
 const leftDrawerOpen = ref(false)
 const searchQuery = ref('')
+const cart=()=>{
+    window.location.href = 'http://localhost:5173/#/cart';
+}
 
 function toggleLeftDrawer() {
     leftDrawerOpen.value = !leftDrawerOpen.value
@@ -87,7 +90,7 @@ function toggleLeftDrawer() {
 </script>
 <style scoped>
 .header-tech {
-    background: linear-gradient(to right, #1a2a6c, #204a87);
+    background: var(--four-color--);
     height: 112px;
 }
 

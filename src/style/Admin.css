@@ -1,0 +1,264 @@
+/* Estilos para el componente de administración */
+#body {
+  background-color: var(--two-color--);
+}
+
+/* Drawer izquierdo */
+.q-drawer {
+  background: var(--drawer-bg) !important;
+  box-shadow: var(--drawer-shadow);
+  transition: all 0.3s ease;
+}
+
+.drawer-header {
+  padding: 20px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background 0.3s ease;
+}
+
+.drawer-header:hover {
+  background: var(--header-bg) !important;
+}
+
+.q-card--filters {
+  border-radius: 8px;
+}
+
+.q-select, .q-input {
+  margin-bottom: 0;
+}
+
+.row.q-gutter-md.items-center {
+  align-items: flex-end;
+}
+
+.q-btn--filter {
+  margin-top: 0;
+  height: 40px;
+}
+
+/* Tarjetas de métricas */
+.metric-card {
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.metric-card .text-h6 {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.metric-card .text-h2 {
+  display: block;
+  margin-top: 10px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metric-icon {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  opacity: 0.2;
+  font-size: 60px !important;
+  transition: opacity 0.3s ease;
+}
+
+.metric-card:hover .metric-icon {
+  opacity: 0.4;
+}
+
+/* Tabla de productos */
+.my-sticky-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.my-sticky-table thead tr {
+  background-color: var(--five-color--) !important;
+}
+
+.my-sticky-table thead tr th {
+  color: white !important;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.my-sticky-table tbody tr:nth-child(even) {
+  background-color: var(--one-color--);
+}
+
+.my-sticky-table tbody tr:hover {
+  background-color: var(--three-color--) !important;
+}
+
+/* Botones de acción */
+.q-btn {
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.q-btn--actionable:hover {
+  transform: translateY(-2px);
+}
+
+/* Diálogos */
+.q-dialog__inner--minimized > div {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.q-card {
+  border-radius: 12px !important;
+}
+
+/* Inputs y selects */
+.q-input, .q-select {
+  margin-bottom: 12px;
+}
+
+.q-field--filled .q-field__control {
+  background: white;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.q-field--filled .q-field__control:hover {
+  background: var(--two-color--);
+}
+
+/* Previsualización de imágenes */
+.preview-images-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.preview-image-wrapper {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.preview-image-wrapper:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Efectos de hover para items del menú */
+.q-item {
+  border-radius: 8px;
+  margin: 4px 8px;
+  transition: all 0.3s ease;
+}
+
+.q-item:hover {
+  background-color: var(--menu-item-hover) !important;
+}
+
+.q-item.q-router-link--active {
+  background-color: var(--menu-item-active) !important;
+  color: var(--menu-item-active-color) !important;
+}
+
+/* Responsividad */
+@media (max-width: 1024px) {
+  .metric-card {
+    margin-bottom: 16px;
+  }
+  
+  .q-drawer {
+    width: 220px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .drawer-header {
+    padding: 16px 12px;
+  }
+  
+  .q-table {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.q-page {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Scroll personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--one-color--);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--four-color--);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--five-color--);
+}
+
+/* Estado vacío */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: var(--four-color--);
+}
+
+/* Transiciones para diálogos */
+.q-dialog__inner {
+  transition: all 0.3s ease;
+}
+
+/* Mejoras para la tabla en móviles */
+@media (max-width: 600px) {
+  .q-table__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .q-table__control {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .q-table__title {
+    margin-bottom: 15px;
+  }
+}

@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-    <DRAWER/>
-    <!-- Contenido principal -->
+    <mainDrawer/>
+      <!-- Contenido principal -->
     <div>
       <div class="Home">
         <!-- Carrusel -->
@@ -203,11 +203,12 @@
 
 <script setup>
 import { onMounted, ref, toRaw } from 'vue'
+import mainDrawer from '../components/mainDrawer.vue';
 import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
 import { Notify } from 'quasar';
-import DRAWER from './DRAWER.vue';
+import ColorThief from 'colorthief';
 const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);

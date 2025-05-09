@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 
 export const useStore = defineStore ("store",()=>{
 let userId = ref("");
-const token = ref("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2ODE2NjJkZTVkNWM4ZTk2ZWU5YTcxZDEiLCJpYXQiOjE3NDY3MDU4MjUsImV4cCI6MTc0NjczNDYyNX0.8kLQ9yY_tzIFSRPA0zRbvqUBxbcGMpdS1bpqIP4TpX8");
+const token = ref("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2ODE2NjJkZTVkNWM4ZTk2ZWU5YTcxZDEiLCJpYXQiOjE3NDY3NTYzMzAsImV4cCI6MTc0Njc4NTEzMH0.Csnh5dE_1JrasnpmFpOzjN_XJeiMXjXwzsTy8ZcaDYU");
 const cart = ref([]);
 
     function save_Token (Token){

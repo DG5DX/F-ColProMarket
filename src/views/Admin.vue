@@ -51,10 +51,11 @@
           <div class="row q-mb-md q-gutter-md">
             <!-- Total de Productos -->
             <q-card class="col metric-card bg-blue-1">
-              <q-card-section>
+              <q-card-section >
                 <div class="text-h6">Total de Productos</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="inventory_2" size="md" class="metric-icon" />
+                <q-label class="text-h2">{{ dataProducts.count || 0 }}</q-label>
               </q-card-section>
             </q-card>
 
@@ -73,6 +74,7 @@
                 <div class="text-h6">Total en Stock</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="warehouse" size="md" class="metric-icon" />
+                <q-label class="text-h2">{{ dataProducts.stock?.stockAvailable || 0 }}</q-label>
               </q-card-section>
             </q-card>
 
@@ -82,6 +84,9 @@
                 <div class="text-h6">Total Fuera de Stock</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="warning" size="md" class="metric-icon" />
+                <q-label class="text-h2">{{ dataProducts.stock?.zeroStock || 0 }}</q-label>
+
+
               </q-card-section>
             </q-card>
           </div>
@@ -103,7 +108,7 @@
                 label="Buscar producto"
                 clearable
                 prepend-inner-icon="search"
-                class="col"
+                class="search"
                 @clear="search = ''"
               />
               <q-btn
@@ -123,6 +128,7 @@
               dense
               v-model="selectedCategory"
               :options="categories"
+              option-label="name"
               label="Filtrar por categoría"
               clearable
               class="col"
@@ -135,10 +141,17 @@
               @click="categoryDialog = true"
               class="col-auto"
             />
+            <q-btn
+              label="Crear Subcategoría"
+              color="secondary"
+              icon="add"
+              @click="subcategoryDialog = true"
+              class="col-auto"
+            />
           </div>
 
           <q-table
-            :rows="productosFiltrados"
+            :rows="dataProducts.data || []"
             :columns="columns"
             row-key="nombre"
             flat
@@ -152,7 +165,7 @@
             <template v-slot:body-cell-imagen="props">
               <q-td :props="props">
                 <q-img
-                  :src="props.row.imagen"
+                  :src="props.row.images[0].urlImage"
                   contain
                   style="width: 60px; height: 60px"
                 />
@@ -273,6 +286,30 @@
       </q-card>
     </q-dialog>
 
+    
+    <!-- Diálogo Crear subcategoría -->
+
+    <q-dialog v-model="subcategoryDialog" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Agregar subcategoría</div>
+        </q-card-section>
+        <q-select label="Categoria principal" v-model="newSubcategory.idCategoryFather" :options="categories" option-label="name"  option-value="_id" map-options></q-select>
+        <q-card-section class="q-gutter-md">
+          <q-input v-model="newSubcategory.name" label="Nombre de la subcategoría" />
+          <q-input
+            v-model="newSubcategory.description"
+            label="Descripción"
+            type="textarea"
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="secondary" v-close-popup />
+          <q-btn flat label="Guardar" color="primary" @click="saveSubcategory()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <!-- Diálogo Detalle -->
     <q-dialog v-model="detalleDialog" persistent>
       <q-card class="q-pa-md" style="min-width: 400px; max-width: 600px">
@@ -345,19 +382,18 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, toRaw } from "vue";
 import { Notify } from "quasar";
-import { postData } from "../service/service";
+import { getData, postData } from "../service/service.js";
 
 const files = ref([]);
-const dataProduct = ref({
-  categoryId: "64bfc6a3e9e6f3a8d1e55c21",
-  stock: 12,
-  user: "64bfc6a3e9e6f3a8d1e55c22",
+const dataProduct = ref({ // tengo que arreglar esto despues
+  categoryId: "681d74695b4961fb4cdb9e88",
+  stock: 0,
+  brand:"generico",
+  acceptReturns:"si",
 });
 const previewImages = ref([]);
-
-// Estado de interfaz
 const leftDrawerOpen = ref(true);
 const rightDrawerOpen = ref(false);
 const search = ref("");
@@ -365,21 +401,27 @@ const search = ref("");
 // Diálogos
 const productDialog = ref(false);
 const categoryDialog = ref(false);
+const subcategoryDialog = ref(false);
 const detalleDialog = ref(false);
 const editarDialog = ref(false);
 
 // Categorías
-const categories = ref([
-  { label: "Electrónicos", value: "electronics" },
-  { label: "Ropa", value: "clothing" },
-  { label: "Hogar", value: "home" },
-  { label: "Deportes", value: "sports" },
-]);
+const categories = ref([]);
 const selectedCategory = ref(null);
-const newCategory = ref({
-  name: "",
-  description: "",
-});
+const newCategory = ref({});
+const newSubcategory = ref({});
+
+//productos
+const dataProducts = ref([])
+
+// Datos para ver o editar
+const productoSeleccionado = ref({});
+const productoEditado = ref({});
+
+onMounted(()=>{
+  getAllCategories();
+  getAllProducts()
+})
 
 const handleFiles = (selectedFiles) => {
   previewImages.value = [];
@@ -428,107 +470,128 @@ const saveProduct = async () => {
   }
 };
 
-const saveCategory = () => {
-  if (!newCategory.value.name) {
-    Notify.create({
-      type: "negative",
-      message: "Por favor ingresa un nombre para la categoría",
+async function saveCategory (){
+  try {
+    if (!newCategory.value.name || !newCategory.value.description) {
+      Notify.create({
+        type: "negative",
+        message: "Por favor completa todos los datos",
+      });
+      console.log("datos de categoria incompletos");
+      return;
+    }
+
+    const response = await postData("/categories",{
+      data:{
+        name : newCategory.value.name,
+        description : newCategory.value.description
+      }
     });
-    return;
+
+    if (response && response.success) { 
+      Notify.create({
+        type:'positive',
+        message :'categoria creada y guardada correctamente'
+      });
+      newCategory.value = { name: "", description: "" };
+      categoryDialog.value = false;
+      console.log("categoria creada" , response.data);
+    } else {
+      const errorMessage = response?.error || 'Error al crear categoría desde la API';
+      Notify.create({
+        type:'negative',
+        message: errorMessage
+      });
+      console.error("error al crear categoria desde la API" , response);
+    }
+
+  } catch (error) {
+    console.log("error al crear categoria" , error);
+    Notify.create({
+      type:'negative',
+      message:'Error al crear categoria'
+    });
   }
-
-  categories.value.push({
-    label: newCategory.value.name,
-    value: newCategory.value.name.toLowerCase().replace(/\s+/g, "-"),
-  });
-
-  Notify.create({
-    type: "positive",
-    message: "Categoría creada correctamente",
-  });
-
-  newCategory.value = { name: "", description: "" };
-  categoryDialog.value = false;
 };
 
-// Lista de productos
-const productos = ref([
-  {
-    nombre: "Producto A",
-    descripcion: "Descripción del producto A.",
-    precio: 19.99,
-    imagen:
-      "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg",
-    categoria: "electronics",
-  },
-  {
-    nombre: "Producto B",
-    descripcion: "Descripción del producto B.",
-    precio: 29.99,
-    imagen:
-      "https://centraldesuministrosgs.com/wp-content/uploads/2022/02/totto-morral-con-porta-pc-ribbon-negro-negro-black-negro-negro-black_1-1.jpg",
-    categoria: "clothing",
-  },
-  {
-    nombre: "Producto A",
-    descripcion: "Descripción del producto A.",
-    precio: 19.99,
-    imagen:
-      "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg",
-    categoria: "electronics",
-  },
-  {
-    nombre: "Producto B",
-    descripcion: "Descripción del producto B.",
-    precio: 29.99,
-    imagen:
-      "https://centraldesuministrosgs.com/wp-content/uploads/2022/02/totto-morral-con-porta-pc-ribbon-negro-negro-black-negro-negro-black_1-1.jpg",
-    categoria: "clothing",
-  },
-  {
-    nombre: "Producto A",
-    descripcion: "Descripción del producto A.",
-    precio: 19.99,
-    imagen:
-      "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg",
-    categoria: "electronics",
-  },
-  {
-    nombre: "Producto B",
-    descripcion: "Descripción del producto B.",
-    precio: 29.99,
-    imagen:
-      "https://centraldesuministrosgs.com/wp-content/uploads/2022/02/totto-morral-con-porta-pc-ribbon-negro-negro-black-negro-negro-black_1-1.jpg",
-    categoria: "clothing",
-  },
-  {
-    nombre: "Producto A",
-    descripcion: "Descripción del producto A.",
-    precio: 19.99,
-    imagen:
-      "https://www.pcware.com.co/wp-content/uploads/2018/05/delloptiplexaio.jpg",
-    categoria: "electronics",
-  },
-  {
-    nombre: "Producto B",
-    descripcion: "Descripción del producto B.",
-    precio: 29.99,
-    imagen:
-      "https://centraldesuministrosgs.com/wp-content/uploads/2022/02/totto-morral-con-porta-pc-ribbon-negro-negro-black-negro-negro-black_1-1.jpg",
-    categoria: "clothing",
-  },
-]);
+async function saveSubcategory (){
+  try {
+    if (!newSubcategory.value.name || !newSubcategory.value.description) {
+      Notify.create({
+        type: "negative",
+        message: "Por favor completa todos los datos",
+      });
+      console.log("datos de subcategoria incompletos");
+      return;
+    }
 
-// Datos para ver o editar
-const productoSeleccionado = ref({});
-const productoEditado = ref({});
+    const response = await postData("/categories",{
+      data:newSubcategory.value
+    });
+
+    if (response && response.success) { 
+      Notify.create({
+        type:'positive',
+        message :'subcategoria creada y guardada correctamente'
+      });
+      newSubcategory.value = {};
+      subcategoryDialog.value = false;
+      console.log("subcategoria creada" , response.data);
+    } else {
+      const errorMessage = response?.error || 'Error al crear subcategoría desde la API';
+      Notify.create({
+        type:'negative',
+        message: errorMessage
+      });
+      console.error("error al crear subcategoria desde la API" , response);
+    }
+
+  } catch (error) {
+    console.log("error al crear subcategoria" , error);
+    Notify.create({
+      type:'negative',
+      message:'Error al crear subcategoria'
+    });
+  }
+};
+
+async function getAllProducts(){
+  try {
+    const response = await getData("/product");
+    if(response.success){
+      dataProducts.value = response
+    }
+    console.log("productos en admin" , toRaw(dataProducts.value))
+  } catch (error) {
+    console.error("Error al traer datos de productos" , dataProducts.value)
+
+  }
+}
+
+async function getAllCategories() {
+  try {
+    const response = await getData("/categories");
+    if(response.data.length > 0){
+      categories.value = response.data
+    }
+    else{
+      return console.log("no hay categorias" , response.data);
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+
+
+
 
 // Filtro dinámico de productos
 const productosFiltrados = computed(() => {
   const texto = search.value.trim().toLowerCase();
   const categoria = selectedCategory.value?.value;
 
-  let filtered = productos.value;
+  let filtered = dataProduct.value.data;
 
   if (texto) {
     filtered = filtered.filter(
@@ -547,21 +610,21 @@ const productosFiltrados = computed(() => {
 
 // Columnas de la tabla
 const columns = [
-  { name: "nombre", label: "Nombre", field: "nombre", align: "center" },
+  { name: "nombre", label: "Nombre", field: "name", align: "center" },
   {
     name: "descripcion",
     label: "Descripción",
-    field: "descripcion",
+    field: "description",
     align: "center",
   },
   {
-    name: "creación",
+    name: "stock",
     label: "Stock",
-    field: "Stock",
+    field: "stock",
     aling: "center",
   },
-  { name: "precio", label: "Precio", field: "precio", align: "center" },
-  { name: "imagen", label: "Imagen", field: "imagen", align: "center" },
+  { name: "precio", label: "Precio", field: "price", align: "center" },
+  { name: "imagen", label: "Imagen", align: "center" },
   { name: "acciones", label: "Acciones", field: "acciones", align: "center" },
 ];
 
@@ -579,12 +642,12 @@ function editarProducto(producto) {
 
 // Guardar cambios al editar
 function actualizarProducto() {
-  const index = productos.value.findIndex(
+  const index = dataProduct.value.data.findIndex(
     (p) => p.nombre === productoEditado.value.nombre
   );
 
   if (index !== -1) {
-    productos.value[index] = { ...productoEditado.value };
+    dataProduct.value.data[index] = { ...productoEditado.value };
 
     Notify.create({
       type: "positive",
@@ -601,10 +664,10 @@ function actualizarProducto() {
 
 // Eliminar producto
 function eliminarProducto(producto) {
-  const index = productos.value.indexOf(producto);
+  const index =dataProduct.value.data.indexOf(producto);
 
   if (index !== -1) {
-    productos.value.splice(index, 1);
+    dataProduct.value.data.splice(index, 1);
     Notify.create({
       type: "warning",
       message: "Producto eliminado",

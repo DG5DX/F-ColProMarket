@@ -61,14 +61,14 @@
           </div>
         </q-card>
 
-        <!-- Nueva Q-Card para Filtros de Búsqueda -->
+        <!-- Filtros de Búsqueda -->
         <q-card
           class="q-pa-md shadow-2 q-mx-auto q-mt-md"
-          style="width: 100%; background-color: #f5f5f5"
+          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px;"
         >
           <div class="text-h6 text-weight-bold q-mb-md">🔍 Filtros Avanzados</div>
           
-          <div class="row q-gutter-md">
+          <div class="row q-gutter-md items-center" style="display: flex; align-items: center;">
             <q-select
               filled
               dense       
@@ -77,6 +77,7 @@
               label="Filtrar por categoría"
               clearable
               class="col"
+              style="min-width: 200px"
             />
             
             <q-input
@@ -85,6 +86,7 @@
               label="Precio mínimo"
               type="number"
               class="col"
+              style="min-width: 150px"
             />
             
             <q-input
@@ -93,6 +95,7 @@
               label="Precio máximo"
               type="number"
               class="col"
+              style="min-width: 150px"
             />
             
             <q-select
@@ -100,20 +103,26 @@
               dense
               label="Filtrar por stock"
               class="col"
+              style="min-width: 200px"
+              :options="['En stock', 'Sin stock']"
             />
-          </div>
-          
-          <div class="row q-mt-md justify-end">
-            <q-btn
-              label="Aplicar Filtros"
-              color="primary"
-              class="q-mr-sm"
-            />
-            <q-btn
-              label="Limpiar Filtros"
-              color="negative"
-              outline
-            />
+            
+            <div class="row q-gutter-sm" style="margin-top: 0%;">
+              <q-btn
+                label="Aplicar Filtros"
+                color="primary"
+                dense
+                class="q-ml-sm"
+                style="height: 40px"
+              />
+              <q-btn
+                label="Limpiar Filtros"
+                color="negative"
+                outline
+                dense
+                style="height: 40px"
+              />
+            </div>
           </div>
         </q-card> 
 

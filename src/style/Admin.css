@@ -20,6 +20,23 @@
   background: var(--header-bg) !important;
 }
 
+.q-card--filters {
+  border-radius: 8px;
+}
+
+.q-select, .q-input {
+  margin-bottom: 0;
+}
+
+.row.q-gutter-md.items-center {
+  align-items: flex-end;
+}
+
+.q-btn--filter {
+  margin-top: 0;
+  height: 40px;
+}
+
 /* Tarjetas de métricas */
 .metric-card {
   border-radius: 12px;

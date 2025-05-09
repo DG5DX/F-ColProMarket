@@ -108,7 +108,7 @@
                 label="Buscar producto"
                 clearable
                 prepend-inner-icon="search"
-                class="col"
+                class="search"
                 @clear="search = ''"
               />
               <q-btn

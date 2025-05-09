@@ -1,12 +1,7 @@
 /* Estilos optimizados para el carrusel */
 .carrusel {
-    width: 98%;
-    margin: 1% auto;
-    border-radius: 15px;
-    overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  
   
   .carrusel-slide {
     height: 100%;
@@ -28,7 +23,6 @@
   }
   
   .carrusel-image {
-    width: 100%;
     height: auto;
     object-fit: contain; 
     max-height: 100%; 
@@ -37,40 +31,22 @@
   
   
   .q-carousel-slide, .q-carousel {
-    border-radius: 15px;
     box-shadow: none;
     border: none;
   }
   
   
   .q-carousel-slide,.q-carousel{
-    border-radius: 15px;
     background-color:  #121212;
     box-shadow: none;
     border: none;
   }
-  .carrusel{
-    margin-top: 1%;
-  }
-
   
-  #app {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    padding: 5px;
-    gap: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
   
-  #logo img {
-    max-height: 10vh;
-    object-fit: contain;
-  }
   
   #footer {
     background-color: #f9f9f9;
+    margin-top: 2%;
   }
   
   .mini-logo {
@@ -118,6 +94,8 @@
     padding: 20px 0;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    background: #121212;
+    background: radial-gradient(circle, rgba(18, 18, 18, 0.37) 0%, rgba(18, 18, 18, 0.55) 0%);
   }
   
   .productos {
@@ -135,255 +113,7 @@
     margin-top: 30px;
   }
   
-  /* Tarjetas de productos regulares */
-  .my-card {
-    flex: 0 0 auto;
-    width: 280px;
-    text-align: center;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    background: white;
-    position: relative;
-    cursor: pointer; /* Cursor pointer para indicar que es clicable */
-  }
   
-  .my-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Imagen del producto */
-  .my-card .q-img {
-    height: 220px !important;
-    transition: transform 0.5s ease;
-  }
-  
-  .my-card:hover .q-img {
-    transform: scale(1.05);
-  }
-  
-  /* Título del producto */
-  .my-card .text-h6 {
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Descripción del producto */
-  .my-card .text-subtitle2 {
-    color: #666;
-    font-size: 0.9rem;
-    height: 40px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-  }
-  
-  /* Precio */
-  .my-card .text-h6[style*="color: red"] {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #e53935 !important;
-    margin: 10px 0;
-  }
-  
-  /* Botones */
-  .my-card .q-card-actions {
-    padding: 8px 16px 16px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .my-card .q-btn {
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-  
-  .my-card .q-btn[icon="shopping_cart"] {
-    background: #1976d2;
-    color: white;
-    padding: 8px 12px;
-  }
-  
-  .my-card .q-btn[icon="shopping_cart"]:hover {
-    background: #0d47a1;
-    transform: scale(1.05);
-  }
-  
-  .my-card::before {
-    content: "Nuevo";
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #e53935;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    z-index: 1;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    opacity: 0;
-    transform: translateX(10px);
-    transition: all 0.3s ease;
-  }
-  
-  .my-card:hover::before {
-    opacity: 0.9;
-    transform: translateX(0);
-  }
-  
-  /* Tarjetas de productos especiales */
-  .especial-card {
-    transition: all 0.3s ease;
-    border-radius: 12px !important;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
-    border: none !important;
-    cursor: pointer; /* Cursor pointer para indicar que es clicable */
-  }
-  
-  .especial-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
-  }
-  
-  .especial-card .q-img {
-    border-radius: 8px !important;
-    overflow: hidden;
-    transition: transform 0.5s;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .especial-card:hover .q-img {
-    transform: scale(1.03);
-  }
-  
-  .especial-card .text-h6 {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 10px;
-    position: relative;
-    padding-bottom: 8px;
-  }
-  
-  .especial-card .text-h6::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 40px;
-    height: 2px;
-    background: #1976d2;
-  }
-  
-  .especial-card .text-h6[style*="color: red"] {
-    font-size: 1.4rem;
-    color: #e53935 !important;
-    margin: 12px 0;
-  }
-  
-  .especial-card .text-subtitle2 {
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 15px;
-  }
-  
-  .especial-card .q-card-actions {
-    margin-top: 5px;
-  }
-  
-  .especial-card .q-btn {
-    border-radius: 8px;
-    transition: all 0.2s;
-    margin: 0 5px;
-  }
-  
-  .especial-card .q-btn[icon="shopping_cart"] {
-    background: #1976d2;
-    color: white;
-    padding: 8px 15px;
-  }
-  
-  .especial-card .q-btn[icon="shopping_cart"]:hover {
-    background: #0d47a1;
-    transform: scale(1.05);
-  }
-  
-  /* Mejoras para efectos de clic */
-  .my-card:active, .especial-card:active {
-    transform: scale(0.98) !important;
-    transition: transform 0.1s;
-  }
-  
-  /* Efecto de overlay al hacer hover para indicar que es clicable */
-  .my-card::after, .especial-card::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0);
-    transition: background-color 0.3s ease;
-    pointer-events: none;
-    z-index: 1;
-  }
-  
-  .my-card:hover::after, .especial-card:hover::after {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
-  
-  /* Solo mantener el botón del carrito */
-  .my-card .q-card-actions, .especial-card .q-card-actions {
-    padding: 8px 16px 16px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* Hacer que el botón del carrito se mantenga por encima para capturar su propio clic */
-  .my-card .q-btn, .especial-card .q-btn {
-    z-index: 2;
-    position: relative;
-  }
-  
-  /* Responsive */
-  @media (max-width: 600px) {
-    .my-card {
-      width: 100%;
-      max-width: 340px;
-      margin: 0 auto;
-    }
-    
-    .especial-card .text-h6::after {
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  }
-  
-  .especial .especial-card{
-    min-width: 330px;
-    max-width: 40%;
-    margin-right: 16px;
-    vertical-align: top;
-    flex-wrap: wrap;
-  }
-  
-  .special {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    padding: 0%;
-  }
   
   .q-carousel-slide {
     max-height: 500px;
@@ -394,6 +124,104 @@
     height: 100%;
     object-fit: cover;
     border-bottom: 1px solid #ccc;
+  }
+  .card {
+    position: relative;
+    width: 300px;
+    height: 380px;
+    background-color: var(--one-color--);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card-img {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+  
+  .card-img .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .card-img .q-img {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .card-subtitle {
+    font-size: 14px;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
+  
+  .card-divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 15px 0;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .card-price {
+    font-size: 20px;
+    font-weight: 600;
+    color:var(--five-color--);
+  }
+  
+  .card-price span {
+    font-size: 16px;
+  }
+  
+  .card-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color:var(--five-color--);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card-btn:hover {
+    background-color:var(--five-color--);
+    transform: translateY(-2px);
+  }
+  
+  .card-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
   }
   
   @media (max-width: 990px) {

@@ -23,7 +23,7 @@ export async function postData(url, data,){
 
 export async function putData(url, data) {
     try {
-        
+        console.log("data", data);
         const response = await client.put(url,data);
         return response.data;
     } catch (error) {

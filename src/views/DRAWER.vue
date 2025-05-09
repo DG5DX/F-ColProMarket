@@ -105,6 +105,7 @@ export default {
         leftDrawerOpen.value = !leftDrawerOpen.value
       }
     }
+
   }
 }
 </script>
@@ -172,6 +173,7 @@ export default {
   .categories-tabs .q-tab {
     padding: 0 8px;
     font-size: 0.8rem;
+
   }
 }
 </style>

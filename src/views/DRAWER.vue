@@ -11,7 +11,7 @@
             @click="toggleLeftDrawer"
             class="menu-btn q-mr-sm"
           />
-          <q-avatar square size="md">
+          <q-avatar circle size="md">
             <img src="../assets/MiniLogo.jpeg">
           </q-avatar>
           <q-toolbar-title class="tech-title">
@@ -39,7 +39,7 @@
         <div class="row items-center menu-right">
           <q-btn flat label="Ingresar" to="/login" class="text-white" />
           <q-btn flat label="Registro" to="/register" class="text-white" />
-          <q-btn flat round icon="shopping_cart" class="text-white">
+          <q-btn flat round icon="shopping_cart" class="text-white" to="/CART">
             <q-badge color="orange" floating>3</q-badge>
           </q-btn>
         </div>
@@ -123,21 +123,20 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 180px;
+  margin: 10px;
 }
 
 .search-container {
   flex-grow: 1;
   max-width: 600px;
   margin: 0 20px;
+  margin-left: 4px;
 }
 
 .search-input {
   border-radius: 4px;
-}
-
-.categories-tabs {
-  background: rgba(0,0,0,0.1);
+  margin: 8px;
+  margin-left: 2px;
 }
 
 .categories-tabs .q-tab {

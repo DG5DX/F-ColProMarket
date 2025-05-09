@@ -106,4 +106,8 @@ export default {
 }
 </script>
 
+<style scoped>
+@import url("../style/paymentGateway.css");
+</style>
+
 

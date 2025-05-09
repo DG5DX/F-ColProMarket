@@ -1,8 +1,8 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-  
-    <!-- Contenido principal -->
-    <q-page-container>
+    <mainDrawer/>
+      <!-- Contenido principal -->
+    <div>
       <div class="Home">
         <!-- Carrusel -->
         <div class="carrusel">
@@ -32,82 +32,47 @@
       </q-carousel-slide>
     </q-carousel>
   </div>
-
-        <!-- Productos -->
-        <div class="productos-wrapper">
-          <div class="productos row q-gutter-xl justify-start q-pa-xl">
-            <q-card
-              v-for="(producto, index) in productos"
-              :key="index"
-              class="my-card"
-              bordered
-              flat
-              @click="verDetalleProducto(producto)"
-            >
-              <q-card-section class="q-pa-none">
-                <q-img
-                  :src="producto.images[0].urlImage"
-                  :alt="producto.name"
-                  style="height: 200px;"
-                  fit="cover"
-                >
-                  <template v-slot:loading>
-                    <q-spinner color="primary" />
-                  </template>
-                </q-img>
-              </q-card-section>
-
-              <q-card-section>
-                <div class="text-h6">{{ producto.name }}</div>
-                <div class="text-subtitle2 text-grey">{{ producto.description }}</div>
-              </q-card-section>
-
-              <q-card-section class="text-h6" style="color: red; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                ${{ producto.price.toFixed(2) }}
-              </q-card-section>
-
-              <q-card-actions align="center">
-                <q-btn color="primary" icon="shopping_cart" @click.stop="agregarAlCarrito(producto)" />
-              </q-card-actions>
-            </q-card>
-          </div>
-        </div>
-      </div>
-
-      <!-- Productos Especiales -->
-      <div class="especial q-pa-xl">
-        <div class="row q-col-gutter-md justify-center">
-          <q-card
-            v-for="(producto, index) in productosEspeciales"
-            :key="'especial-' + index"
-            class="especial-card col-12 col-sm-6"
-            flat
-            bordered
-            @click="verDetalleProducto(producto)"
+  <div class="productos-wrapper">
+  <div class="productos row q-gutter-xl justify-start q-pa-xl">
+    <div
+      v-for="(producto, index) in productos"
+      :key="index"
+      class="my-card card"
+      @click="verDetalleProducto(producto)"
+    >
+      <div class="card-img">
+        <div class="img">
+          <q-img
+            :src="producto.images[0].urlImage"
+            :alt="producto.name"
+            fit="cover"
           >
-            <q-card-section class="special row no-wrap">
-              <q-img
-                :src="producto.imagen"
-                :alt="producto.nombre"
-                class="col-5"
-                style="height: 180px"
-                fit="cover"
-              />
-              <div class="col q-pa-md">
-                <div class="text-h6">{{ producto.nombre }}</div>
-                <div class="text-h6 q-mt-sm" style="color: red; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                  ${{ producto.precio.toFixed(2) }}
-                </div>
-                <div class="text-subtitle2">{{ producto.descripcion }}</div>
-                <q-card-actions align="center">
-                  <q-btn icon="shopping_cart" color="primary" @click.stop="agregarAlCarrito(producto)" />
-                </q-card-actions>
-              </div>
-            </q-card-section>
-          </q-card>
+            <template v-slot:loading>
+              <q-spinner color="primary" />
+            </template>
+          </q-img>
         </div>
       </div>
-    </q-page-container>
+      <div class="card-title">{{ producto.name }}</div>
+      <div class="card-subtitle">{{ producto.description }}</div>
+      <hr class="card-divider">
+      <div class="card-footer">
+        <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
+        <button class="card-btn" @click.stop="addToTheCart(producto)">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
+            <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+            <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+            <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+    </div>
+    
 
     <!-- Footer -->
     <div
@@ -205,14 +170,14 @@
 
 <script setup>
 import { onMounted, ref, toRaw } from 'vue'
+import mainDrawer from '../components/mainDrawer.vue';
 import { getData, postData } from '../service/service'
+import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
-import ColorThief from 'colorthief';
-
+import { Notify } from 'quasar';
+const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);
-const search = ref("");
-const rightDrawerOpen = ref(false);
 const loginDialog = ref(false);
 const registerDialog = ref(false);
 const loginEmail = ref("");
@@ -298,9 +263,14 @@ function Dialog(action){
 } 
 
 // Función para agregar al carrito
-const agregarAlCarrito = (producto) => {
-  console.log('Agregado al carrito:', producto.nombre || producto.name);
-  event.stopPropagation();
+const addToTheCart = (producto) => {
+  store.addToCart(producto)
+  console.log("producto en home", producto);
+  Notify.create({
+        type: "positive",
+        message: "Producto agregado al carrito"
+      })
+  console.log('Agregado al carrito:', producto.name);
 }
 
 // Función para ver el detalle del producto

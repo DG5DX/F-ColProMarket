@@ -8,11 +8,12 @@
         <div class="start">
           <div class="boxOne">
             <div class="sideL">
-              <img v-for="(imagen, index) in producto.imagenes" :key="index" :class="`thumbnail ${index + 1}`"
-                :src="imagen" @click="seleccionarImagen(index)" />
+              <img v-for="(image, index) in dataProduct.images" :key="index" :class="`thumbnail ${index + 1}`"
+                :src="image.urlImage" @click="selectImage(index)" />
             </div>
             <div class="sideR">
-              <img class="imG" :src="imagenSeleccionada" />
+              <img
+  v-if="dataProduct.images && dataProduct.images.length" class="imG" :src="selectedImage || dataProduct.images[0].urlImage"/>
             </div>
           </div>
           
@@ -24,24 +25,22 @@
           </div>
 
 
-       
-
           <!-- Sección de reseñas -->
           <div class="reviews">
             <div class="contemReviews">
               <label class="reviewsText">Reseñas</label>
 
               <!-- Lista de reseñas existentes -->
-              <div v-for="(review, index) in producto.resenas" :key="index" class="RVW q-pa-md">
+              <div v-for="(review, index) in dataProduct.reviews" :key="index" class="RVW q-pa-md">
                 <div class="flex items-center q-mb-sm">
                   <q-avatar color="primary" text-color="white" size="sm">
-                    {{ review.usuario.charAt(0) }}
+                    {{ review.userId.name.charAt(0) }}
                   </q-avatar>
-                  <span class="q-ml-sm text-weight-bold">{{ review.usuario }}</span>
+                  <span class="q-ml-sm text-weight-bold">{{ review.userId.name }}</span>
                 </div>
                 
                 <q-rating
-                  v-model="review.calificacion"
+                  v-model="review.stars"
                   size="1em"
                   color="black"
                   icon="star_border"
@@ -50,7 +49,7 @@
                   class="q-mb-sm"
                 />
                 
-                <div class="coment">{{ review.comentario }}</div>
+                <div class="coment">{{ review.message }}</div>
               </div>
 
               <!-- Formulario para nueva reseña -->
@@ -58,7 +57,7 @@
                 <div class="flex items-center q-gutter-sm q-mb-sm">
                   <span>Tu calificación:</span>
                   <q-rating
-                    v-model="ratingModel"
+                    v-model="productQualification"
                     max="5"
                     size="2em"
                     color="black"
@@ -69,14 +68,14 @@
                 
                 <q-input 
                   class="Testo"
-                  v-model="nuevoComentario" 
+                  v-model="review" 
                   placeholder="Escribe tu reseña..." 
                   outlined
                   type="textarea"
                   rows="3"
                 >
                   <template v-slot:append>
-                    <q-btn round dense flat icon="send" @click="agregarComentario" />
+                    <q-btn round dense flat icon="send" @click="addReview(dataProduct._id)" />
                   </template>
                 </q-input>
               </div>
@@ -87,9 +86,9 @@
         <div class="medium">
           <q-card class="bg-grey-3-q-pa-md" >
             <!-- Titulo -->
-            <div class="text-h6 text-bold q-mb-sm">{{ (producto.nombre) }}</div>
+            <div class="text-h6 text-bold q-mb-sm">{{ (dataProduct.name) }}</div>
             <!-- Precio -->
-            <div class="text-h6 text-bold q-mb-sm">Precio: {{ formatearPrecio(producto.precio) }}</div>
+            <div class="text-h6 text-bold q-mb-sm">Precio: {{ formatPrice(dataProduct.price || 1500) }}</div>
 
             <!-- Entrega -->
             <div class="text-body2 q-mb-sm">
@@ -99,9 +98,9 @@
              <!-- Calificación -->
         <div class="row2-q-mb-md">
             <div class="flex ">
-              <span class="text-subtitle1" style="color:black"><h3>{{ producto.calificacion }}</h3></span>
+              <span class="text-subtitle1" style="color:black"><h3>{{ dataProduct.averageRating }}</h3></span>
               <q-rating
-                v-model="ratingProducto"
+                v-model="dataProduct.averageRating"
                 size="3em"
                 color="black"
                 icon="star_border"
@@ -112,21 +111,21 @@
           </div>
 
             <!-- Disponible -->
-            <div :class="disponibilidadClase" class="text-subtitle2 q-mb-sm">{{ producto.disponibilidad }}</div>
+            <div :class="isProductAvailable" class="text-subtitle2 q-mb-sm"> <p>Quedan {{ dataProduct.stock }}</p></div>
 
             
 
 
             <div class="text-blue">Devoluciones:</div>
-            <div class="q-mb-md">{{ producto.politicaDevolucion }}</div>
+            <div class="q-mb-md">{{ dataProduct.acceptReturns === 'si' ? 'Se aceptan devoluciones' : 'No se aceptan devoluciones' }}</div>
 
             <!-- Botones -->
             <q-btn label="Agregar al carrito" class="bg-dark text-white full-width q-mb-sm" unelevated
-              @click="agregarAlCarrito" />
+              @click="addToTheCart(dataProduct)" />
             <q-btn label="Comprar Ahora" class="bg-dark text-white full-width" unelevated @click="comprarAhora" />
 
             <!-- Checkbox -->
-            <q-checkbox v-model="agregarRecibo" label="Agregar Recibo" class="q-mt-md">
+            <q-checkbox v-model="agregarRecibo" label="Agregar Recibo" class="q-mt-md"> <!--esto pasarlo para la vista de pago-->
               <template v-slot:after>
                 <div class="text-caption text-orange-5 q-ml-sm">
                   Facilita la devolución del producto en cuestión
@@ -134,7 +133,7 @@
               </template>
             </q-checkbox>
 
-            <!-- Notificación -->
+            <!-- Notificación --- si se usa esto ay que crear una coleccion --> 
             <div class="row items-center q-mt-md">
               <q-icon name="notifications_none" size="md" class="q-mr-sm" />
               <div class="text-caption">
@@ -147,23 +146,8 @@
           <div class="contemMmedium">
             <!-- Descripción principal -->
             <div class="text-body1 q-mb-md">
-              {{ producto.descripcion }}
+              {{ dataProduct.description }}
             </div>
-
-            
-
-            <br>
-
-            <!-- Detalles del producto -->
-            <q-card class="bg-grey-3 q-pa-md">
-              <div class="text-subtitle2 text-negative q-mb-sm">Detalles</div>
-              <div v-for="(valor, clave) in producto.detalles" :key="clave" class="q-mb-sm">
-                <span class="text-bold" :class="colorDetalles(clave)">{{ clave }}:</span> {{ valor }}
-              </div>
-
-              <div class="q-mt-md text-bold text-red">Sobre este artículo</div>
-              <div class="q-mt-sm" v-html="producto.sobreEsteArticulo"></div>
-            </q-card>
           </div>
         </div>
 
@@ -174,90 +158,65 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useQuasar } from 'quasar'
+import { useQuasar, Notify } from 'quasar'
+import { useStore } from '../stores/store.js'
+import { putData } from '../service/service.js'
+const store = useStore()
 import { useRoute } from 'vue-router'
-
 const $q = useQuasar()
 const route = useRoute()
 
 // Variables de estado
-const producto = ref({
-  id: '',
-  nombre: '',
-  descripcion: '',
-  precio: 0,
-  calificacion: 0,
-  disponibilidad: 'DISPONIBLE',
-  imagenes: [],
-  detalles: {},
-  politicaDevolucion: 'Reintegro o Reemplazo en 30 días',
-  resenas: []
-})
-
-const search = ref('')
-const rightDrawerOpen = ref(false)
-const cantidad = ref(1)
-const cantidades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const dataProduct = ref({});
 const agregarRecibo = ref(false)
-const nuevoComentario = ref('')
-const imagenSeleccionada = ref('')
-const ratingModel = ref(0)
-const ratingProducto = ref(0)
+const review = ref('')
+const selectedImage = ref('')
+const productQualification = ref(0)
 
 // Funciones
-const formatearPrecio = (precio) => {
+const formatPrice = (precio) => {
   return '$' + precio.toLocaleString('es-CO')
 }
 
-const seleccionarImagen = (index) => {
-  imagenSeleccionada.value = producto.value.imagenes[index]
+const selectImage = (index) => {
+  selectedImage.value = dataProduct.value.images[index].urlImage
 }
 
-const agregarComentario = () => {
-  if (nuevoComentario.value.trim() === '') {
-    $q.notify({
-      message: 'Por favor escribe un comentario',
-      color: 'negative',
-      position: 'top'
+async function addReview(id){
+  try {
+    const response = await putData(`/product/reviews/${id}`,{
+      userId:store.userId,
+      stars:productQualification.value,
+      message:review.value
     })
-    return
+
+    if(response){
+      Notify.create({
+        type:'positive',
+        message:'Reseña guardada'
+      })
+      dataProduct.value.reviews = response.product.reviews
+      console.log("data product al agregar reseña",dataProduct.value);
+      console.log("reseña" , response.product);
+    }
+
+  } catch (error) {
+    console.log(error);
+    Notify.create({
+        type:'negative',
+        message:'Error al crear reseña'
+      })
   }
-
-  producto.value.resenas.push({
-    usuario: 'Usuario Anónimo',
-    comentario: nuevoComentario.value,
-    calificacion: ratingModel.value || 5
-  })
-
-  actualizarCalificacionPromedio()
-  nuevoComentario.value = ''
-  ratingModel.value = 0
-
-  $q.notify({
-    message: 'Reseña agregada con éxito',
-    color: 'positive',
-    position: 'top'
-  })
 }
 
-const actualizarCalificacionPromedio = () => {
-  if (producto.value.resenas.length === 0) {
-    producto.value.calificacion = 0
-    ratingProducto.value = 0
-    return
-  }
-  
-  const suma = producto.value.resenas.reduce((acc, review) => acc + review.calificacion, 0)
-  producto.value.calificacion = parseFloat((suma / producto.value.resenas.length).toFixed(1))
-  ratingProducto.value = producto.value.calificacion
-}
 
-const agregarAlCarrito = () => {
-  $q.notify({
-    message: `Agregado al carrito: ${cantidad.value} unidad(es)`,
-    color: 'positive',
-    position: 'top'
-  })
+const addToTheCart = (product) => {
+  store.addToCart(product)
+  Notify.create({
+        type: "positive",
+        message: "Producto agregado al carrito"
+      })
+  console.log('Agregado al carrito:', product);
 }
 
 const comprarAhora = () => {
@@ -268,47 +227,19 @@ const comprarAhora = () => {
   })
 }
 
-const disponibilidadClase = computed(() => {
-  return producto.value.disponibilidad === 'DISPONIBLE' ? 'text-positive' : 'text-negative'
+const isProductAvailable = computed(() => {
+  return dataProduct.value.Stock >= 0 ? 'text-positive' : 'text-negative'
 })
 
-const colorDetalles = (clave) => {
-  const colores = {
-    'Marca': 'text-primary',
-    'Color': 'text-blue',
-    'Stock': 'text-green',
-    'Categoría': 'text-purple'
-  }
-  return colores[clave] || 'text-dark'
+
+function obtainDataProduct(){
+  dataProduct.value = JSON.parse(route.query.data || '{}')
+  console.log("detalles del producto" , dataProduct);
 }
 
 // Inicialización
 onMounted(() => {
-  const productoData = JSON.parse(route.query.data || '{}')
-  
-  if (productoData) {
-    const imagenesMapeadas = productoData.images?.map(img => img.urlImage) || []
-    
-    producto.value = {
-      id: productoData._id,
-      nombre: productoData.name,
-      descripcion: productoData.description,
-      precio: productoData.price,
-      imagenes: imagenesMapeadas,
-      detalles: {
-        'Marca': productoData.brand || 'Genérica',
-        'Stock': productoData.stock || 0
-      },
-      resenas: productoData.reviews?.map(r => ({
-        usuario: r.usuario || 'Anónimo',
-        comentario: r.comentario,
-        calificacion: r.calificacion || 5
-      })) || []
-    }
-    
-    imagenSeleccionada.value = imagenesMapeadas[0] || ''
-    actualizarCalificacionPromedio()
-  }
+  obtainDataProduct();
 })
 </script>
 <style scoped>

@@ -1,75 +1,142 @@
 <template>
-  <div class="checkout-container">
-    <h2>Tu pedido</h2>
-    <table class="order-table">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Subtotal</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in orderItems" :key="index">
-          <td>{{ item.name }} × {{ item.quantity }}</td>
-          <td>{{ formatPrice(item.price * item.quantity) }}</td>
-        </tr>
-        <tr>
-          <td><strong>Subtotal</strong></td>
-          <td><strong>{{ formatPrice(total) }}</strong></td>
-        </tr>
-        <tr>
-          <td><strong>Total</strong></td>
-          <td><strong>{{ formatPrice(total) }}</strong></td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="fullscreen-checkout">
+    <!-- Header con logo y pasos -->
+    <header class="checkout-header">
+      <div class="logo">
+        <i class="fas fa-graduation-cap"></i>
+        <span>ACADEMIA ONLINE</span>
+      </div>
+      <div class="steps">
+        <div class="step completed">
+          <div class="step-number">1</div>
+          <div class="step-name">Carrito</div>
+        </div>
+        <div class="step completed">
+          <div class="step-number">2</div>
+          <div class="step-name">Información</div>
+        </div>
+        <div class="step active">
+          <div class="step-number">3</div>
+          <div class="step-name">Pago</div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-name">Confirmación</div>
+        </div>
+      </div>
+    </header>
 
-    <div class="payment-info">
-      <h3>Transferencia bancaria directa</h3>
-      <p>
-        Realiza tu pago directamente en nuestra cuenta bancaria. Por favor, usa el número del pedido como referencia de pago. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
-      </p>
-    </div>
+    <!-- Contenido principal -->
+    <main class="checkout-main">
+      <!-- Sección izquierda - Resumen del pedido -->
+      <div class="order-summary">
+        <div class="summary-header">
+          <h2><i class="fas fa-shopping-bag"></i> Tu pedido</h2>
+          <div class="order-number">Pedido #12345</div>
+        </div>
 
-    <div class="customer-info">
-      <p><strong>Nombre:</strong> Juan Pérez</p>
-      <p><strong>Email:</strong> juan@example.com</p>
-    </div>
+        <div class="order-items">
+          <div class="order-item">
+            <div class="item-image" style="background-color: #FF9A8B;"></div>
+            <div class="item-details">
+              <h3>Curso de Vue.js Avanzado</h3>
+              <p class="item-meta">Acceso por 12 meses</p>
+              <div class="item-quantity">1 × 89.00€</div>
+            </div>
+            <div class="item-price">89.00€</div>
+          </div>
 
-    <label class="terms">
-      <input type="checkbox" v-model="acceptedTerms" />
-      He leído y estoy de acuerdo con los <a href="#">términos y condiciones</a> de la web
-    </label>
+          <div class="order-item">
+            <div class="item-image" style="background-color: #4FC0D0;"></div>
+            <div class="item-details">
+              <h3>Curso de Diseño UX/UI</h3>
+              <p class="item-meta">Acceso por 12 meses</p>
+              <div class="item-quantity">1 × 65.00€</div>
+            </div>
+            <div class="item-price">65.00€</div>
+          </div>
+        </div>
 
-    <div ref="paypalRef" class="paypal-button"></div>
+        <div class="promo-section">
+          <input type="text" placeholder="Código promocional" class="promo-input">
+          <button class="apply-btn">Aplicar</button>
+        </div>
+
+        <div class="order-totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span>154.00€</span>
+          </div>
+          <div class="total-row">
+            <span>Descuento</span>
+            <span class="discount">-10.50€</span>
+          </div>
+          <div class="total-row grand-total">
+            <span>Total</span>
+            <span>143.50€</span>
+          </div>
+        </div>
+
+        <div class="guarantee-banner">
+          <i class="fas fa-shield-alt"></i>
+          <span>Garantía de satisfacción de 30 días</span>
+        </div>
+      </div>
+
+      <!-- Sección derecha - Método de pago -->
+      <div class="payment-section">
+        <div class="payment-container">
+          <h2><i class="fas fa-credit-card"></i> Método de pago</h2>
+          
+          <div class="payment-method selected">
+            <div class="method-logo">
+              <i class="fab fa-paypal"></i>
+            </div>
+            <div class="method-info">
+              <h3>PayPal</h3>
+              <p>Paga con tu cuenta PayPal o tarjeta</p>
+            </div>
+          </div>
+
+          <div class="paypal-button-container">
+            <div ref="paypalRef" class="paypal-button"></div>
+            <p class="secure-payment">
+              <i class="fas fa-lock"></i> Pago seguro con encriptación SSL
+            </p>
+          </div>
+
+          <div class="customer-support">
+            <h3><i class="fas fa-headset"></i> ¿Necesitas ayuda?</h3>
+            <p>Contacta con nuestro equipo de soporte en <strong>soporte@academiaonline.com</strong></p>
+            <p>Horario: L-V de 9:00 a 18:00</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="checkout-footer">
+      <div class="footer-links">
+        <a href="#">Términos y condiciones</a>
+        <a href="#">Política de privacidad</a>
+        <a href="#">Reembolsos</a>
+      </div>
+      <div class="copyright">
+        © 2023 Academia Online. Todos los derechos reservados.
+      </div>
+    </footer>
   </div>
 </template>
-
 <script>
 import { ref, onMounted } from 'vue'
 
 export default {
-  data() {
-    return {
-      orderItems: [
-        { name: 'Curso 1', quantity: 1, price: 8.0 }
-      ],
-      acceptedTerms: false,
-      paypalRef: null
-    }
-  },
-  computed: {
-    total() {
-      return this.orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    }
-  },
-  methods: {
-    formatPrice(value) {
-      return `${value.toFixed(2)}€`
-    },
-    renderPayPalButton() {
+  setup() {
+    const paypalRef = ref(null)
+
+    const renderPayPalButton = () => {
       if (!window.paypal || !window.paypal.Buttons) {
-        setTimeout(this.renderPayPalButton, 250)
+        setTimeout(renderPayPalButton, 250)
         return
       }
 
@@ -77,31 +144,53 @@ export default {
         createOrder: (data, actions) => {
           return actions.order.create({
             purchase_units: [{
-              amount: { value: this.total.toFixed(2) }
+              amount: {
+                value: '143.50',
+                currency_code: 'EUR',
+                breakdown: {
+                  item_total: { value: '154.00' },
+                  discount: { value: '10.50' }
+                }
+              },
+              items: [
+                {
+                  name: 'Curso de Vue.js Avanzado',
+                  unit_amount: { value: '89.00' },
+                  quantity: '1'
+                },
+                {
+                  name: 'Curso de Diseño UX/UI',
+                  unit_amount: { value: '65.00' },
+                  quantity: '1'
+                }
+              ]
             }]
           })
         },
         onApprove: async (data, actions) => {
           const details = await actions.order.capture()
-          alert(`✅ Pago completado por ${details.payer.name.given_name}`)
-          this.savePurchase(details)
+          alert(`Pago completado por ${details.payer.name.given_name}`)
         },
         onError: (err) => {
-          console.error('❌ Error en PayPal:', err)
+          console.error('Error en PayPal:', err)
+        },
+        style: {
+          layout: 'vertical',
+          color: 'blue',
+          shape: 'rect',
+          label: 'paypal',
+          tagline: false
         }
-      }).render(this.paypalRef)
-    },
-    savePurchase(details) {
-      console.log('📝 Compra registrada:', {
-        metodo: 'PayPal',
-        detalles: details,
-        monto: this.total
-      })
+      }).render(paypalRef.value)
     }
-  },
-  mounted() {
-    this.paypalRef = this.$refs.paypalRef
-    this.renderPayPalButton()
+
+    onMounted(() => {
+      renderPayPalButton()
+    })
+
+    return {
+      paypalRef
+    }
   }
 }
 </script>
@@ -109,5 +198,6 @@ export default {
 <style scoped>
 @import url("../style/paymentGateway.css");
 </style>
+
 
 

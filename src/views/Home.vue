@@ -74,47 +74,80 @@
     </div>
     
 
-    <!-- Footer -->
-    <div
-      class="row justify-around items-start q-gutter-md full-width"
-      id="footer"
-    >
-      <div class="redes">
-        <div class="text-bold q-mb-sm">Redes Sociales</div>
-        <q-btn icon="fa-brands fa-facebook" flat round color="primary" />
-        <q-btn icon="fa-brands fa-x-twitter" flat round color="dark" />
-        <q-btn icon="fa-brands fa-instagram" flat round color="accent" />
-        <q-btn icon="fa-brands fa-youtube" flat round color="red" />
-      </div>
-
-      <div class="contacto">
-        <div class="text-bold q-mb-sm">Contacto</div>
-        <div class="text-caption">
-          <q-icon name="email" class="q-mr-xs" /> colpromarket@gmail.com
-        </div>
-        <div class="text-caption">
-          <q-icon name="phone" class="q-mr-xs" /> +57 123 456 7890
-        </div>
-        <div class="text-caption">
-          <q-icon name="location_on" class="q-mr-xs" /> Santander, Colombia
+   
+<!-- Footer -->
+<footer class="footer-container">
+  <div class="q-container">
+    <div class="row q-col-gutter-lg">
+      <!-- Sección Sobre Nosotros -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="footer-section animated-item animated-delay-1">
+          <h3>Sobre Nosotros</h3>
+          <p>ColproMarket es tu destino online para encontrar los mejores productos colombianos con la mejor calidad y precio.</p>
+          <div class="social-icons">
+            <a href="#" class="social-icon facebook"><q-icon name="fa-brands fa-facebook" /></a>
+            <a href="#" class="social-icon twitter"><q-icon name="fa-brands fa-x-twitter" /></a>
+            <a href="#" class="social-icon instagram"><q-icon name="fa-brands fa-instagram" /></a>
+            <a href="#" class="social-icon youtube"><q-icon name="fa-brands fa-youtube" /></a>
+          </div>
         </div>
       </div>
 
-      <div class="informacion">
-        <div class="text-bold q-mb-sm">Información</div>
-        <div class="text-caption">Envíos</div>
-        <div class="text-caption">Política de devoluciones</div>
-        <div class="text-caption">Nuestra marca</div>
-        <div class="text-caption">Preguntas frecuentes</div>
+      <!-- Sección Enlaces Rápidos -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="footer-section animated-item animated-delay-2">
+          <h3>Enlaces Rápidos</h3>
+          <a href="#" class="footer-link">Inicio</a>
+          <a href="#" class="footer-link">Productos</a>
+          <a href="#" class="footer-link">Ofertas Especiales</a>
+          <a href="#" class="footer-link">Nuestra Marca</a>
+          <a href="#" class="footer-link">Preguntas Frecuentes</a>
+        </div>
       </div>
 
-      <div class="legal">
-        <div class="text-bold q-mb-sm">Legal</div>
-        <div class="text-caption">Términos y condiciones</div>
-        <div class="text-caption">Política de privacidad</div>
-        <div class="text-caption">Cookies</div>
+      <!-- Sección Contacto -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="footer-section animated-item animated-delay-3">
+          <h3>Contacto</h3>
+          <div class="footer-contact-item">
+            <i class="q-icon material-icons">email</i>
+            <span>colpromarket@gmail.com</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="q-icon material-icons">phone</i>
+            <span>+57 123 456 7890</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="q-icon material-icons">location_on</i>
+            <span>Santander, Colombia</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección Legal -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="footer-section animated-item animated-delay-4">
+          <h3>Legal</h3>
+          <a href="#" class="footer-link">Términos y Condiciones</a>
+          <a href="#" class="footer-link">Política de Privacidad</a>
+          <a href="#" class="footer-link">Política de Devoluciones</a>
+          <a href="#" class="footer-link">Cookies</a>
+        </div>
       </div>
     </div>
+
+    <!-- Sección Copyright -->
+    <div class="copyright-section">
+      <p>&copy; 2025 ColproMarket. Todos los derechos reservados.</p>
+      <div class="payment-methods">
+        <q-icon name="fa-brands fa-cc-visa" size="24px" />
+        <q-icon name="fa-brands fa-cc-mastercard" size="24px" />
+        <q-icon name="fa-brands fa-cc-paypal" size="24px" />
+        <q-icon name="fa-brands fa-cc-amex" size="24px" />
+      </div>
+    </div>
+  </div>
+</footer>
 
     <!-- Modal Login -->
     <q-dialog v-model="loginDialog" persistent>
@@ -175,6 +208,7 @@ import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
 import { Notify } from 'quasar';
+import ColorThief from 'colorthief';
 const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);

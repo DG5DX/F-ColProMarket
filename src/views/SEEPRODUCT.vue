@@ -1,7 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
- 
-
+  <q-layout>
     <!-- Contenedor de página -->
     <q-page-container class="theContainer">
       <div class="ContainerMedium">
@@ -122,16 +120,6 @@
             <!-- Botones -->
             <q-btn label="Agregar al carrito" class="bg-dark text-white full-width q-mb-sm" unelevated
               @click="addToTheCart(dataProduct)" />
-            <q-btn label="Comprar Ahora" class="bg-dark text-white full-width" unelevated @click="comprarAhora" />
-
-            <!-- Checkbox -->
-            <q-checkbox v-model="agregarRecibo" label="Agregar Recibo" class="q-mt-md"> <!--esto pasarlo para la vista de pago-->
-              <template v-slot:after>
-                <div class="text-caption text-orange-5 q-ml-sm">
-                  Facilita la devolución del producto en cuestión
-                </div>
-              </template>
-            </q-checkbox>
 
             <!-- Notificación --- si se usa esto ay que crear una coleccion --> 
             <div class="row items-center q-mt-md">

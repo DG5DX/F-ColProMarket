@@ -28,12 +28,6 @@
           </q-item>
           <q-item clickable v-ripple class="drawer-item">
             <q-item-section avatar>
-              <q-icon name="groups" />
-            </q-item-section>
-            <q-item-section>Comunidad</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
               <q-icon name="local_offer" />
             </q-item-section>
             <q-item-section>Rebajas</q-item-section>
@@ -101,7 +95,6 @@
           </div>
           <div id="nav-buttons">
             <q-btn push label="Productos" color="grey" />
-            <q-btn push label="Comunidad" color="grey" />
             <q-btn push label="Rebajas" color="grey" />
             <q-btn push label="Contacto" color="grey" />
           </div>

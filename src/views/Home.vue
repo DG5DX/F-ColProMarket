@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-  
+    <DRAWER/>
     <!-- Contenido principal -->
     <q-page-container>
       <div class="Home">
@@ -211,6 +211,7 @@ import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
 import { Notify } from 'quasar';
 import ColorThief from 'colorthief';
+import DRAWER from './DRAWER.vue';
 const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);

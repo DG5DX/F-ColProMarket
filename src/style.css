@@ -4,8 +4,21 @@
   --three-color--:#C4D9FF;
   --four-color--:#C5BAFF;
   --five-color--:#8E7DBE;
+  --six-color--:#D8D5E6;
+  --seven-color--:#490cf2;
 }
 
 body{
-  background-color: var(--three-color--);
+  background-color: var(--six-color--);
+}
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
 }

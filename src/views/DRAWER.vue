@@ -1,268 +1,179 @@
 <template>
-    <q-layout view="hHh lpR fFf" id="body">
-      <!-- Drawer -->
-      <q-drawer
-        v-model="rightDrawerOpen"
-        side="right"
-        :show-if-above="false"
-        :breakpoint="900"
-        bordered
-        class="custom-drawer"
-      >
-        <div class="drawer-header q-pa-md flex items-center">
-          <img
-            src="../assets/MiniLogo.jpeg"
-            alt="Logo"
-            class="mini-logo q-mr-md"
+  <q-layout view="hHh LpR fFf">
+    <q-header bordered class="header-tech">
+      <q-toolbar>
+        <div class="row items-center">
+          <q-btn 
+            dense 
+            flat 
+            round 
+            icon="menu" 
+            @click="toggleLeftDrawer"
+            class="menu-btn q-mr-sm"
           />
-          <h3 class="text-h6 q-ma-none">Menú</h3>
+          <q-avatar square size="md">
+            <img src="../assets/MiniLogo.jpeg">
+          </q-avatar>
+          <q-toolbar-title class="tech-title">
+            ColProductMarket
+          </q-toolbar-title>
         </div>
-        <q-separator />
-        <q-list>
-          <!-- Menú de navegación -->
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="shopping_bag" />
-            </q-item-section>
-            <q-item-section>Productos</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="local_offer" />
-            </q-item-section>
-            <q-item-section>Rebajas</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="contact_mail" />
-            </q-item-section>
-            <q-item-section>Contacto</q-item-section>
-          </q-item>
-  
-          <hr />
-  
-          <!-- Formulario de autenticación -->
-          <q-item clickable v-ripple class="drawer-item" @click="Dialog('openRegister')">
-                <q-item-section avatar>
-              <q-icon name="login" />
-            </q-item-section>
-            <q-item-section>Iniciar Sesión</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item" @click="Dialog('openLogin')">
-                <q-item-section avatar>
-              <q-icon name="person_add" />
-            </q-item-section>
-            <q-item-section>Registrarse</q-item-section>
-          </q-item>
-  
-          <q-separator class="q-my-sm" />
-  
-          <!-- Información adicional -->
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="help_outline" />
-            </q-item-section>
-            <q-item-section>Ayuda</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="wallet" />
-            </q-item-section>
-            <q-item-section>Metodo De Pago</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple class="drawer-item">
-            <q-item-section avatar>
-              <q-icon name="shopping_cart" />
-            </q-item-section>
-            <q-item-section>Carrito</q-item-section>
-          </q-item>
-          <q-separator class="q-my-sm" />
-        </q-list>
-      </q-drawer>
-  
-      <!-- Header -->
-      <q-header elevated>
-        <div id="app">
-          <router-link to="/" id="logo" style="text-decoration: none">
-            <img src="../assets/Logo ColProMarket.jpeg" alt="logo" />
-          </router-link>
-          <div id="search">
-            <q-input v-model="search" filled type="search" placeholder="Buscar">
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input>
-          </div>
-          <div id="nav-buttons">
-            <q-btn push label="Productos" color="grey" />
-            <q-btn push label="Rebajas" color="grey" />
-            <q-btn push label="Contacto" color="grey" />
-          </div>
-          <div id="menu">
-            <q-btn
-              color="dark"
-              icon="menu"
-              @click="rightDrawerOpen = !rightDrawerOpen"
-              flat
-              round
-            />
-          </div>
+
+        <div class="search-container">
+          <q-input
+            v-model="searchQuery"
+            dense
+            standout
+            bg-color="white"
+            placeholder="Buscar productos electrónicos..."
+            class="search-input"
+            input-class="text-black"
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+          </q-input>
         </div>
-      </q-header>
-  
-      <!-- Contenido principal -->
-      <q-page-container>
-        <router-view />
-      </q-page-container>
-    </q-layout>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue'
-  
-  const rightDrawerOpen = ref(false)
-  const search = ref("")
-  
-  function Dialog(action) {
-    switch (action) {
-      case "openLogin":
-        // Lógica para abrir el diálogo de Login
-        break
-      case "openRegister":
-        // Lógica para abrir el diálogo de Registro
-        break
-      case "closeLogin":
-        // Lógica para cerrar el diálogo de Login
-        break
-      case "closeRegister":
-        // Lógica para cerrar el diálogo de Registro
-        break
+
+        <!-- Menú superior derecho -->
+        <div class="row items-center menu-right">
+          <q-btn flat label="Ingresar" to="/login" class="text-white" />
+          <q-btn flat label="Registro" to="/register" class="text-white" />
+          <q-btn flat round icon="shopping_cart" class="text-white">
+            <q-badge color="orange" floating>3</q-badge>
+          </q-btn>
+        </div>
+      </q-toolbar>
+
+      <!-- Menú de categorías -->
+      <q-tabs align="center" class="categories-tabs">
+        <q-route-tab label="PRODUCTOS" to="/productos" />
+        <q-route-tab label="COMUNIDAD" to="/comunidad" />
+        <q-route-tab label="REBAJAS" to="/rebajas" />
+        <q-route-tab label="CONTACTO" to="/contacto" />
+      </q-tabs>
+    </q-header>
+
+    <q-drawer v-model="leftDrawerOpen" side="left" bordered>
+      <q-list>
+        <q-item-label header>Menú</q-item-label>
+        <q-item clickable to="/productos">
+          <q-item-section avatar>
+            <q-icon name="shopping_bag" />
+          </q-item-section>
+          <q-item-section>Productos</q-item-section>
+        </q-item>
+        <q-item clickable to="/comunidad">
+          <q-item-section avatar>
+            <q-icon name="groups" />
+          </q-item-section>
+          <q-item-section>Comunidad</q-item-section>
+        </q-item>
+        <q-item clickable to="/rebajas">
+          <q-item-section avatar>
+            <q-icon name="local_offer" />
+          </q-item-section>
+          <q-item-section>Rebajas</q-item-section>
+        </q-item>
+        <q-item clickable to="/contacto">
+          <q-item-section avatar>
+            <q-icon name="contact_mail" />
+          </q-item-section>
+          <q-item-section>Contacto</q-item-section>
+        </q-item>
+      </q-list>
+    </q-drawer>
+
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+  </q-layout>
+</template>
+
+<script>
+import { ref } from 'vue'
+
+export default {
+  setup () {
+    const leftDrawerOpen = ref(false)
+    const searchQuery = ref('')
+
+    return {
+      leftDrawerOpen,
+      searchQuery,
+      toggleLeftDrawer () {
+        leftDrawerOpen.value = !leftDrawerOpen.value
+      }
     }
+
   }
-  </script>
-  
-  <style scoped>
-  #body {
-    background: linear-gradient(
-      to right,
-      rgba(255, 255, 0, 0.5),
-      rgba(0, 0, 255, 0.5),
-      rgba(255, 0, 0, 0.5)
-    );
-  }
-  
-  #app {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    padding: 5px;
-    gap: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  #logo img {
-    max-height: 10vh;
-    object-fit: contain;
-  }
-  
-  #search {
-    flex: 1;
-    min-width: 200px;
-    max-width: 400px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  #nav-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  #menu {
-    margin-left: auto;
-  }
-  
-  .custom-drawer {
-    background: linear-gradient(to bottom, #ffffff, #f9f9f9);
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .drawer-header {
-    background-color: #f1f1f1;
-    padding: 5px;
-    border-bottom: 1px solid #ddd;
+}
+</script>
+
+<style scoped>
+.header-tech {
+  background: linear-gradient(to right, #1a2a6c, #204a87);
+  height: 112px;
+}
+
+.tech-title {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.search-container {
+  flex-grow: 1;
+  max-width: 600px;
+  margin: 0 20px;
+}
+
+.search-input {
+  border-radius: 4px;
+}
+
+.categories-tabs {
+  background: rgba(0,0,0,0.1);
+}
+
+.categories-tabs .q-tab {
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0 16px;
+}
+
+.menu-right {
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .tech-title {
+    max-width: 120px;
+    font-size: 1.2rem;
   }
   
-  .drawer-item {
-    padding: 10px 16px;
-    font-size: 15px;
-    border-radius: 8px;
-    margin: 4px 8px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .drawer-item:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .drawer-item:active {
-    background-color: #e0e0e0;
-  }
-  
-  #footer {
-    background-color: #f9f9f9;
-  }
-  
-  .mini-logo {
-    height: 40px;
-    object-fit: contain;
-    border-radius: 4px;
-  }
-  
-  .q-btn-group {
-    display: flex;
-    justify-content: space-around;
-  }
-  
-  .q-btn {
-    margin-top: 10px;
-  }
-  
-  .q-input {
+  .search-container {
+    order: 3;
     width: 100%;
+    margin: 8px 0;
+    max-width: 100%;
   }
   
-  @media (max-width: 990px) {
-    #nav-buttons {
-      margin: 0%;
-    }
-  
-    #menu {
-      display: block;
-    }
+  .menu-right .q-btn:not(:last-child) {
+    display: none;
   }
   
-  @media (max-width: 960px) {
-    #nav-buttons {
-      display: none;
-    }
+  .categories-tabs .q-tab {
+    padding: 0 8px;
+    font-size: 0.8rem;
+
   }
-  
-  @media (max-width: 500px) {
-    #logo img {
-      max-height: 6vh;
-    }
-  }
-  
-  @media (max-width: 550px) {
-    .especial .especial-card {
-      min-width: 90%;
-    }
-  }
-  </style>
-  
+}
+</style>

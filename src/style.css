@@ -6,3 +6,6 @@
   --five-color--:#8E7DBE;
 }
 
+body{
+  background-color: var(--three-color--);
+}

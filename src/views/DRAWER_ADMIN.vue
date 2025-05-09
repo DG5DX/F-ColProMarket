@@ -1,5 +1,5 @@
 <template>
-    <q-layout view="hHh lpR fFf" id="body">
+    <q-layout view="hHh lpR fFf" >
       <!-- Drawer -->
       <q-drawer
         v-model="rightDrawerOpen"
@@ -133,14 +133,7 @@
   </script>
   
   <style scoped>
-  #body {
-    background: linear-gradient(
-      to right,
-      rgba(255, 255, 0, 0.5),
-      rgba(0, 0, 255, 0.5),
-      rgba(255, 0, 0, 0.5)
-    );
-  }
+
   
   #app {
     display: flex;

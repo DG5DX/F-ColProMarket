@@ -1,5 +1,93 @@
 
-
+/* From Uiverse.io by CristianMontoya98 */ 
+/* Estilos para el botón de eliminación */
+.remove-btn {
+    width: 150px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Centra el contenido */
+    background: #e62222;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+    position: relative;  /* Para contener elementos absolutos */
+    overflow: hidden;    /* Para que nada se salga del botón */
+  }
+  
+  .remove-btn span {
+    transition: 200ms;
+  }
+  
+  .remove-btn .btn-label {
+    color: white;
+    font-weight: bold;
+  }
+  
+  .remove-btn .btn-icon {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    width: 0;  /* Oculto por defecto */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e62222;
+    transition: width 0.2s ease;
+  }
+  
+  .remove-btn svg {
+    width: 15px;
+    height: 15px;
+    fill: white;
+  }
+  
+  .remove-btn:hover .btn-icon {
+    width: 40px;  /* Se muestra al hacer hover */
+  }
+  
+  .remove-btn:active .btn-icon svg {
+    transform: scale(0.8);
+  }
+.btn {
+    width:15.5em;
+    height: 2.3em;
+    margin-top:3em;
+    background: var(--five-color--);
+    color: white;
+    border: none;
+    border-radius: 0.625em;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+   }
+   
+   button:hover {
+    color: var(--five-color--);
+   }
+   
+   button:after {
+    content: "";
+    background: white;
+    position: absolute;
+    z-index: -1;
+    left: -20%;
+    right: -20%;
+    top: 0;
+    bottom: 0;
+    transform: skewX(-45deg) scale(0, 1);
+    transition: all 0.5s;
+   }
+   
+   button:hover:after {
+    transform: skewX(-45deg) scale(1, 1);
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+   }
 
 .q-mb-md {
     width: 50%;
@@ -60,15 +148,13 @@
     margin-top: 2%;
     width: 90%;
     min-height: 90vh;
-    background-color: var(--five-color--);
+    background-color: var(--one-color--);
     display: grid;
     grid-template-rows: 20% 80%;
     border-radius: 15px;
 }
   
-.theContainer {
-    background-color: var(--five-color) 
-}
+
 
 .empty-cart {
     margin: 10% 8%;

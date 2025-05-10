@@ -4,6 +4,7 @@
         <q-page-container class="theContainer">
             <div class="containerMedium">
                 <div class="titleOne">
+        <q-btn icon="arrow_back" style="margin: 1%;" to="/"></q-btn>
                     <label class="Title">TU CARRITO</label><br>
                     <label class="Text">Los artículos de tu carrito no están reservados. Completa tu compra para hacerte
                         con

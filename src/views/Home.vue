@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-    <mainDrawer/>
+    <mainDrawer @open-register-dialog="registerDialog = true" />
       <!-- Contenido principal -->
     <div>
       <div class="Home">
@@ -179,25 +179,32 @@
     </q-dialog>
 
     <!-- Modal Register -->
-    <q-dialog v-model="registerDialog" persistent>
-      <q-card style="min-width: 400px; max-width: 600px">
-        <q-card-section>
-          <div class="text-h6">Registrarse</div>
-        </q-card-section>
+    <q-dialog class="form-container" v-model="registerDialog">
+  <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
+    <q-card-section class="q-pb-none">
+      <p class="title">Registrate</p>
+    </q-card-section>
 
-        <q-card-section>
+    <q-card-section class="q-pt-none">
+      <form class="form q-gutter-md">
+        <div class="input-group">
           <q-input v-model="user.name" label="Nombre" type="text" />
-          <q-input v-model="user.email" label="Correo Electrónico" type="email" />
+          <q-input v-model="user.email" label="Correo Electronico" type="text" />
           <q-input v-model="user.password" label="Contraseña" type="password" />
-          <q-input v-model="user.ConfirmPassword" label="Confirmar Contraseña" type="password" />
-        </q-card-section>
-
-        <q-card-actions>
-          <q-btn label="Cerrar" color="secondary" @click="Dialog('closeRegister')" />
-          <q-btn label="Registrarse" color="primary" @click="registerUser()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <q-input type="password" name="password" id="password" placeholder="" />
+          <div class="forgot q-mt-sm">
+            <a rel="noopener noreferrer" href="#">Forgot Password ?</a>
+          </div>
+        </div>
+        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--four-color--);" @click="registerUser()" />
+      </form>
+    </q-card-section>
+  </q-card>
+</q-dialog>
   </q-layout>
 </template>
 
@@ -208,8 +215,8 @@ import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
 import { Notify } from 'quasar';
-import ColorThief from 'colorthief';
 const store = useStore();
+store.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2ODE2NjJkZTVkNWM4ZTk2ZWU5YTcxZDEiLCJpYXQiOjE3NDY4MzAyNDUsImV4cCI6MTc0Njg1OTA0NX0.h2PZjip_K1jSWC2d9gEdCNBK91iuZ49MQGP1j7_JFMY"
 const slide = ref(1);
 const autoplay = ref(true);
 const loginDialog = ref(false);
@@ -244,12 +251,23 @@ const imagenesCarrusel = ref([
 async function registerUser() {
   try {
     if(user.value.password !== user.value.ConfirmPassword){
+      Notify.create({
+        type:'negative',
+        message:'Las contraseñas deben ser iguales'
+      })
       throw new Error ('Contraseñas deben ser iguales')
     }
-    console.log(user.value.name);
+
     const response = await postData("/users",{
       data:toRaw(user.value)
     })
+
+    if(response.success == true){
+      Notify.create({
+        type:'positive',
+        message:'Registro exitoso'
+      })
+    }
 
     console.log(response);
     Dialog('closeRegister');

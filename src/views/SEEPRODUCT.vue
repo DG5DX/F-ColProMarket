@@ -5,6 +5,7 @@
     <q-page-container class="theContainer">
       <div class="ContainerMedium">
         <div class="start">
+        <q-btn icon="arrow_back" style="margin: 5%;" to="/"></q-btn>
           <div class="boxOne">
             <div class="sideL">
               <img v-for="(image, index) in dataProduct.images" :key="index" :class="`thumbnail ${index + 1}`"

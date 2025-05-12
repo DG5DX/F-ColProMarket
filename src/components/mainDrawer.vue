@@ -92,6 +92,7 @@ function toggleLeftDrawer() {
 .header-tech {
     background: var(--five-color--);
     height: 112px;
+    position: fixed;
 }
 
 .tech-title {

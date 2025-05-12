@@ -1,43 +1,9 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-    <!-- Drawer izquierdo fijo -->
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      :width="250"
-      class="bg-grey-2"
-    >
-      <!-- Encabezado del drawer -->
-      <div class="drawer-header q-pa-md bg-primary text-white">
-        <div class="text-h6">Menú de Administración</div>
-        <div class="text-subtitle2">Sistema de Productos</div>
-        <q-avatar size="60px" class="q-mt-sm">
-          <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" />
-        </q-avatar>
-      </div>
-
-      <!-- Botones del drawer -->
-      <q-list padding class="q-mt-md">
-        <q-item clickable v-ripple>
-          <q-item-section avatar>
-            <q-icon name="inventory_2" />
-          </q-item-section>
-          <q-item-section> Productos </q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple>
-          <q-item-section avatar>
-            <q-icon name="category" />
-          </q-item-section>
-          <q-item-section> Compras </q-item-section>
-        </q-item>
-      </q-list>
-    </q-drawer>
-
+    <admin-drawer />
     <q-page-container>
       <q-page class="q-pa-md flex flex-center">
-        <div
+        <q-card
           class="q-pa-md shadow-2 q-mx-auto"
           style="width: 100%; background-color: white"
         >
@@ -51,13 +17,14 @@
           <div class="row q-mb-md q-gutter-md">
             <!-- Total de Productos -->
             <q-card class="col metric-card bg-blue-1">
-              <q-card-section >
+              <q-card-section>
                 <div class="text-h6">Total de Productos</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="inventory_2" size="md" class="metric-icon" />
                 <q-label class="text-h2">{{ dataProducts.count || 0 }}</q-label>
               </q-card-section>
             </q-card>
+            
 
             <!-- Total de Pedidos -->
             <q-card class="col metric-card bg-green-1">
@@ -74,7 +41,9 @@
                 <div class="text-h6">Total en Stock</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="warehouse" size="md" class="metric-icon" />
-                <q-label class="text-h2">{{ dataProducts.stock?.stockAvailable || 0 }}</q-label>
+                <q-label class="text-h2">{{
+                  dataProducts.stock?.stockAvailable || 0
+                }}</q-label>
               </q-card-section>
             </q-card>
 
@@ -84,18 +53,83 @@
                 <div class="text-h6">Total Fuera de Stock</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="warning" size="md" class="metric-icon" />
-                <q-label class="text-h2">{{ dataProducts.stock?.zeroStock || 0 }}</q-label>
-
-
+                <q-label class="text-h2">{{
+                  dataProducts.stock?.zeroStock || 0
+                }}</q-label>
               </q-card-section>
             </q-card>
           </div>
-        </div>
+        </q-card>
+
+        <!-- Filtros de Búsqueda -->
+        <q-card
+          class="q-pa-md shadow-2 q-mx-auto q-mt-md"
+          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px;"
+        >
+          <div class="text-h6 text-weight-bold q-mb-md">🔍 Filtros Avanzados</div>
+          
+          <div class="row q-gutter-md items-center" style="display: flex; align-items: center;">
+            <q-select
+              filled
+              dense       
+              :options="categories"
+              option-label="name"
+              label="Filtrar por categoría"
+              clearable
+              class="col"
+              style="min-width: 200px"
+            />
+            
+            <q-input
+              filled
+              dense
+              label="Precio mínimo"
+              type="number"
+              class="col"
+              style="min-width: 150px"
+            />
+            
+            <q-input
+              filled
+              dense
+              label="Precio máximo"
+              type="number"
+              class="col"
+              style="min-width: 150px"
+            />
+            
+            <q-select
+              filled
+              dense
+              label="Filtrar por stock"
+              class="col"
+              style="min-width: 200px"
+              :options="['En stock', 'Sin stock']"
+            />
+            
+            <div class="row q-gutter-sm" style="margin-top: 0%;">
+              <q-btn
+                label="Aplicar Filtros"
+                color="primary"
+                dense
+                class="q-ml-sm"
+                style="height: 40px"
+              />
+              <q-btn
+                label="Limpiar Filtros"
+                color="negative"
+                outline
+                dense
+                style="height: 40px"
+              />
+            </div>
+          </div>
+        </q-card> 
 
         <q-card> </q-card>
         <q-card
           class="q-pa-md shadow-2 q-mx-auto"
-          style="width: 100%; min-height: 600px;"
+          style="width: 100%; min-height: 600px"
         >
           <div class="row justify-between items-center q-mb-md">
             <div class="text-h5 text-weight-bold">📦 Lista de Productos</div>
@@ -180,7 +214,7 @@
                   flat
                   dense
                   color="primary"
-                  @click="verDetalle(props.row)"
+                  @click="seeDetail(props.row)"
                 />
                 <q-btn
                   icon="edit"
@@ -194,7 +228,7 @@
                   flat
                   dense
                   color="negative"
-                  @click="eliminarProducto(props.row)"
+                  @click="deleteProduct(props.row)"
                 />
               </q-td>
             </template>
@@ -286,7 +320,6 @@
       </q-card>
     </q-dialog>
 
-    
     <!-- Diálogo Crear subcategoría -->
 
     <q-dialog v-model="subcategoryDialog" persistent>
@@ -294,9 +327,19 @@
         <q-card-section>
           <div class="text-h6">Agregar subcategoría</div>
         </q-card-section>
-        <q-select label="Categoria principal" v-model="newSubcategory.idCategoryFather" :options="categories" option-label="name"  option-value="_id" map-options></q-select>
+        <q-select
+          label="Categoria principal"
+          v-model="newSubcategory.idCategoryFather"
+          :options="categories"
+          option-label="name"
+          option-value="_id"
+          map-options
+        ></q-select>
         <q-card-section class="q-gutter-md">
-          <q-input v-model="newSubcategory.name" label="Nombre de la subcategoría" />
+          <q-input
+            v-model="newSubcategory.name"
+            label="Nombre de la subcategoría"
+          />
           <q-input
             v-model="newSubcategory.description"
             label="Descripción"
@@ -305,13 +348,18 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn flat label="Guardar" color="primary" @click="saveSubcategory()" />
+          <q-btn
+            flat
+            label="Guardar"
+            color="primary"
+            @click="saveSubcategory()"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
 
     <!-- Diálogo Detalle -->
-    <q-dialog v-model="detalleDialog" persistent>
+    <q-dialog v-model="detailDialog" persistent>
       <q-card class="q-pa-md" style="min-width: 400px; max-width: 600px">
         <q-card-section class="text-h6 text-primary"
           >Detalle del Producto</q-card-section
@@ -319,21 +367,21 @@
         <q-separator />
         <q-card-section class="q-gutter-md">
           <q-img
-            :src="productoSeleccionado.imagen"
+            :src="productSelect.imagen"
             style="width: 100%; height: 250px"
             class="rounded-borders"
             contain
           />
           <div>
             <div>
-              <strong>Nombre:</strong> {{ productoSeleccionado.nombre }}
+              <strong>Nombre:</strong> {{ productSelect.nombre }}
             </div>
             <div>
               <strong>Descripción:</strong>
-              {{ productoSeleccionado.descripcion }}
+              {{ productSelect.descripcion }}
             </div>
             <div>
-              <strong>Precio:</strong> ${{ productoSeleccionado.precio }}
+              <strong>Precio:</strong> ${{ productSelect.precio }}
             </div>
           </div>
         </q-card-section>
@@ -344,7 +392,7 @@
     </q-dialog>
 
     <!-- Diálogo Editar -->
-    <q-dialog v-model="editarDialog" persistent>
+    <q-dialog v-model="editDialog" persistent>
       <q-card style="min-width: 400px">
         <q-card-section class="text-h6 text-warning"
           >Editar Producto</q-card-section
@@ -352,20 +400,20 @@
         <q-separator />
         <q-card-section class="q-gutter-md">
           <q-input
-            v-model="productoEditado.nombre"
+            v-model="productEdit.nombre"
             label="Nombre del Producto"
           />
           <q-input
-            v-model="productoEditado.descripcion"
+            v-model="productEdit.descripcion"
             label="Descripción"
             type="textarea"
           />
           <q-input
-            v-model="productoEditado.precio"
+            v-model="productEdit.precio"
             label="Precio"
             type="number"
           />
-          <q-input v-model="productoEditado.imagen" label="URL de Imagen" />
+          <q-input v-model="productEdit.imagen" label="URL de Imagen" />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="secondary" v-close-popup />
@@ -373,7 +421,7 @@
             flat
             label="Guardar Cambios"
             color="primary"
-            @click="actualizarProducto"
+            @click="updateProduct"
           />
         </q-card-actions>
       </q-card>
@@ -385,25 +433,25 @@
 import { ref, computed, onMounted, toRaw } from "vue";
 import { Notify } from "quasar";
 import { getData, postData } from "../service/service.js";
+import adminDrawer from "../components/adminDrawer.vue";
 
 const files = ref([]);
-const dataProduct = ref({ // tengo que arreglar esto despues
+const dataProduct = ref({
+  // tengo que arreglar esto despues
   categoryId: "681d74695b4961fb4cdb9e88",
   stock: 0,
-  brand:"generico",
-  acceptReturns:"si",
+  brand: "generico",
+  acceptReturns: "si",
 });
 const previewImages = ref([]);
-const leftDrawerOpen = ref(true);
-const rightDrawerOpen = ref(false);
 const search = ref("");
 
 // Diálogos
 const productDialog = ref(false);
 const categoryDialog = ref(false);
 const subcategoryDialog = ref(false);
-const detalleDialog = ref(false);
-const editarDialog = ref(false);
+const detailDialog = ref(false);
+const editDialog = ref(false);
 
 // Categorías
 const categories = ref([]);
@@ -412,16 +460,16 @@ const newCategory = ref({});
 const newSubcategory = ref({});
 
 //productos
-const dataProducts = ref([])
+const dataProducts = ref([]);
 
 // Datos para ver o editar
-const productoSeleccionado = ref({});
-const productoEditado = ref({});
+const productSelect = ref({});
+const productEdit = ref({});
 
-onMounted(()=>{
+onMounted(() => {
   getAllCategories();
-  getAllProducts()
-})
+  getAllProducts();
+});
 
 const handleFiles = (selectedFiles) => {
   previewImages.value = [];
@@ -470,7 +518,7 @@ const saveProduct = async () => {
   }
 };
 
-async function saveCategory (){
+async function saveCategory() {
   try {
     if (!newCategory.value.name || !newCategory.value.description) {
       Notify.create({
@@ -481,40 +529,40 @@ async function saveCategory (){
       return;
     }
 
-    const response = await postData("/categories",{
-      data:{
-        name : newCategory.value.name,
-        description : newCategory.value.description
-      }
+    const response = await postData("/categories", {
+      data: {
+        name: newCategory.value.name,
+        description: newCategory.value.description,
+      },
     });
 
-    if (response && response.success) { 
+    if (response && response.success) {
       Notify.create({
-        type:'positive',
-        message :'categoria creada y guardada correctamente'
+        type: "positive",
+        message: "categoria creada y guardada correctamente",
       });
       newCategory.value = { name: "", description: "" };
       categoryDialog.value = false;
-      console.log("categoria creada" , response.data);
+      console.log("categoria creada", response.data);
     } else {
-      const errorMessage = response?.error || 'Error al crear categoría desde la API';
+      const errorMessage =
+        response?.error || "Error al crear categoría desde la API";
       Notify.create({
-        type:'negative',
-        message: errorMessage
+        type: "negative",
+        message: errorMessage,
       });
-      console.error("error al crear categoria desde la API" , response);
+      console.error("error al crear categoria desde la API", response);
     }
-
   } catch (error) {
-    console.log("error al crear categoria" , error);
+    console.log("error al crear categoria", error);
     Notify.create({
-      type:'negative',
-      message:'Error al crear categoria'
+      type: "negative",
+      message: "Error al crear categoria",
     });
   }
-};
+}
 
-async function saveSubcategory (){
+async function saveSubcategory() {
   try {
     if (!newSubcategory.value.name || !newSubcategory.value.description) {
       Notify.create({
@@ -525,88 +573,60 @@ async function saveSubcategory (){
       return;
     }
 
-    const response = await postData("/categories",{
-      data:newSubcategory.value
+    const response = await postData("/categories", {
+      data: newSubcategory.value,
     });
 
-    if (response && response.success) { 
+    if (response && response.success) {
       Notify.create({
-        type:'positive',
-        message :'subcategoria creada y guardada correctamente'
+        type: "positive",
+        message: "subcategoria creada y guardada correctamente",
       });
       newSubcategory.value = {};
       subcategoryDialog.value = false;
-      console.log("subcategoria creada" , response.data);
+      console.log("subcategoria creada", response.data);
     } else {
-      const errorMessage = response?.error || 'Error al crear subcategoría desde la API';
+      const errorMessage =
+        response?.error || "Error al crear subcategoría desde la API";
       Notify.create({
-        type:'negative',
-        message: errorMessage
+        type: "negative",
+        message: errorMessage,
       });
-      console.error("error al crear subcategoria desde la API" , response);
+      console.error("error al crear subcategoria desde la API", response);
     }
-
   } catch (error) {
-    console.log("error al crear subcategoria" , error);
+    console.log("error al crear subcategoria", error);
     Notify.create({
-      type:'negative',
-      message:'Error al crear subcategoria'
+      type: "negative",
+      message: "Error al crear subcategoria",
     });
   }
-};
+}
 
-async function getAllProducts(){
+async function getAllProducts() {
   try {
     const response = await getData("/product");
-    if(response.success){
-      dataProducts.value = response
+    if (response.success) {
+      dataProducts.value = response;
     }
-    console.log("productos en admin" , toRaw(dataProducts.value))
+    console.log("productos en admin", toRaw(dataProducts.value));
   } catch (error) {
-    console.error("Error al traer datos de productos" , dataProducts.value)
-
+    console.error("Error al traer datos de productos", dataProducts.value);
   }
 }
 
 async function getAllCategories() {
   try {
     const response = await getData("/categories");
-    if(response.data.length > 0){
-      categories.value = response.data
-    }
-    else{
-      return console.log("no hay categorias" , response.data);
+    if (response.data.length > 0) {
+      categories.value = response.data;
+    } else {
+      return console.log("no hay categorias", response.data);
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
-
-
-
-
-
-// Filtro dinámico de productos
-const productosFiltrados = computed(() => {
-  const texto = search.value.trim().toLowerCase();
-  const categoria = selectedCategory.value?.value;
-
-  let filtered = dataProduct.value.data;
-
-  if (texto) {
-    filtered = filtered.filter(
-      (p) =>
-        p.nombre.toLowerCase().includes(texto) ||
-        p.descripcion.toLowerCase().includes(texto)
-    ); // Se movió el paréntesis de cierre aquí
-  }
-
-  if (categoria) {
-    filtered = filtered.filter((p) => p.categoria === categoria);
-  }
-
-  return filtered;
-});
 
 // Columnas de la tabla
 const columns = [
@@ -629,31 +649,31 @@ const columns = [
 ];
 
 // Ver detalles del producto
-function verDetalle(producto) {
-  productoSeleccionado.value = { ...producto };
-  detalleDialog.value = true;
+function seeDetail(producto) {
+  productSelect.value = { ...producto };
+  detailDialog.value = true;
 }
 
 // Abrir modal para editar
 function editarProducto(producto) {
-  productoEditado.value = { ...producto };
-  editarDialog.value = true;
+  productEdit.value = { ...producto };
+  editDialog.value = true;
 }
 
 // Guardar cambios al editar
-function actualizarProducto() {
+function updateProduct() {
   const index = dataProduct.value.data.findIndex(
-    (p) => p.nombre === productoEditado.value.nombre
+    (p) => p.nombre === productEdit.value.nombre
   );
 
   if (index !== -1) {
-    dataProduct.value.data[index] = { ...productoEditado.value };
+    dataProduct.value.data[index] = { ...productEdit.value };
 
     Notify.create({
       type: "positive",
       message: "Producto actualizado correctamente",
     });
-    editarDialog.value = false;
+    editDialog.value = false;
   } else {
     Notify.create({
       type: "negative",
@@ -663,8 +683,8 @@ function actualizarProducto() {
 }
 
 // Eliminar producto
-function eliminarProducto(producto) {
-  const index =dataProduct.value.data.indexOf(producto);
+function deleteProduct(producto) {
+  const index = dataProduct.value.data.indexOf(producto);
 
   if (index !== -1) {
     dataProduct.value.data.splice(index, 1);

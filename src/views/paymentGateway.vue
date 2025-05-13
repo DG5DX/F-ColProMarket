@@ -53,7 +53,7 @@
               <p class="item-meta">Acceso por 12 meses</p>
               <div class="item-quantity">1 × 65.00€</div>
             </div>
-            <div class="item-price">65.00€</div>
+            <div class="item-price">95.00€</div>
           </div>
         </div>
 
@@ -198,6 +198,3 @@ export default {
 <style scoped>
 @import url("../style/paymentGateway.css");
 </style>
-
-
-

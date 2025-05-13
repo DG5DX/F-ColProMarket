@@ -34,7 +34,7 @@
                                 <span>{{ calculateTotalCart() }}</span>
                             </div>
 
-<button   label="Proceder al pago"class="pay-btn" :disable="cart.length === 0" @click=pago()>
+<button   label="Proceder al pago" class="pay-btn" :disable="cart.length === 0" @click=pago()>
   <span class="btn-text">Proceder al pago</span>
   <div class="icon-container">
     <svg viewBox="0 0 24 24" class="icon card-icon"> 

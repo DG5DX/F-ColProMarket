@@ -34,7 +34,7 @@
                                 <span>{{ calculateTotalCart() }}</span>
                             </div>
 
-<button   label="Proceder al pago"class="pay-btn" :disable="cart.length === 0" @click=pago()>
+<button   label="Proceder al pago" class="pay-btn" :disable="cart.length === 0" @click=pago()>
   <span class="btn-text">Proceder al pago</span>
   <div class="icon-container">
     <svg viewBox="0 0 24 24" class="icon card-icon"> 
@@ -128,6 +128,7 @@
 <script setup>
 import { ref, toRaw } from 'vue'
 import { useStore } from '../stores/store'
+import { Notify } from 'quasar';
 const store = useStore()
 
 const cart = ref(store.cart)
@@ -178,6 +179,10 @@ const calculateTotalProduct = (price, quantity, index) => {
 // Función para eliminar del carrito
 const removeFromCart = (index) => {
     cart.value.splice(index, 1)
+    Notify.create({
+        type: "negative",
+        message: "Producto eliminado del carrito"
+      })
 }
 
 // Función para el infinite-scroll (si la implementas)

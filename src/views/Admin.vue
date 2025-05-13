@@ -24,7 +24,6 @@
                 <q-label class="text-h2">{{ dataProducts.count || 0 }}</q-label>
               </q-card-section>
             </q-card>
-            
 
             <!-- Total de Pedidos -->
             <q-card class="col metric-card bg-green-1">
@@ -64,14 +63,19 @@
         <!-- Filtros de Búsqueda -->
         <q-card
           class="q-pa-md shadow-2 q-mx-auto q-mt-md"
-          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px;"
+          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px"
         >
-          <div class="text-h6 text-weight-bold q-mb-md">🔍 Filtros Avanzados</div>
-          
-          <div class="row q-gutter-md items-center" style="display: flex; align-items: center;">
+          <div class="text-h6 text-weight-bold q-mb-md">
+            🔍 Filtros Avanzados
+          </div>
+
+          <div
+            class="row q-gutter-md items-center"
+            style="display: flex; align-items: center"
+          >
             <q-select
               filled
-              dense       
+              dense
               :options="categories"
               option-label="name"
               label="Filtrar por categoría"
@@ -79,7 +83,7 @@
               class="col"
               style="min-width: 200px"
             />
-            
+
             <q-input
               filled
               dense
@@ -88,7 +92,7 @@
               class="col"
               style="min-width: 150px"
             />
-            
+
             <q-input
               filled
               dense
@@ -97,7 +101,7 @@
               class="col"
               style="min-width: 150px"
             />
-            
+
             <q-select
               filled
               dense
@@ -106,8 +110,8 @@
               style="min-width: 200px"
               :options="['En stock', 'Sin stock']"
             />
-            
-            <div class="row q-gutter-sm" style="margin-top: 0%;">
+
+            <div class="row q-gutter-sm" style="margin-top: 0%">
               <q-btn
                 label="Aplicar Filtros"
                 color="primary"
@@ -124,7 +128,7 @@
               />
             </div>
           </div>
-        </q-card> 
+        </q-card>
 
         <q-card> </q-card>
         <q-card
@@ -133,7 +137,10 @@
         >
           <div class="row justify-between items-center q-mb-md">
             <div class="text-h5 text-weight-bold">📦 Lista de Productos</div>
-            <div class="row q-mb-md items-center q-gutter-md">
+            <div
+              class="row q-mb-md items-center q-gutter-md"
+              style="display: flex; align-items: flex-start"
+            >
               <q-input
                 filled
                 dense
@@ -156,7 +163,10 @@
           </div>
 
           <!-- Barra de categorías -->
-          <div class="row q-mb-md items-center q-gutter-md">
+          <div
+            class="row q-mb-md items-center q-gutter-md"
+            style="display: flex; align-items: flex-start"
+          >
             <q-select
               filled
               dense
@@ -288,7 +298,7 @@
           </div>
         </div>
 
-        <q-card-actions>
+        <q-card-actions style="display: flex; justify-content: flex-end;">
           <q-btn
             label="Cerrar"
             color="secondary"
@@ -373,16 +383,12 @@
             contain
           />
           <div>
-            <div>
-              <strong>Nombre:</strong> {{ productSelect.nombre }}
-            </div>
+            <div><strong>Nombre:</strong> {{ productSelect.nombre }}</div>
             <div>
               <strong>Descripción:</strong>
               {{ productSelect.descripcion }}
             </div>
-            <div>
-              <strong>Precio:</strong> ${{ productSelect.precio }}
-            </div>
+            <div><strong>Precio:</strong> ${{ productSelect.precio }}</div>
           </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -399,20 +405,13 @@
         >
         <q-separator />
         <q-card-section class="q-gutter-md">
-          <q-input
-            v-model="productEdit.nombre"
-            label="Nombre del Producto"
-          />
+          <q-input v-model="productEdit.nombre" label="Nombre del Producto" />
           <q-input
             v-model="productEdit.descripcion"
             label="Descripción"
             type="textarea"
           />
-          <q-input
-            v-model="productEdit.precio"
-            label="Precio"
-            type="number"
-          />
+          <q-input v-model="productEdit.precio" label="Precio" type="number" />
           <q-input v-model="productEdit.imagen" label="URL de Imagen" />
         </q-card-section>
         <q-card-actions align="right">
@@ -511,7 +510,7 @@ const saveProduct = async () => {
     previewImages.value = [];
   } catch (error) {
     Notify.create({
-      type: "positive",
+      type: "negative",
       message: "Error al crear producto",
     });
     console.error("Error uploading images:", error);

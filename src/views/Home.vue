@@ -208,7 +208,7 @@ import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
 import { Notify } from 'quasar';
-import ColorThief from 'colorthief';
+
 const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);

@@ -198,3 +198,4 @@ export default {
 <style scoped>
 @import url("../style/paymentGateway.css");
 </style>
+

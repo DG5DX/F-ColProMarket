@@ -439,3 +439,50 @@
     flex-wrap: wrap;
   }
 }
+
+/* Estilos para el botón alternativo y mensajes */
+.alternative-payment {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.error-message {
+  color: #e74c3c;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.alternative-btn {
+  background: #4a6bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.alternative-btn:hover {
+  background: #3a5bef;
+}
+
+.alternative-btn:disabled {
+  background: #a0a4a8;
+  cursor: not-allowed;
+}
+
+.payment-success {
+  text-align: center;
+  color: #2ecc71;
+  margin: 20px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.payment-success i {
+  font-size: 40px;
+  margin-bottom: 10px;
+}

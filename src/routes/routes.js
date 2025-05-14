@@ -5,6 +5,7 @@ import Admin from "../views/Admin.vue"
 import DRAWER_ADMIN from "../views/DRAWER_ADMIN.vue"
 import {createRouter, createWebHashHistory} from "vue-router"
 import PaymentGateway from "../views/paymentGateway.vue"
+import Search from "../views/Search.vue"
   
 const routes = [
   { path: '/', component: Home },
@@ -12,7 +13,8 @@ const routes = [
   { path: '/seeproduct', component: Seeproduct }, 
   { path: '/admin', component: Admin },
   { path: '/gateway', component: PaymentGateway },
-  { path: '/draweradmin', component: DRAWER_ADMIN }
+  { path: '/draweradmin', component: DRAWER_ADMIN },
+  { path: '/search', component: Search },
 ]
   
 export const router = createRouter({

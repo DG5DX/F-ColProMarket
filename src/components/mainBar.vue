@@ -23,7 +23,7 @@
 
                 <!-- Menú superior derecho -->
                 <div class="row items-center menu-right">
-                    <q-btn flat label="Ingresar" to="/login" class="text-white" />
+                    <q-btn flat label="Ingresar"  @click="emit('open-logIn-dialog')"  class="text-white" />
                     <q-btn flat label="Registro" @click="emit('open-register-dialog')" class="text-white" />
                     <q-btn flat round icon="shopping_cart" class="text-white" @click="cart()">
                         <q-badge color="orange" floating>3</q-badge>
@@ -75,7 +75,7 @@
 
 <script setup>
 import { ref, defineEmits } from 'vue'
-const emit = defineEmits(['open-register-dialog']);
+const emit = defineEmits(['open-register-dialog','open-logIn-dialog']);
 
 
 const leftDrawerOpen = ref(false)

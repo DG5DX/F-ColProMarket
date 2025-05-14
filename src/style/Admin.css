@@ -14,7 +14,7 @@
   padding: 20px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   transition: background 0.3s ease;
-}
+} 
 
 .drawer-header:hover {
   background: var(--header-bg) !important;

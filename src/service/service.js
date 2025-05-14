@@ -1,4 +1,5 @@
 import client from "../plugins/axios.js";
+import { toRaw } from "vue";
 
 export async function getData(url) {
     try {
@@ -12,7 +13,7 @@ export async function getData(url) {
 
 export async function postData(url, data,){
     try {
-        console.log("data", data);
+        console.log("data", toRaw(data));
         const response = await client.post(url, data);
         return response.data;
     } catch (error){
@@ -23,7 +24,7 @@ export async function postData(url, data,){
 
 export async function putData(url, data) {
     try {
-        console.log("data", data);
+        console.log("data", toRaw(data));
         const response = await client.put(url,data);
         return response.data;
     } catch (error) {

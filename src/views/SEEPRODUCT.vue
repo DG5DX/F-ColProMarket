@@ -1,6 +1,6 @@
 <template>
   <q-layout>
-    <main-drawer />
+    <MainBar />
     <!-- Contenedor de página -->
     <q-page-container class="theContainer">
       <div class="ContainerMedium">
@@ -151,7 +151,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useQuasar, Notify } from 'quasar'
 import { useStore } from '../stores/store.js'
 import { putData } from '../service/service.js'
-import mainDrawer from '../components/mainDrawer.vue'
+import mainBar from '../components/mainBar.vue'
 const store = useStore()
 import { useRoute } from 'vue-router'
 const $q = useQuasar()

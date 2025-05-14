@@ -80,7 +80,8 @@ function closeSession() {
 
 <style scoped>
 .header-tech {
-  background: #1a2a6c;
+  background: #8E7DBE;
+;
 }
 
 .tech-title {
@@ -95,7 +96,7 @@ function closeSession() {
 }
 
 .profile-header {
-  background: linear-gradient(to right, #1a2a6c, #204a87);
+  background: linear-gradient(to right, #8E7DBE, #8E7DBE);
   padding: 20px;
 }
 

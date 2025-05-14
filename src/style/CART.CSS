@@ -1,11 +1,13 @@
 
-/* From Uiverse.io by CristianMontoya98 */ 
-/* Estilos para el botón de eliminación */
+
+
 .remove-btn {
     width: 150px;
     height: 30px;
     cursor: pointer;
     display: flex;
+    margin: 5%;
+    margin-left: -2%;
     align-items: center;
     justify-content: center;  /* Centra el contenido */
     background: #e62222;
@@ -50,44 +52,146 @@
   .remove-btn:active .btn-icon svg {
     transform: scale(0.8);
   }
-.btn {
-    width:15.5em;
-    height: 2.3em;
-    margin-top:3em;
-    background: var(--five-color--);
+/* From Uiverse.io by fthisilak */ 
+.pay-btn {
+    width: 100%;
+    position: relative;
+    padding: 12px 24px;
+    font-size: 25px;
+    background: #1a1a1a;
     color: white;
     border: none;
-    border-radius: 0.625em;
-    font-size: 20px;
-    font-weight: bold;
+    border-radius: 2px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    margin-top: 10%;
+  }
+  
+  .pay-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  }
+  
+  .icon-container {
     position: relative;
-    z-index: 1;
-    overflow: hidden;
-   }
-   
-   button:hover {
-    color: var(--five-color--);
-   }
-   
-   button:after {
-    content: "";
-    background: white;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .icon {
     position: absolute;
-    z-index: -1;
-    left: -20%;
-    right: -20%;
     top: 0;
-    bottom: 0;
-    transform: skewX(-45deg) scale(0, 1);
-    transition: all 0.5s;
-   }
-   
-   button:hover:after {
-    transform: skewX(-45deg) scale(1, 1);
-    -webkit-transition: all 0.5s;
-    transition: all 0.5s;
-   }
+    left: 0;
+    width: 34px;
+    height: 34px;
+    color:var(--five-color--);
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .default-icon {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Hover animations */
+  .pay-btn:hover .icon {
+    animation: none;
+  }
+  
+  .pay-btn:hover .wallet-icon {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .pay-btn:hover .card-icon {
+    animation: iconRotate 2.5s infinite;
+    animation-delay: 0s;
+  }
+  
+  .pay-btn:hover .payment-icon {
+    animation: iconRotate 2.5s infinite;
+    animation-delay: 0.5s;
+  }
+  
+  .pay-btn:hover .dollar-icon {
+    animation: iconRotate 2.5s infinite;
+    animation-delay: 1s;
+  }
+  
+  .pay-btn:hover .check-icon {
+    animation: iconRotate 2.5s infinite;
+    animation-delay: 1.5s;
+  }
+  
+  /* Active state - show only checkmark */
+  .pay-btn:active .icon {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .pay-btn:active .check-icon {
+    animation: checkmarkAppear 0.6s ease forwards;
+    visibility: visible;
+  }
+  
+  .btn-text {
+    font-weight: 600;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+      margin-left: 24%;
+  }
+  
+  @keyframes iconRotate {
+    0% {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px) scale(0.5);
+    }
+    5% {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+    15% {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+    20% {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px) scale(0.5);
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px) scale(0.5);
+    }
+  }
+  
+  @keyframes checkmarkAppear {
+    0% {
+      opacity: 0;
+      transform: scale(0.5) rotate(-45deg);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2) rotate(0deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+  }
+  
 
 .q-mb-md {
     width: 50%;
@@ -113,6 +217,7 @@
     justify-content: center;
 }
 
+
 .producto {
     box-shadow: 0px 10px 10px 1px var(--four-color--);
     margin-bottom: 3%;
@@ -125,19 +230,32 @@
 }
 
 .Text {
-    margin: 0% 0% 0% 5%;
+    margin: 0% 0% 0% 10%;
     font-size: larger;
 }
 
 .Title {
-    margin: 0% 0% 0% 5%;
+    margin: 0% 0% 0% 10%;
     font-size: xx-large;
 }
 
 .titleOne {
-    padding-top: 2.5%;
+    color: white;
+    padding: 2%;
+    background: var(--five-color--);
+    border-radius:  15px 15px 0px 0px;
+    margin-left: 5%;
+    margin-top: 3%;
+    width: 90%;
 }
-
+.Imagen{
+    width: 65px;
+    height: 65px ;
+    position: absolute;
+    margin-left: 2%;
+    margin-top: 0.5%;
+    border-radius: 5px;
+}
 .viewProduct {
     display: grid;
     grid-template-columns: 50% 50%;
@@ -145,13 +263,15 @@
 
 .containerMedium {
     margin-left: 5%;
-    margin-top: 2%;
+    margin-top: 0.3%;
     width: 90%;
-    min-height: 90vh;
+    min-height: 85vh;
     background-color: var(--one-color--);
     display: grid;
-    grid-template-rows: 20% 80%;
-    border-radius: 15px;
+    padding-top: 5%;
+    border-radius:  0px 0px 15px 15px;
+    border: 1px solid var(--four-color--);
+    
 }
   
 
@@ -262,25 +382,118 @@
     object-fit: cover;
     border-bottom: 1px solid #ccc;
 }
-
-@media (max-width:1024) {
-    .theContainer {
-        height: 100vh;
-    }
+.theContainer {
+    height: 110vh;
 }
 
-@media (max-width: 900px) {
-    #nav-buttons {
-        display: none;
+@media (max-width: 1025px) {
+    .imgproduct {
+       margin-top: 35%;
     }
-
-    #menu {
-        display: block;
+    .cart-summary {
+        border-radius: 8px;
+        margin: -15% 8% 0% 2%;
+        padding: 20px;
     }
+    .Text {
+        margin: 0% 0% 0% 13%;
+    }
+    
+    .Title {
+        margin: 0% 0% 0% 13%;
+    }
+    .pay-btn {
+        font-size: 23px;
+        margin-top: 10%;
+      }
+      .icon {
+        width: 34px;
+        height: 34px;
+      }
+      .btn-text {
+          margin-left: 16%;
+      }
+      
 }
 
-@media (max-width: 450px) {
-    #logo img {
-        max-height: 8vh;
+@media (max-width: 769px) {
+    .titleOne {
+        margin-left: 2%;
+        width: 95%;
     }
+    .containerMedium {
+        margin-left: 2%;
+        width: 95%;
+        min-height: 90vh;
+    }
+      
+    .imgproduct {
+        margin-top: 5%;
+        width: 50%;
+     }
+    .producto {
+    text-align: center;
+    align-items: center;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 40% 60%;
+}
+.remove-btn {
+    margin-left: 25%;
+  }
+  .q-mb-md {
+    width: 30%;
+    margin-left: 36%;
+}
+.Text {
+    margin: 0% 0% 0% 15%;
+    font-size:small;
+}
+
+.Title {
+    margin: 0% 0% 0% 15%;
+    
+}
+
+.pay-btn {
+    font-size: 20px;
+    margin-top: 10%;
+  }
+  .icon {
+    width: 30px;
+    height: 30px;
+  }
+  .btn-text {
+      margin-left: 10%;
+  }
+  
+
+}
+
+@media (max-width: 426px) {
+    .containerMedium {
+        width: 100%;
+        margin-left: 0%;
+        margin: 0%;
+        min-height: 120vh;
+        
+    }
+    .titleOne {
+        margin: 0;
+        border-radius: 0;
+        margin-left: 0%;
+        width: 100%;
+    }
+    .viewProduct {
+        display: grid;
+        grid-template-columns:100%;
+        grid-template-rows:50% 50%;
+
+    }
+    .boxTwo{
+        border-radius: 0;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+        margin: 5%;
+    }
+    
 }

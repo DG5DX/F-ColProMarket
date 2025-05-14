@@ -6,6 +6,3 @@ export function showNotification (type, message){
         message:message
     })
 }
-
-
-

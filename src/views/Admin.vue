@@ -18,7 +18,10 @@
                 <q-label class="text-h2">{{ dataProducts.count || 0 }}</q-label>
               </q-card-section>
             </q-card>
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 
             <!-- Total de Pedidos -->
             <q-card class="col metric-card bg-green-1">
@@ -56,24 +59,71 @@
         </q-card>
 
         <!-- Filtros de Búsqueda -->
-        <q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md"
-          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px;">
-          <div class="text-h6 text-weight-bold q-mb-md">🔍 Filtros Avanzados</div>
+        <q-card
+          class="q-pa-md shadow-2 q-mx-auto q-mt-md"
+          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px"
+        >
+          <div class="text-h6 text-weight-bold q-mb-md">
+            🔍 Filtros Avanzados
+          </div>
 
-          <div class="row q-gutter-md items-center" style="display: flex; align-items: center;">
-            <q-select filled dense :options="categories" option-label="name" label="Filtrar por categoría" clearable
-              class="col" style="min-width: 200px" />
+          <div
+            class="row q-gutter-md items-center"
+            style="display: flex; align-items: center"
+          >
+            <q-select
+              filled
+              dense
+              :options="categories"
+              option-label="name"
+              label="Filtrar por categoría"
+              clearable
+              class="col"
+              style="min-width: 200px"
+            />
 
-            <q-input filled dense label="Precio mínimo" type="number" class="col" style="min-width: 150px" />
+            <q-input
+              filled
+              dense
+              label="Precio mínimo"
+              type="number"
+              class="col"
+              style="min-width: 150px"
+            />
 
-            <q-input filled dense label="Precio máximo" type="number" class="col" style="min-width: 150px" />
+            <q-input
+              filled
+              dense
+              label="Precio máximo"
+              type="number"
+              class="col"
+              style="min-width: 150px"
+            />
 
-            <q-select filled dense label="Filtrar por stock" class="col" style="min-width: 200px"
-              :options="['En stock', 'Sin stock']" />
+            <q-select
+              filled
+              dense
+              label="Filtrar por stock"
+              class="col"
+              style="min-width: 200px"
+              :options="['En stock', 'Sin stock']"
+            />
 
-            <div class="row q-gutter-sm" style="margin-top: 0%;">
-              <q-btn label="Aplicar Filtros" color="primary" dense class="q-ml-sm" style="height: 40px" />
-              <q-btn label="Limpiar Filtros" color="negative" outline dense style="height: 40px" />
+            <div class="row q-gutter-sm" style="margin-top: 0%">
+              <q-btn
+                label="Aplicar Filtros"
+                color="primary"
+                dense
+                class="q-ml-sm"
+                style="height: 40px"
+              />
+              <q-btn
+                label="Limpiar Filtros"
+                color="negative"
+                outline
+                dense
+                style="height: 40px"
+              />
             </div>
           </div>
         </q-card>
@@ -82,20 +132,61 @@
         <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; min-height: 600px">
           <div class="row justify-between items-center q-mb-md">
             <div class="text-h5 text-weight-bold">📦 Lista de Productos</div>
-            <div class="row q-mb-md items-center q-gutter-md">
-              <q-input filled dense debounce="300" v-model="search" label="Buscar producto" clearable
-                prepend-inner-icon="search" class="search" @clear="search = ''" />
-              <q-btn label="Crear Producto" color="primary" icon="add" @click="productDialog = true" class="col-auto" />
+            <div
+              class="row q-mb-md items-center q-gutter-md"
+              style="display: flex; align-items: flex-start"
+            >
+              <q-input
+                filled
+                dense
+                debounce="300"
+                v-model="search"
+                label="Buscar producto"
+                clearable
+                prepend-inner-icon="search"
+                class="search"
+                @clear="search = ''"
+              />
+              <q-btn
+                label="Crear Producto"
+                color="primary"
+                icon="add"
+                @click="productDialog = true"
+                class="col-auto"
+              />
             </div>
           </div>
 
           <!-- Barra de categorías -->
-          <div class="row flex-center" style="column-gap: 15px; margin-bottom: 2%; padding: 10px;">
-            <q-select filled dense v-model="selectedCategory" :options="categories" option-label="name"
-              label="Filtrar por categoría" clearable class="col" style="margin-bottom: 0%;"
-              @clear="selectedCategory = null" />
-            <q-btn label="Crear Categoría" color="secondary" icon="add" @click="categoryDialog = true"
-              class="col-auto" />
+          <div
+            class="row q-mb-md items-center q-gutter-md"
+            style="display: flex; align-items: flex-start"
+          >
+            <q-select
+              filled
+              dense
+              v-model="selectedCategory"
+              :options="categories"
+              option-label="name"
+              label="Filtrar por categoría"
+              clearable
+              class="col"
+              @clear="selectedCategory = null"
+            />
+            <q-btn
+              label="Crear Categoría"
+              color="secondary"
+              icon="add"
+              @click="categoryDialog = true"
+              class="col-auto"
+            />
+            <q-btn
+              label="Crear Subcategoría"
+              color="secondary"
+              icon="add"
+              @click="subcategoryDialog = true"
+              class="col-auto"
+            />
           </div>
 
 
@@ -160,8 +251,12 @@
           </div>
         </div>
 
-        <q-card-actions>
-          <q-btn label="Cerrar" color="secondary" @click="productDialog = false" />
+        <q-card-actions style="display: flex; justify-content: flex-end;">
+          <q-btn
+            label="Cerrar"
+            color="secondary"
+            @click="productDialog = false"
+          />
           <q-btn label="Guardar" color="primary" @click="saveProduct()" />
         </q-card-actions>
       </q-card>
@@ -210,16 +305,12 @@
         <q-card-section class="q-gutter-md">
           <q-img :src="productSelect.imagen" style="width: 100%; height: 250px" class="rounded-borders" contain />
           <div>
-            <div>
-              <strong>Nombre:</strong> {{ productSelect.nombre }}
-            </div>
+            <div><strong>Nombre:</strong> {{ productSelect.nombre }}</div>
             <div>
               <strong>Descripción:</strong>
               {{ productSelect.descripcion }}
             </div>
-            <div>
-              <strong>Precio:</strong> ${{ productSelect.precio }}
-            </div>
+            <div><strong>Precio:</strong> ${{ productSelect.precio }}</div>
           </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -235,7 +326,11 @@
         <q-separator />
         <q-card-section class="q-gutter-md">
           <q-input v-model="productEdit.nombre" label="Nombre del Producto" />
-          <q-input v-model="productEdit.descripcion" label="Descripción" type="textarea" />
+          <q-input
+            v-model="productEdit.descripcion"
+            label="Descripción"
+            type="textarea"
+          />
           <q-input v-model="productEdit.precio" label="Precio" type="number" />
           <q-input v-model="productEdit.imagen" label="URL de Imagen" />
         </q-card-section>
@@ -338,7 +433,7 @@ const saveProduct = async () => {
     previewImages.value = [];
   } catch (error) {
     Notify.create({
-      type: "positive",
+      type: "negative",
       message: "Error al crear producto",
     });
     console.error("Error uploading images:", error);

@@ -142,6 +142,44 @@
         </div>
 
       </div>
+      <div class="productos-wrapper">
+  <div class="productos row q-gutter-xl justify-start q-pa-xl">
+    <div
+      v-for="(producto, index) in productos"
+      :key="index"
+      class="my-card card"
+      @click="verDetalleProducto(producto)"
+    >
+      <div class="card-img">
+        <div class="img">
+          <q-img
+            :src="producto.images[0].urlImage"
+            :alt="producto.name"
+            fit="cover"
+          >
+            <template v-slot:loading>
+              <q-spinner color="primary" />
+            </template>
+          </q-img>
+        </div>
+      </div>
+      <div class="card-title">{{ producto.name }}</div>
+      <div class="card-subtitle">{{ producto.description }}</div>
+      <hr class="card-divider">
+      <div class="card-footer">
+        <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
+        <button class="card-btn" @click.stop="addToTheCart(producto)">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
+            <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+            <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+            <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
     </q-page-container>
   </q-layout>
 </template>
@@ -151,11 +189,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useQuasar, Notify } from 'quasar'
 import { useStore } from '../stores/store.js'
 import { putData } from '../service/service.js'
-import mainBar from '../components/mainBar.vue'
 const store = useStore()
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router' // Añade useRouter
 const $q = useQuasar()
 const route = useRoute()
+const router = useRouter() // Añade router
 
 // Variables de estado
 const dataProduct = ref({});
@@ -163,8 +201,40 @@ const agregarRecibo = ref(false)
 const review = ref('')
 const selectedImage = ref('')
 const productQualification = ref(0)
+const productos = ref([]);
 
-// Funciones
+// Función para cargar productos (copiada del primer componente)
+async function products() {
+  try {
+    const response = await getData("/product");
+    productos.value = response.data
+  } catch (error) {
+    console.error('Error al cargar productos:', error)
+  }
+}
+
+// Función para agregar al carrito (copiada del primer componente)
+const addToTheCart = (producto) => {
+  store.addToCart(producto)
+  Notify.create({
+    type: "positive",
+    message: "Producto agregado al carrito"
+  })
+  console.log('Agregado al carrito:', producto.name);
+}
+
+// Función para ver el detalle del producto (similar a la del primer componente)
+const verDetalleProducto = (producto) => {
+  if (producto && (producto.id || producto.name)) {
+    localStorage.setItem('selectedProduct', JSON.stringify(producto));
+  }
+  router.push({
+    path:"/seeproduct", 
+    query:{data:JSON.stringify(producto)}
+  });
+}
+
+// Resto de tus funciones existentes...
 const formatPrice = (precio) => {
   return '$' + precio.toLocaleString('es-CO')
 }
@@ -187,27 +257,14 @@ async function addReview(id){
         message:'Reseña guardada'
       })
       dataProduct.value.reviews = response.product.reviews
-      console.log("data product al agregar reseña",dataProduct.value);
-      console.log("reseña" , response.product);
     }
-
   } catch (error) {
     console.log(error);
     Notify.create({
-        type:'negative',
-        message:'Error al crear reseña'
-      })
+      type:'negative',
+      message:'Error al crear reseña'
+    })
   }
-}
-
-
-const addToTheCart = (product) => {
-  store.addToCart(product)
-  Notify.create({
-        type: "positive",
-        message: "Producto agregado al carrito"
-      })
-  console.log('Agregado al carrito:', product);
 }
 
 const comprarAhora = () => {
@@ -222,7 +279,6 @@ const isProductAvailable = computed(() => {
   return dataProduct.value.Stock >= 0 ? 'text-positive' : 'text-negative'
 })
 
-
 function obtainDataProduct(){
   dataProduct.value = JSON.parse(route.query.data || '{}')
   console.log("detalles del producto" , dataProduct);
@@ -231,6 +287,7 @@ function obtainDataProduct(){
 // Inicialización
 onMounted(() => {
   obtainDataProduct();
+  products(); // Llama a la función para cargar productos al montar el componente
 })
 </script>
 <style scoped>

@@ -127,75 +127,67 @@
     </footer>
   </div>
 </template>
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 
-export default {
-  setup() {
-    const paypalRef = ref(null)
+const paypalRef = ref(null)
 
-    const renderPayPalButton = () => {
-      if (!window.paypal || !window.paypal.Buttons) {
-        setTimeout(renderPayPalButton, 250)
-        return
-      }
-
-      window.paypal.Buttons({
-        createOrder: (data, actions) => {
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                value: '143.50',
-                currency_code: 'EUR',
-                breakdown: {
-                  item_total: { value: '154.00' },
-                  discount: { value: '10.50' }
-                }
-              },
-              items: [
-                {
-                  name: 'Curso de Vue.js Avanzado',
-                  unit_amount: { value: '89.00' },
-                  quantity: '1'
-                },
-                {
-                  name: 'Curso de Diseño UX/UI',
-                  unit_amount: { value: '65.00' },
-                  quantity: '1'
-                }
-              ]
-            }]
-          })
-        },
-        onApprove: async (data, actions) => {
-          const details = await actions.order.capture()
-          alert(`Pago completado por ${details.payer.name.given_name}`)
-        },
-        onError: (err) => {
-          console.error('Error en PayPal:', err)
-        },
-        style: {
-          layout: 'vertical',
-          color: 'blue',
-          shape: 'rect',
-          label: 'paypal',
-          tagline: false
-        }
-      }).render(paypalRef.value)
-    }
-
-    onMounted(() => {
-      renderPayPalButton()
-    })
-
-    return {
-      paypalRef
-    }
+const renderPayPalButton = () => {
+  if (!window.paypal || !window.paypal.Buttons) {
+    setTimeout(renderPayPalButton, 250)
+    return
   }
+
+  window.paypal.Buttons({
+    createOrder: (data, actions) => {
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: '143.50',
+            currency_code: 'USD',
+            breakdown: {
+              item_total: { value: '154.00', currency_code: 'USD' },
+              discount: { value: '10.50', currency_code: 'USD' }
+            }
+          },
+          items: [
+            {
+              name: 'Curso de Vue.js Avanzado',
+              unit_amount: { value: '89.00', currency_code: 'USD' },
+              quantity: '1'
+            },
+            {
+              name: 'Curso de Diseño UX/UI',
+              unit_amount: { value: '65.00', currency_code: 'USD' },
+              quantity: '1'
+            }
+          ]
+        }]
+      })
+    },
+    onApprove: async (data, actions) => {
+      const details = await actions.order.capture()
+      alert(`Pago completado por ${details.payer.name.given_name}`)
+    },
+    onError: (err) => {
+      console.error('Error en PayPal:', err)
+    },
+    style: {
+      layout: 'vertical',
+      color: 'blue',
+      shape: 'rect',
+      label: 'paypal',
+      tagline: false
+    }
+  }).render(paypalRef.value)
 }
+
+onMounted(() => {
+  renderPayPalButton()
+})
 </script>
+
 
 <style scoped>
 @import url("../style/paymentGateway.css");
 </style>
-

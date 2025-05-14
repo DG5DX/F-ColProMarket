@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-    <mainDrawer/>
+    <mainBar @open-register-dialog="registerDialog = true" @open-logIn-dialog="loginDialog = true" />
       <!-- Contenido principal -->
     <div>
       <div class="Home">
@@ -179,36 +179,59 @@
     </q-dialog>
 
     <!-- Modal Register -->
-    <q-dialog v-model="registerDialog" persistent>
-      <q-card style="min-width: 400px; max-width: 600px">
-        <q-card-section>
-          <div class="text-h6">Registrarse</div>
-        </q-card-section>
+    <q-dialog class="form-container" v-model="registerDialog">
+  <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
+    <q-card-section class="q-pb-none">
+      <p class="title">Registrate</p>
+    </q-card-section>
 
-        <q-card-section>
+    <q-card-section class="q-pt-none">
+      <form class="form q-gutter-md">
+        <div class="input-group">
           <q-input v-model="user.name" label="Nombre" type="text" />
-          <q-input v-model="user.email" label="Correo Electrónico" type="email" />
+          <q-input v-model="user.email" label="Correo Electronico" type="text" />
           <q-input v-model="user.password" label="Contraseña" type="password" />
-          <q-input v-model="user.ConfirmPassword" label="Confirmar Contraseña" type="password" />
-        </q-card-section>
+          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
+        </div>
+        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--four-color--);" @click="registerUser()" />
+      </form>
+    </q-card-section>
+  </q-card>
+</q-dialog>
 
-        <q-card-actions>
-          <q-btn label="Cerrar" color="secondary" @click="Dialog('closeRegister')" />
-          <q-btn label="Registrarse" color="primary" @click="registerUser()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+
+  <!--modal para loguearse-->
+
+  <q-dialog class="form-container" v-model="loginDialog">
+  <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
+    <q-card-section class="q-pb-none">
+      <p class="title">Entra a tu cuenta</p>
+    </q-card-section>
+
+    <q-card-section class="q-pt-none">
+      <form class="form q-gutter-md">
+        <div class="input-group">
+          <q-input v-model="user.email" label="Correo Electronico" type="text" />
+          <q-input v-model="user.password" label="Contraseña" type="password" />
+        </div>
+        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--four-color--);" @click="login()" />
+      </form>
+    </q-card-section>
+  </q-card>
+</q-dialog>
+
+
   </q-layout>
 </template>
 
 <script setup>
 import { onMounted, ref, toRaw } from 'vue'
-import mainDrawer from '../components/mainDrawer.vue';
+import { showNotification } from '../utils/utils.js'
+import mainBar from '../components/mainBar.vue';
 import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';
 import { router } from '../routes/routes';
 import { Notify } from 'quasar';
-
 const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);
@@ -218,6 +241,7 @@ const loginEmail = ref("");
 const loginPassword = ref("");
 const productos = ref([]);
 const user = ref({});
+const loading = ref(false);
 
 
 // Imágenes del carrusel optimizadas
@@ -244,12 +268,23 @@ const imagenesCarrusel = ref([
 async function registerUser() {
   try {
     if(user.value.password !== user.value.ConfirmPassword){
+      Notify.create({
+        type:'negative',
+        message:'Las contraseñas deben ser iguales'
+      })
       throw new Error ('Contraseñas deben ser iguales')
     }
-    console.log(user.value.name);
+
     const response = await postData("/users",{
       data:toRaw(user.value)
     })
+
+    if(response.success == true){
+      Notify.create({
+        type:'positive',
+        message:'Registro exitoso'
+      })
+    }
 
     console.log(response);
     Dialog('closeRegister');
@@ -260,9 +295,31 @@ async function registerUser() {
 }
 
 
-function login() {
-  console.log('Iniciando sesión con:', loginEmail.value);
-  Dialog('closeLogin');
+async function login() {
+  try {
+    loading.value = true
+    const response = await postData("users/login",{
+      user:user.value.email,
+      password:String(user.value.password)
+    })
+
+    store.save_Token(response.data.token)
+
+    if(response.data.user.role === 0){
+      router.push('/admin')
+      showNotification('positive', `Hola ${response.data.user.name} ¡Bienvenido al panel de administración! Gestiona la tienda y las ventas.`)
+    }else{
+    showNotification('postive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
+    }
+    user.value = {}
+  } catch (error) {
+    showNotification('negative', 'Inicio de sesion fallido')
+    user.value = {}
+    console.log(error);
+  }
+  finally{
+    loading.value = false
+  }
 }
 
 // Función para cargar productos

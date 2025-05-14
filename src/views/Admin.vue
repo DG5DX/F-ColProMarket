@@ -3,14 +3,8 @@
     <admin-drawer />
     <q-page-container>
       <q-page class="q-pa-md flex flex-center">
-        <q-card
-          class="q-pa-md shadow-2 q-mx-auto"
-          style="width: 100%; background-color: white"
-        >
-          <div
-            class="text-h5 text-weight-bold"
-            style="display: grid; justify-items: center; padding: 10px"
-          >
+        <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; background-color: white">
+          <div class="text-h5 text-weight-bold" style="display: grid; justify-items: center; padding: 10px">
             📄 Detalles Generales
           </div>
           <!-- Rectángulos de métricas -->
@@ -24,6 +18,10 @@
                 <q-label class="text-h2">{{ dataProducts.count || 0 }}</q-label>
               </q-card-section>
             </q-card>
+<<<<<<< HEAD
+
+=======
+>>>>>>> main
 
             <!-- Total de Pedidos -->
             <q-card class="col metric-card bg-green-1">
@@ -131,10 +129,7 @@
         </q-card>
 
         <q-card> </q-card>
-        <q-card
-          class="q-pa-md shadow-2 q-mx-auto"
-          style="width: 100%; min-height: 600px"
-        >
+        <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; min-height: 600px">
           <div class="row justify-between items-center q-mb-md">
             <div class="text-h5 text-weight-bold">📦 Lista de Productos</div>
             <div
@@ -194,55 +189,35 @@
             />
           </div>
 
-          <q-table
-            :rows="dataProducts.data || []"
-            :columns="columns"
-            row-key="nombre"
-            flat
-            bordered
-            wrap-cells
-            class="bg-white my-sticky-table"
-            :filter="search"
-            style="max-height: 400px"
-          >
-            <!-- Imagen -->
-            <template v-slot:body-cell-imagen="props">
-              <q-td :props="props">
-                <q-img
-                  :src="props.row.images[0].urlImage"
-                  contain
-                  style="width: 60px; height: 60px"
-                />
-              </q-td>
-            </template>
 
-            <!-- Acciones -->
-            <template v-slot:body-cell-acciones="props">
-              <q-td :props="props">
-                <q-btn
-                  icon="visibility"
-                  flat
-                  dense
-                  color="primary"
-                  @click="seeDetail(props.row)"
-                />
-                <q-btn
-                  icon="edit"
-                  flat
-                  dense
-                  color="warning"
-                  @click="editarProducto(props.row)"
-                />
-                <q-btn
-                  icon="delete"
-                  flat
-                  dense
-                  color="negative"
-                  @click="deleteProduct(props.row)"
-                />
-              </q-td>
-            </template>
-          </q-table>
+<q-table
+    :rows="dataProducts.data || []"
+    :columns="columns"
+    row-key="nombre"
+    flat
+    bordered
+    wrap-cells
+    class="bg-white my-sticky-table"
+    :filter="search"
+    style="max-height: 400px"
+    separator="cell"
+  >
+    <template v-slot:body-cell-imagen="props">
+      <q-td :props="props" class="q-table--cell-center">
+        <q-img :src="props.row.images[0].urlImage" contain style="width: 60px; height: 60px" />
+      </q-td>
+    </template>
+
+    <template v-slot:body-cell-acciones="props">
+      <q-td :props="props" class="q-table--cell-center">
+        <q-btn icon="visibility" flat dense color="primary" @click="seeDetail(props.row)" />
+        <q-btn icon="edit" flat dense color="warning" @click="editarProducto(props.row)" class="q-ml-sm" />
+        <q-btn icon="delete" flat dense color="negative" @click="deleteProduct(props.row)" class="q-ml-sm" />
+      </q-td>
+    </template>
+  </q-table>
+
+
         </q-card>
       </q-page>
     </q-page-container>
@@ -255,45 +230,23 @@
         </q-card-section>
         <q-card-section>
           <q-input v-model="dataProduct.name" label="Nombre del Producto" />
-          <q-input
-            v-model="dataProduct.description"
-            label="Descripción"
-            type="textarea"
-          />
+          <q-input v-model="dataProduct.description" label="Descripción" type="textarea" />
           <q-input v-model="dataProduct.price" label="Precio" type="number" />
         </q-card-section>
 
         <!-- Archivos -->
         <div class="q-pa-md">
-          <q-file
-            v-model="files"
-            label="Seleccionar imágenes"
-            multiple
-            accept="image/*"
-            @update:model-value="handleFiles"
-            style="max-width: 300px"
-          >
+          <q-file v-model="files" label="Seleccionar imágenes" multiple accept="image/*"
+            @update:model-value="handleFiles" style="max-width: 300px">
             <template v-slot:prepend>
               <q-icon name="attach_file" />
             </template>
           </q-file>
 
           <div class="q-mt-md row q-gutter-sm">
-            <q-img
-              v-for="(image, index) in previewImages"
-              :key="index"
-              :src="image"
-              style="height: 100px; width: 100px"
-              class="rounded-borders"
-            >
-              <q-btn
-                dense
-                round
-                icon="close"
-                color="negative"
-                class="absolute-top-right"
-                @click="removeImage(index)"
-              />
+            <q-img v-for="(image, index) in previewImages" :key="index" :src="image" style="height: 100px; width: 100px"
+              class="rounded-borders">
+              <q-btn dense round icon="close" color="negative" class="absolute-top-right" @click="removeImage(index)" />
             </q-img>
           </div>
         </div>
@@ -317,71 +270,40 @@
         </q-card-section>
         <q-card-section class="q-gutter-md">
           <q-input v-model="newCategory.name" label="Nombre de la categoría" />
-          <q-input
-            v-model="newCategory.description"
-            label="Descripción"
-            type="textarea"
-          />
+          <q-input v-model="newCategory.description" label="Descripción" type="textarea" />
+          <q-card-section class="flex flex-center">
+          <q-input label="Agregar caracteristica" v-model="characteristic" ></q-input>
+          <q-btn icon="check" @click="addCharacteristic()"></q-btn>
+          </q-card-section>
+          <q-card-section class="q-gutter-md flex flex-center">
+            <q-card-section v-for="element of newCategory?.characteristics">
+              <q-span>{{ element }}</q-span>
+            </q-card-section>
+          </q-card-section>
+        </q-card-section>
+        <hr>
+        <q-card-section v-show="subcategoryDialog === true">
+          <q-input v-model="newSubcategory.name" label="Nombre de la subcategoría" />
+          <q-input v-model="newSubcategory.description" label="Descripción" type="textarea" />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn flat label="Guardar" color="primary" @click="saveCategory" />
+          <q-btn flat label="Añadir subcategoria" @click="subcategoryDialog = true" color="secondary" />
+          <q-btn flat label="Guardar" color="primary" @click="saveCategory" :loading="loading" />
         </q-card-actions>
       </q-card>
     </q-dialog>
 
-    <!-- Diálogo Crear subcategoría -->
 
-    <q-dialog v-model="subcategoryDialog" persistent>
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">Agregar subcategoría</div>
-        </q-card-section>
-        <q-select
-          label="Categoria principal"
-          v-model="newSubcategory.idCategoryFather"
-          :options="categories"
-          option-label="name"
-          option-value="_id"
-          map-options
-        ></q-select>
-        <q-card-section class="q-gutter-md">
-          <q-input
-            v-model="newSubcategory.name"
-            label="Nombre de la subcategoría"
-          />
-          <q-input
-            v-model="newSubcategory.description"
-            label="Descripción"
-            type="textarea"
-          />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn
-            flat
-            label="Guardar"
-            color="primary"
-            @click="saveSubcategory()"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+
 
     <!-- Diálogo Detalle -->
     <q-dialog v-model="detailDialog" persistent>
       <q-card class="q-pa-md" style="min-width: 400px; max-width: 600px">
-        <q-card-section class="text-h6 text-primary"
-          >Detalle del Producto</q-card-section
-        >
+        <q-card-section class="text-h6 text-primary">Detalle del Producto</q-card-section>
         <q-separator />
         <q-card-section class="q-gutter-md">
-          <q-img
-            :src="productSelect.imagen"
-            style="width: 100%; height: 250px"
-            class="rounded-borders"
-            contain
-          />
+          <q-img :src="productSelect.imagen" style="width: 100%; height: 250px" class="rounded-borders" contain />
           <div>
             <div><strong>Nombre:</strong> {{ productSelect.nombre }}</div>
             <div>
@@ -400,9 +322,7 @@
     <!-- Diálogo Editar -->
     <q-dialog v-model="editDialog" persistent>
       <q-card style="min-width: 400px">
-        <q-card-section class="text-h6 text-warning"
-          >Editar Producto</q-card-section
-        >
+        <q-card-section class="text-h6 text-warning">Editar Producto</q-card-section>
         <q-separator />
         <q-card-section class="q-gutter-md">
           <q-input v-model="productEdit.nombre" label="Nombre del Producto" />
@@ -416,12 +336,7 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn
-            flat
-            label="Guardar Cambios"
-            color="primary"
-            @click="updateProduct"
-          />
+          <q-btn flat label="Guardar Cambios" color="primary" @click="updateProduct" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -429,7 +344,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, toRaw } from "vue";
+import { ref, onMounted, toRaw } from "vue";
 import { Notify } from "quasar";
 import { getData, postData } from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
@@ -442,9 +357,10 @@ const dataProduct = ref({
   brand: "generico",
   acceptReturns: "si",
 });
+const loading = ref(false)
 const previewImages = ref([]);
 const search = ref("");
-
+const characteristic = ref(null)
 // Diálogos
 const productDialog = ref(false);
 const categoryDialog = ref(false);
@@ -455,7 +371,9 @@ const editDialog = ref(false);
 // Categorías
 const categories = ref([]);
 const selectedCategory = ref(null);
-const newCategory = ref({});
+const newCategory = ref({
+  characteristics:[]
+});
 const newSubcategory = ref({});
 
 //productos
@@ -489,6 +407,11 @@ const removeImage = (index) => {
   files.value.splice(index, 1);
 };
 
+function addCharacteristic (){
+  newCategory.value.characteristics.push(String(characteristic.value))
+  characteristic.value = "";
+}
+
 const saveProduct = async () => {
   try {
     const formData = new FormData();
@@ -516,91 +439,40 @@ const saveProduct = async () => {
     console.error("Error uploading images:", error);
   }
 };
-
 async function saveCategory() {
+  loading.value = true;
   try {
-    if (!newCategory.value.name || !newCategory.value.description) {
-      Notify.create({
-        type: "negative",
-        message: "Por favor completa todos los datos",
-      });
-      console.log("datos de categoria incompletos");
+    if (!newCategory.value.name?.trim() || !newCategory.value.description?.trim()) {
+      Notify.create({ type: 'negative', message: 'Completa los datos.' });
       return;
     }
 
-    const response = await postData("/categories", {
-      data: {
-        name: newCategory.value.name,
-        description: newCategory.value.description,
-      },
-    });
-
-    if (response && response.success) {
-      Notify.create({
-        type: "positive",
-        message: "categoria creada y guardada correctamente",
-      });
-      newCategory.value = { name: "", description: "" };
-      categoryDialog.value = false;
-      console.log("categoria creada", response.data);
-    } else {
-      const errorMessage =
-        response?.error || "Error al crear categoría desde la API";
-      Notify.create({
-        type: "negative",
-        message: errorMessage,
-      });
-      console.error("error al crear categoria desde la API", response);
-    }
-  } catch (error) {
-    console.log("error al crear categoria", error);
-    Notify.create({
-      type: "negative",
-      message: "Error al crear categoria",
-    });
-  }
-}
-
-async function saveSubcategory() {
-  try {
-    if (!newSubcategory.value.name || !newSubcategory.value.description) {
-      Notify.create({
-        type: "negative",
-        message: "Por favor completa todos los datos",
-      });
-      console.log("datos de subcategoria incompletos");
+    const catResp = await postData('/categories', { data: newCategory.value });
+    if (!catResp?.data?._id) {
+      Notify.create({ type: 'negative', message: 'Error al crear categoría.' });
       return;
     }
 
-    const response = await postData("/categories", {
-      data: newSubcategory.value,
-    });
-
-    if (response && response.success) {
-      Notify.create({
-        type: "positive",
-        message: "subcategoria creada y guardada correctamente",
-      });
-      newSubcategory.value = {};
-      subcategoryDialog.value = false;
-      console.log("subcategoria creada", response.data);
-    } else {
-      const errorMessage =
-        response?.error || "Error al crear subcategoría desde la API";
-      Notify.create({
-        type: "negative",
-        message: errorMessage,
-      });
-      console.error("error al crear subcategoria desde la API", response);
+    let subcatMsg = '';
+    if (newSubcategory?.value?.name?.trim() && newSubcategory.value?.description?.trim()) {
+      newSubcategory.value.idCategoryFather = catResp.data._id;
+      const subcatResp = await postData('/categories', { data: newSubcategory.value });
+      subcatMsg = subcatResp?.data?._id ? ' y subcategoría creada.' : ', error en subcategoría.';
     }
+
+    Notify.create({ type: 'positive', message: `Categoría creada.${subcatMsg}` });
+    newCategory.value = { name: '', description: '' };
+    if (newSubcategory.value) newSubcategory.value = { name: '', description: '', idCategoryFather: null };
+
   } catch (error) {
-    console.log("error al crear subcategoria", error);
-    Notify.create({
-      type: "negative",
-      message: "Error al crear subcategoria",
-    });
+    const msg = error?.response?.data?.error === 'Duplicate key' ? 'Categoría existente.' : 'Error al guardar.';
+    Notify.create({ type: 'negative', message: msg });
+  } finally {
+    loading.value = false;
+    categoryDialog.value = false;
   }
 }
+
 
 async function getAllProducts() {
   try {
@@ -693,6 +565,8 @@ function deleteProduct(producto) {
     });
   }
 }
+
+
 </script>
 
 <style scoped>

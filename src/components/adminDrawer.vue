@@ -43,6 +43,7 @@
                 label="Cerrar sesión"
                 icon="logout"
                 color="negative"
+                @click="closeSession()"
                 class="full-width"
                 v-close-popup
               />
@@ -56,11 +57,24 @@
 
 <script setup>
 import { ref } from "vue";
-
+import { useStore } from "../stores/store.js";
+const store = useStore()
+import { Notify } from "quasar";
+import { router } from "../routes/routes";
 const adminDialog = ref(false);
 
 function toggleAdminDialog() {
   adminDialog.value = !adminDialog.value;
+}
+
+function closeSession() {
+  store.token = null;
+  store.userId = null;
+    Notify.create({
+      type: 'positive',
+      message: 'Cierre de sesion exitoso'
+    })
+    router.replace("/")
 }
 </script>
 

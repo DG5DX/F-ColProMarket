@@ -188,7 +188,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useQuasar, Notify } from 'quasar'
 import { useStore } from '../stores/store.js'
-import { putData } from '../service/service.js'
+import { putData, getData } from '../service/service.js'
 const store = useStore()
 import { useRoute, useRouter } from 'vue-router' // Añade useRouter
 const $q = useQuasar()

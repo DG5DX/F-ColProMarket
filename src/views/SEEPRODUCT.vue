@@ -1,10 +1,11 @@
 <template>
   <q-layout>
-    <main-drawer />
+    <MainBar />
     <!-- Contenedor de página -->
     <q-page-container class="theContainer">
       <div class="ContainerMedium">
         <div class="start">
+        <q-btn icon="arrow_back" style="margin: 5%;" to="/"></q-btn>
           <div class="boxOne">
             <div class="sideL">
               <img v-for="(image, index) in dataProduct.images" :key="index" :class="`thumbnail ${index + 1}`"
@@ -187,8 +188,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useQuasar, Notify } from 'quasar'
 import { useStore } from '../stores/store.js'
-import { putData, getData } from '../service/service.js' // Asegúrate de importar getData
-import mainDrawer from '../components/mainDrawer.vue'
+import { putData } from '../service/service.js'
 const store = useStore()
 import { useRoute, useRouter } from 'vue-router' // Añade useRouter
 const $q = useQuasar()

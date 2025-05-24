@@ -18,10 +18,7 @@
                 <q-label class="text-h2">{{ dataProducts.count || 0 }}</q-label>
               </q-card-section>
             </q-card>
-<<<<<<< HEAD
 
-=======
->>>>>>> main
 
             <!-- Total de Pedidos -->
             <q-card class="col metric-card bg-green-1">
@@ -180,13 +177,6 @@
               @click="categoryDialog = true"
               class="col-auto"
             />
-            <q-btn
-              label="Crear Subcategoría"
-              color="secondary"
-              icon="add"
-              @click="subcategoryDialog = true"
-              class="col-auto"
-            />
           </div>
 
 
@@ -232,6 +222,23 @@
           <q-input v-model="dataProduct.name" label="Nombre del Producto" />
           <q-input v-model="dataProduct.description" label="Descripción" type="textarea" />
           <q-input v-model="dataProduct.price" label="Precio" type="number" />
+          <q-select
+              filled
+              dense
+              v-model="dataProduct.category"
+              :options="categories"
+              option-label="name"
+              map-options
+              label="Seleccionar Categoria"
+              clearable
+              class="col"
+              @clear="selectedCategory = null"
+            />
+            <q-card-section>
+              <q-input v-for="element of dataProduct?.category?.characteristics" v-model="dataProduct.details[element]" :label="element"></q-input>
+            </q-card-section>
+            <q-input v-model="dataProduct.stock" label="Cantidad"></q-input>
+            <q-select v-model="dataProduct.acceptReturns" :options="acceptReturns" label="Permite Devoluciones" ></q-select>
         </q-card-section>
 
         <!-- Archivos -->
@@ -282,13 +289,8 @@
           </q-card-section>
         </q-card-section>
         <hr>
-        <q-card-section v-show="subcategoryDialog === true">
-          <q-input v-model="newSubcategory.name" label="Nombre de la subcategoría" />
-          <q-input v-model="newSubcategory.description" label="Descripción" type="textarea" />
-        </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn flat label="Añadir subcategoria" @click="subcategoryDialog = true" color="secondary" />
           <q-btn flat label="Guardar" color="primary" @click="saveCategory" :loading="loading" />
         </q-card-actions>
       </q-card>
@@ -351,11 +353,7 @@ import adminDrawer from "../components/adminDrawer.vue";
 
 const files = ref([]);
 const dataProduct = ref({
-  // tengo que arreglar esto despues
-  categoryId: "681d74695b4961fb4cdb9e88",
-  stock: 0,
-  brand: "generico",
-  acceptReturns: "si",
+  details:{}
 });
 const loading = ref(false)
 const previewImages = ref([]);
@@ -364,7 +362,6 @@ const characteristic = ref(null)
 // Diálogos
 const productDialog = ref(false);
 const categoryDialog = ref(false);
-const subcategoryDialog = ref(false);
 const detailDialog = ref(false);
 const editDialog = ref(false);
 
@@ -374,12 +371,8 @@ const selectedCategory = ref(null);
 const newCategory = ref({
   characteristics:[]
 });
-const newSubcategory = ref({});
-
-//productos
 const dataProducts = ref([]);
-
-// Datos para ver o editar
+const acceptReturns = ['Si','No']
 const productSelect = ref({});
 const productEdit = ref({});
 
@@ -419,8 +412,12 @@ const saveProduct = async () => {
       formData.append("images", file);
     });
 
+    dataProduct.value.categoryId = dataProduct.value.category._id
+    delete dataProduct.value.category
+
     formData.append("data", JSON.stringify(dataProduct.value));
     const response = await postData("/product", formData);
+    console.log("datos de producto enviado" , toRaw(dataProduct.value));
 
     if (response) {
       Notify.create({
@@ -448,21 +445,14 @@ async function saveCategory() {
     }
 
     const catResp = await postData('/categories', { data: newCategory.value });
-    if (!catResp?.data?._id) {
+    if (!catResp.data){
+      console.log("id de cateogria al crearla" , catResp.data._id);
       Notify.create({ type: 'negative', message: 'Error al crear categoría.' });
       return;
     }
 
-    let subcatMsg = '';
-    if (newSubcategory?.value?.name?.trim() && newSubcategory.value?.description?.trim()) {
-      newSubcategory.value.idCategoryFather = catResp.data._id;
-      const subcatResp = await postData('/categories', { data: newSubcategory.value });
-      subcatMsg = subcatResp?.data?._id ? ' y subcategoría creada.' : ', error en subcategoría.';
-    }
-
-    Notify.create({ type: 'positive', message: `Categoría creada.${subcatMsg}` });
+    Notify.create({ type: 'positive', message: `Categoría creada.`});
     newCategory.value = { name: '', description: '' };
-    if (newSubcategory.value) newSubcategory.value = { name: '', description: '', idCategoryFather: null };
 
   } catch (error) {
     const msg = error?.response?.data?.error === 'Duplicate key' ? 'Categoría existente.' : 'Error al guardar.';
@@ -491,6 +481,7 @@ async function getAllCategories() {
     const response = await getData("/categories");
     if (response.data.length > 0) {
       categories.value = response.data;
+      console.log("data categorias" ,categories.value);
     } else {
       return console.log("no hay categorias", response.data);
     }

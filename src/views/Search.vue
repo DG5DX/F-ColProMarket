@@ -531,6 +531,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useStore } from '../stores/store'
+import { getData } from '../service/service'
 
 const $q = useQuasar()
 const store = useStore()
@@ -652,7 +653,7 @@ const sortOptions = [
 const products = ref([])
 
 // Computed
-const cartItemCount = computed(() => store.cartItems.length)
+const cartItemCount = computed(() => store.cartItems?.length)
 
 const filteredProducts = computed(() => {
   let filtered = [...products.value]
@@ -897,9 +898,61 @@ watch([
   fetchProducts()
 }, { deep: true })
 
+
+
+
+// datos del backed filtrados
+
+//variables usadas para filtros , estas las pone arroba junto con las demas al inicio del script
+// todo esto esta estatico luego debe hacer esto dinamico osea con v-model y usar inputs para cosas como
+// parameter y precios maximo y minimo para el filtro por categoria usa un select ese es facil de hacer
+// si no sabe como hacer la parte del select me llame y eso se ahce rapidito 
+const parameter = ref('nevera')
+const categoryId = ref('6830ce51182591e400d08b72')
+const minimumPrice = ref(16000)
+const maximunPrice = ref(2000000)
+
+//1 filtro para buscar por cualquier palabra , este es el de la barra de busqueda
+async function searchProducts(){
+  try {
+    const response = await getData(`/product/search-products?search=${parameter.value}`)
+    console.log("productos filtrados por palabra" , response.data);
+  } catch (error) {
+    console.log("error al filtrar priductos por palabras" , error);
+  }
+} 
+
+//2 filtro para buscar por categoria 
+
+async function searchProductsByCategory(){
+  try {
+    const response = await getData(`/product/search-products?categoryId=${categoryId.value}`)
+    console.log("productos filtrados por categoria" , response.data);
+  } catch (error) {
+    console.log("error al filtrar priductos por categoria" , error);
+  }
+} 
+
+
+// 3 filtro por precios
+async function searchProductsByPrice(){
+  try {
+    const response = await getData(`/product/search-products?min_price=${minimumPrice.value}&max_price=${maximunPrice.value}`)
+    console.log("productos filtrados por precios" , response.data);
+  } catch (error) {
+    console.log("error al filtrar priductos por precios" , error);
+  }
+} 
+
+
+
+
 // Lifecycle hooks
 onMounted(() => {
   fetchProducts()
+  searchProducts()
+  searchProductsByCategory()
+  searchProductsByPrice()
 })
 </script>
 
@@ -1014,7 +1067,6 @@ onMounted(() => {
 
 .ellipsis-2-lines {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1022,7 +1074,6 @@ onMounted(() => {
 
 .ellipsis-3-lines {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

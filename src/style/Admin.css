@@ -119,6 +119,7 @@
 }
 
 .q-card {
+  overflow-y: auto !important;
   border-radius: 12px !important;
 }
 

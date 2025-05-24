@@ -16,7 +16,7 @@
                     <q-input v-model="searchQuery" dense standout bg-color="white"
                         placeholder="Buscar productos electrónicos..." class="search-input" input-class="text-black">
                         <template v-slot:prepend>
-                            <q-icon name="search" />
+                            <q-btn icon="search" @click="productsSearch()"></q-btn>
                         </template>
                     </q-input>
                 </div>
@@ -75,11 +75,19 @@
 
 <script setup>
 import { ref, defineEmits } from 'vue'
+import { router } from '../routes/routes';
 const emit = defineEmits(['open-register-dialog','open-logIn-dialog']);
 
 
 const leftDrawerOpen = ref(false)
 const searchQuery = ref('')
+
+function productsSearch (){
+    router.push({
+        path:"/search" , query:{data:searchQuery.value}
+    })
+}
+
 const cart=()=>{
     window.location.href = 'http://localhost:5173/#/cart';
 }

@@ -65,15 +65,15 @@
         <div class="order-totals">
           <div class="total-row">
             <span>Subtotal</span>
-            <span>154.00€</span>
+            <span>{{ cartDetails.total }}</span>
           </div>
           <div class="total-row">
             <span>Descuento</span>
-            <span class="discount">-10.50€</span>
+            <span class="discount">-10000</span>
           </div>
           <div class="total-row grand-total">
             <span>Total</span>
-            <span>143.50€</span>
+            <span>falta arreglar logica de esto</span>
           </div>
         </div>
 
@@ -128,9 +128,16 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
-
+import { ref, onMounted, toRaw } from 'vue'
+import { useStore } from '../stores/store.js';
+import { Notify } from 'quasar';
+import { getData, postData } from '../service/service.js';
 const paypalRef = ref(null)
+const store = useStore()
+const cartDetails = ref(store.cart);
+const formatItems = ref([])
+const paymentValues = ref({})
+const paymentDetails = ref({})
 
 const renderPayPalButton = () => {
   if (!window.paypal || !window.paypal.Buttons) {
@@ -143,30 +150,21 @@ const renderPayPalButton = () => {
       return actions.order.create({
         purchase_units: [{
           amount: {
-            value: '143.50',
+            value: String(paymentValues.value.amount),
             currency_code: 'USD',
             breakdown: {
-              item_total: { value: '154.00', currency_code: 'USD' },
-              discount: { value: '10.50', currency_code: 'USD' }
+              item_total: { value: String(paymentValues.value.subTotal), currency_code: 'USD' },
+              discount: { value: String(paymentValues.value.discount), currency_code: 'USD' }
             }
           },
-          items: [
-            {
-              name: 'Curso de Vue.js Avanzado',
-              unit_amount: { value: '89.00', currency_code: 'USD' },
-              quantity: '1'
-            },
-            {
-              name: 'Curso de Diseño UX/UI',
-              unit_amount: { value: '65.00', currency_code: 'USD' },
-              quantity: '1'
-            }
-          ]
+          items:paymentValues.items
         }]
       })
     },
     onApprove: async (data, actions) => {
       const details = await actions.order.capture()
+      paymentDetails.value = details
+      console.log("detalles de pago" , toRaw(paymentDetails.value));
       alert(`Pago completado por ${details.payer.name.given_name}`)
     },
     onError: (err) => {
@@ -182,8 +180,46 @@ const renderPayPalButton = () => {
   }).render(paypalRef.value)
 }
 
+async function convertCurrency(){
+  try {  //por el momento el descuento es estatico luego cuando se complete la logica de ofertas ay que arreglarlo
+    const response = await postData(`/orders/convertCurrency`,{
+      discount: 10000, 
+      items: toRaw(cartDetails.value.items) 
+    })
+    paymentValues.value = response.data
+    console.log('valores de pago', toRaw(paymentValues.value));
+
+  } catch (error) {
+    console.log('error al convertir valores', error);
+  }
+}
+
+function formatProducts(){
+if(cartDetails.value.items){
+    cartDetails.value.items.forEach((product)=>{
+      const unitPriceInDollars = (product.price / 3900).toFixed(2)
+    formatItems.value.push({
+      name:product.name,
+      unit_amount:{value:unitPriceInDollars , currency_code:'USD'},
+      quantity:product.quantity
+    })
+  })
+}else{
+  Notify.create({
+    type:'negative',
+    message:'No hay datos del carrito'
+  })
+}
+
+console.log("datos de items formateados", toRaw(formatItems.value));
+
+}
+
 onMounted(() => {
+  formatProducts()
   renderPayPalButton()
+  convertCurrency()
+  console.log("datos del carrito en pagos" , toRaw(cartDetails.value));
 })
 </script>
 

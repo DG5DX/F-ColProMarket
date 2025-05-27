@@ -1,6 +1,6 @@
 <template>
   <q-layout>
-    <MainBar />
+    <mainBar @open-register-dialog="registerDialog = true" @open-logIn-dialog="loginDialog = true" />
     <!-- Contenedor de página -->
     <q-page-container class="theContainer">
       <div class="ContainerMedium">
@@ -185,15 +185,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import mainBar from '../components/mainBar.vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useQuasar, Notify } from 'quasar'
 import { useStore } from '../stores/store.js'
 import { putData, getData } from '../service/service.js'
 const store = useStore()
-import { useRoute, useRouter } from 'vue-router' // Añade useRouter
+import { useRoute, useRouter } from 'vue-router'
 const $q = useQuasar()
 const route = useRoute()
-const router = useRouter() // Añade router
+const router = useRouter()
 
 // Variables de estado
 const dataProduct = ref({});
@@ -203,7 +204,7 @@ const selectedImage = ref('')
 const productQualification = ref(0)
 const productos = ref([]);
 
-// Función para cargar productos (copiada del primer componente)
+// Función para cargar productos
 async function products() {
   try {
     const response = await getData("/product");
@@ -213,7 +214,74 @@ async function products() {
   }
 }
 
-// Función para agregar al carrito (copiada del primer componente)
+// Función para cargar un producto específico por ID
+async function loadProductById(productId) {
+  try {
+    // Si ya tienes los productos cargados, búscalo en el array
+    if (productos.value.length > 0) {
+      const product = productos.value.find(p => p._id === productId);
+      if (product) {
+        dataProduct.value = product;
+        selectedImage.value = '';
+        review.value = '';
+        productQualification.value = 0;
+        console.log("Producto cargado desde array:", dataProduct.value);
+        return;
+      }
+    }
+    
+    // Si no está en el array, cárgalo desde la API
+    const response = await getData(`/product/${productId}`);
+    dataProduct.value = response.data;
+    selectedImage.value = '';
+    review.value = '';
+    productQualification.value = 0;
+    console.log("Producto cargado desde API:", dataProduct.value);
+  } catch (error) {
+    console.error('Error al cargar producto:', error);
+    Notify.create({
+      type: 'negative',
+      message: 'Error al cargar el producto'
+    });
+  }
+}
+
+// Función para manejar datos del producto (compatibilidad con método anterior)
+function obtainDataProduct() {
+  const productData = route.query.data;
+  if (productData) {
+    try {
+      dataProduct.value = JSON.parse(productData);
+      selectedImage.value = '';
+      review.value = '';
+      productQualification.value = 0;
+      console.log("Producto cargado desde query data:", dataProduct.value);
+    } catch (error) {
+      console.error('Error al parsear datos del producto:', error);
+    }
+  }
+}
+
+// Función para inicializar el producto
+async function initializeProduct() {
+  // Primero verificar si hay un ID en la query
+  const productId = route.query.id;
+  if (productId) {
+    await loadProductById(productId);
+    return;
+  }
+  
+  // Si no hay ID, verificar si hay data (método anterior)
+  const productData = route.query.data;
+  if (productData) {
+    obtainDataProduct();
+    return;
+  }
+  
+  console.log("No se encontró ID ni data en la query");
+}
+
+// Función para agregar al carrito
 const addToTheCart = (producto) => {
   store.addToCart(producto)
   Notify.create({
@@ -223,18 +291,32 @@ const addToTheCart = (producto) => {
   console.log('Agregado al carrito:', producto.name);
 }
 
-// Función para ver el detalle del producto (similar a la del primer componente)
 const verDetalleProducto = (producto) => {
-  if (producto && (producto.id || producto.name)) {
-    localStorage.setItem('selectedProduct', JSON.stringify(producto));
-  }
   router.push({
-    path:"/seeproduct", 
-    query:{data:JSON.stringify(producto)}
+    path: "/seeproduct",
+    query: { id: producto._id } // Solo pasa el ID
   });
 }
 
-// Resto de tus funciones existentes...
+// Watcher para detectar cambios en la query
+watch(
+  () => [route.query.id, route.query.data],
+  ([newId, newData], [oldId, oldData]) => {
+    // Si cambió el ID
+    if (newId && newId !== oldId) {
+      loadProductById(newId);
+      return;
+    }
+    
+    // Si cambió la data (método anterior)
+    if (newData && newData !== oldData) {
+      obtainDataProduct();
+      return;
+    }
+  }
+)
+
+// Resto de funciones...
 const formatPrice = (precio) => {
   return '$' + precio.toLocaleString('es-CO')
 }
@@ -257,6 +339,9 @@ async function addReview(id){
         message:'Reseña guardada'
       })
       dataProduct.value.reviews = response.product.reviews
+      // Limpiar el formulario después de enviar
+      review.value = '';
+      productQualification.value = 0;
     }
   } catch (error) {
     console.log(error);
@@ -276,20 +361,16 @@ const comprarAhora = () => {
 }
 
 const isProductAvailable = computed(() => {
-  return dataProduct.value.Stock >= 0 ? 'text-positive' : 'text-negative'
+  return dataProduct.value.stock >= 0 ? 'text-positive' : 'text-negative'
 })
-
-function obtainDataProduct(){
-  dataProduct.value = JSON.parse(route.query.data || '{}')
-  console.log("detalles del producto" , dataProduct);
-}
 
 // Inicialización
-onMounted(() => {
-  obtainDataProduct();
-  products(); // Llama a la función para cargar productos al montar el componente
+onMounted(async () => {
+  await products(); // Cargar productos primero
+  await initializeProduct(); // Luego inicializar el producto específico
 })
 </script>
+
 <style scoped>
 @import url('../style/SEEPRODUCT.css');
 </style>

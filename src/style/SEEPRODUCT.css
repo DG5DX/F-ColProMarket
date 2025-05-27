@@ -1,13 +1,31 @@
 .card {
   position: relative;
   width: 300px;
-  height: 380px;
+  height: 390px;
   background-color: var(--one-color--);
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
+}
+.card-subtitle {
+  font-size: 14px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-height: 1.4; 
+  max-height: calc(1.4em * 2); 
+  word-break: break-word; 
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+  line-height: 1; 
 }
 .q-img {
   width: 100%;
@@ -71,7 +89,7 @@
 .card-price {
   font-size: 20px;
   font-weight: 600;
-  color:var(--five-color--);
+  color:var(--fiv-color--);
 }
 
 .card-price span {
@@ -82,7 +100,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color:var(--five-color--);
+  background-color:var(--fiv-color--);
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -92,7 +110,7 @@
 }
 
 .card-btn:hover {
-  background-color:var(--five-color--);
+  background-color:var(--fiv-color--);
   transform: translateY(-2px);
 }
 
@@ -108,7 +126,7 @@
   width: 90%;
   margin-left: 5%;
   padding: 20px 0;
-  border-radius: 5px;
+  border-radius: 15px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   background: #121212;
   background: radial-gradient(circle, rgba(18, 18, 18, 0.37) 0%, rgba(18, 18, 18, 0.55) 0%);
@@ -119,8 +137,11 @@
   display: flex;
   justify-content: center;
   gap: 30px;
-  margin-left: 13%;
   padding: 20px;
+}
+
+.Testo{
+ width: 75vh;
 }
 
 .row1{
@@ -130,10 +151,7 @@
 .q-mb-md{
   width:70%;
 }
-.row {
-  display: grid;
-  grid-template-columns: 25% 25% 25% 25%;
-}
+
 
 .theContainer {
   width: 100%;

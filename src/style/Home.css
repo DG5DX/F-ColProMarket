@@ -42,6 +42,13 @@
     border: none;
   }
   
+.registerFont{
+  height: 50%;
+  width: 30%;
+
+}
+  
+
   /* Estilos adicionales para el footer */
 .footer-container {
   background: linear-gradient(to right, #1d1d1d, #2d2d2d);
@@ -287,7 +294,7 @@
   .card {
     position: relative;
     width: 300px;
-    height: 380px;
+    height: 390px;
     background-color: var(--one-color--);
     border-radius: 10px;
     padding: 20px;
@@ -325,6 +332,7 @@
     font-weight: 600;
     color: #333;
     margin-bottom: 5px;
+    line-height: 1; 
   }
   
   .card-subtitle {
@@ -334,7 +342,10 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-  }
+    line-height: 1.4; 
+    max-height: calc(1.4em * 2); 
+    word-break: break-word; 
+}
   
   .card-divider {
     width: 100%;
@@ -352,7 +363,7 @@
   .card-price {
     font-size: 20px;
     font-weight: 600;
-    color:var(--five-color--);
+    color:var(--fiv-color--);
   }
   
   .card-price span {
@@ -363,7 +374,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color:var(--five-color--);
+    background-color:var(--fiv-color--);
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -373,7 +384,7 @@
   }
   
   .card-btn:hover {
-    background-color:var(--five-color--);
+    background-color:var(--fiv-color--);
     transform: translateY(-2px);
   }
   

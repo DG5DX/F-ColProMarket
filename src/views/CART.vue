@@ -1,6 +1,6 @@
 <template>
     <q-layout view="hHh lpR fFf">
-        <!-- Contenedor de página -->
+        <mainBar @open-register-dialog="registerDialog = true" @open-logIn-dialog="loginDialog = true" />
         <q-page-container class="theContainer">
 
             <div class="titleOne">
@@ -126,6 +126,7 @@
 </template>
 
 <script setup>
+import mainBar from '../components/mainBar.vue';
 import { ref, toRaw } from 'vue'
 import { useStore } from '../stores/store'
 import { Notify } from 'quasar';
@@ -139,11 +140,6 @@ const cantidades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const search = ref('')
 const rightDrawerOpen = ref(false)
 
-
-
-async function pago() {
-    window.location.href = 'http://localhost:5173/#/gateway';
-}
 
 // Función para formatear precio
 const formatPrice = (price) => {
@@ -189,6 +185,17 @@ const removeFromCart = (index) => {
 const onLoad = (index, done) => {
     // Implementar si se necesita cargar más productos dinámicamente
     done()
+}
+
+async function pago() {
+    if (cart.value.length === 0) {
+        Notify.create({
+            type: "warning",
+            message: "Tu carrito está vacío"
+        })
+        return;
+    }
+    window.location.href = 'http://localhost:5173/#/gateway';
 }
 </script>
 

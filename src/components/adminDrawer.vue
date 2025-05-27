@@ -57,21 +57,21 @@
           <q-item-section> Productos </q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/admin/categorias">
+        <q-item clickable v-ripple to="/admincategories">
           <q-item-section avatar>
             <q-icon name="category" />
           </q-item-section>
           <q-item-section> Categorías </q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/admin/usuarios">
+        <q-item clickable v-ripple to="/adminusers">
           <q-item-section avatar>
             <q-icon name="people" />
           </q-item-section>
           <q-item-section> Usuarios </q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/admin/ventas">
+        <q-item clickable v-ripple to="/adminsales">
           <q-item-section avatar>
             <q-icon name="point_of_sale" />
           </q-item-section>

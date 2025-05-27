@@ -17,12 +17,13 @@
         <!-- Barra de búsqueda destacada -->
         <div class="search-container q-mx-lg">
           <q-input v-model="parameter" dense standout="bg-white text-dark" bg-color="white"
-            placeholder="Buscar productos electrónicos..." class="search-input" @update:model-value="searchProducts(parameter)">
+            placeholder="Buscar productos electrónicos..." class="search-input"
+            @update:model-value="searchProducts(parameter)">
             <template v-slot:prepend>
               <q-icon name="search" color="primary" />
             </template>
             <template v-slot:append>
-              <q-icon v-if="searchQuery" name="close" @click="searchQuery = ''" class="cursor-pointer" />
+              <q-icon v-if="searchQuery" name="close" @click="searchQuery = 'category'" class="cursor-pointer" />
             </template>
           </q-input>
         </div>
@@ -112,10 +113,10 @@
                 <q-expansion-item v-model="categoryExpanded" icon="category" label="Categorías"
                   header-class="text-primary">
                   <q-list dense>
-                    <q-item v-for="cat in categories" :key="cat.id" clickable v-ripple @click="selectCategory(cat)">
-                      <q-item-section>{{ cat.name }}</q-item-section>
+                    <q-item  v-for="categories in categories" :key="categories.id" clickable v-ripple @click="selectCategory(categories._id)">
+                      <q-item-section>{{ categories.name }}</q-item-section>
                       <q-item-section side>
-                        <q-badge color="grey-4" text-color="dark">{{ cat.count }}</q-badge>
+                        <q-badge color="grey-4" text-color="dark">{{ categories.count }}</q-badge>
                       </q-item-section>
                     </q-item>
                   </q-list>
@@ -123,60 +124,50 @@
 
                 <q-separator class="q-my-sm" />
 
-                <q-expansion-item v-model="priceExpanded" icon="attach_money" label="Rango de precios"
-                  header-class="text-primary">
-                  <div class="q-pa-sm">
-                    <q-range v-model="priceRange" :min="10000" :max="1500000" :step="100" label-always color="primary"
-                      class="q-mt-sm" />
-                    <div class="row justify-between q-mt-sm">
-                      <q-input v-model.number="priceRange.min" type="number" dense outlined prefix="$"
-                        style="width: 48%" />
-                      <q-input v-model.number="priceRange.max" type="number" dense outlined prefix="$"
-                        style="width: 48%" />
-                    </div>
-                  </div>
-                </q-expansion-item>
+             <q-expansion-item
+    v-model="priceExpanded"
+    icon="attach_money"
+    label="Rango de precios"
+    header-class="text-primary"
+  >
+    <div class="q-pa-sm">
+      <q-range
+        v-model="internalPriceRange"
+        :min="10000"
+        :max="1500000"
+        :step="100"
+        label-always
+        color="primary"
+        class="q-mt-sm"
+      />
+      <div class="row justify-between q-mt-sm">
+        <q-input
+          v-model.number="internalPriceRange.min"
+          type="number"
+          dense
+          outlined
+          prefix="$"
+          style="width: 48%"
+        />
+        <q-input
+          v-model.number="internalPriceRange.max"
+          type="number"
+          dense
+          outlined
+          prefix="$"
+          style="width: 48%"
+        />
+      </div>
+    </div>
+  </q-expansion-item>
 
                 <q-separator class="q-my-sm" />
-
-                <q-expansion-item v-model="featuresExpanded" icon="star" label="Características"
-                  header-class="text-primary">
-                  <div class="q-pa-sm">
-                    <q-select v-model="supplierType" :options="supplierOptions" label="Tipo de proveedor" outlined dense
-                      class="q-mb-sm" />
-
-                    <q-select v-model="productType" :options="productOptions" label="Tipo de producto" outlined dense
-                      class="q-mb-sm" />
-
-                    <q-select v-model="condition" :options="conditionOptions" label="Condición" outlined dense />
-                  </div>
-                </q-expansion-item>
               </q-card-section>
-
-              <q-card-actions align="center">
-                <q-btn label="Aplicar filtros" color="primary" class="full-width" @click="applyFilters" />
-                <q-btn label="Limpiar" flat color="primary" class="full-width q-mt-sm" @click="clearFilters" />
-              </q-card-actions>
             </q-card>
           </div>
 
           <!-- Lista de productos -->
           <div class="col-12 col-md-9">
-            <!-- Encabezado con resultados y ordenamiento -->
-            <div class="row items-center justify-between q-mb-md">
-              <div class="text-subtitle1 text-grey-8">
-                Mostrando <span class="text-weight-bold">{{ pagination.from }}-{{ pagination.to }}</span> de
-                <span class="text-weight-bold">{{ pagination.total }}</span> productos
-              </div>
-
-              <div class="row items-center q-gutter-x-md">
-                <q-select v-model="sortBy" :options="sortOptions" label="Ordenar por" outlined dense
-                  style="min-width: 200px;" emit-value map-options />
-
-                <q-toggle v-model="showDiscountOnly" label="Solo ofertas" color="primary" dense />
-              </div>
-            </div>
-
             <!-- Loading state -->
             <div v-if="loading" class="row q-col-gutter-md">
               <div v-for="n in 6" :key="n" class="col-12 col-sm-6 col-md-4">
@@ -199,7 +190,7 @@
               <div v-for="product in products" :key="product.id" class="col-12 col-sm-6 col-md-4">
                 <q-card class="product-card cursor-pointer" @click="viewProduct(product)">
                   <div class="product-badge-container">
-                    <q-img :src="product.images[1].urlImage || 'https://via.placeholder.com/300'" ratio="1" class="product-image">
+                    <q-img :src="product.images[1].urlImage || ''" ratio="1" class="product-image">
                       <template v-slot:loading>
                         <q-spinner-gears color="primary" size="3em" />
                       </template>
@@ -230,7 +221,6 @@
                     <div class="row items-center justify-between q-mt-sm">
                       <div>
                         <q-rating v-model="product.rating" size="1em" color="orange" readonly class="q-mr-xs" />
-                   <!--      <span class="text-caption text-grey-7">({{ product.reviews }})</span> -->
                       </div>
 
                       <div class="text-caption text-grey-7">
@@ -241,16 +231,12 @@
                   </q-card-section>
 
                   <q-card-actions align="between" class="q-px-md q-pb-md">
-                    <q-btn flat round icon="favorite_border" color="grey-7" size="sm"
-                      @click.stop="toggleFavorite(product)" />
-
                     <div class="row items-center q-gutter-x-sm">
                       <q-btn round icon="add_shopping_cart" color="primary" size="sm"
                         @click.stop="addToCart(product)" />
-
-                      <q-btn label="Ver" color="primary" size="sm" outline @click.stop="viewProduct(product)" />
                     </div>
                   </q-card-actions>
+
                 </q-card>
               </div>
             </div>
@@ -348,31 +334,79 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useStore } from '../stores/store'
 import { getData } from '../service/service'
-const route = useRoute()
+import SEEPRODUCT from './SEEPRODUCT.vue'
+import { router } from '../routes/routes'
 
+
+
+
+// Variables reactivas
+const priceExpanded = ref(false);
+const priceRange = ref({
+  min: 10000,
+  max: 1500000,
+});
+
+// Propiedad computada para vincular q-range y q-inputs
+const internalPriceRange = computed({
+  get() {
+    return priceRange.value;
+  },
+  set(newVal) {
+    // Validaciones para asegurar que los valores se mantengan dentro de los límites y consistentes
+    if (newVal.min < 10000) newVal.min = 10000;
+    if (newVal.max > 1500000) newVal.max = 1500000;
+    
+    // Aseguramos que min no sea mayor que max
+    if (newVal.min > newVal.max) {
+      newVal.min = newVal.max;
+    }
+    // Aseguramos que max no sea menor que min
+    if (newVal.max < newVal.min) {
+      newVal.max = newVal.min;
+    }
+
+    priceRange.value = newVal;
+    // Llamar a la función de búsqueda aquí para que se actualice al arrastrar el rango
+    searchProductsByPrice(priceRange.value.min, priceRange.value.max);
+  },
+});
+
+// Watchers para sincronizar y disparar la búsqueda cuando los inputs individuales cambian
+watch(() => priceRange.value.min, (newVal) => {
+  if (newVal > priceRange.value.max) {
+    priceRange.value.max = newVal;
+  }
+  searchProductsByPrice(priceRange.value.min, priceRange.value.max);
+});
+
+watch(() => priceRange.value.max, (newVal) => {
+  if (newVal < priceRange.value.min) {
+    priceRange.value.min = newVal;
+  }
+  searchProductsByPrice(priceRange.value.min, priceRange.value.max);
+});
+
+
+async function searchProductsByPrice() {
+  try {
+    const response = await getData(`/product/search-products?min_price=${priceRange.value.min}&max_price=${priceRange.value.max}`)
+    products.value = response.data
+    console.log("productos filtrados por precios", response.data);
+  } catch (error) {
+    console.log("error al filtrar priductos por precios", error);
+  }
+}
+
+
+
+const route = useRoute()
 const $q = useQuasar()
 const store = useStore()
 
 const leftDrawerOpen = ref(false)
-
-
-const searchQuery = ref('Electrónicos')
+const searchQuery = ref('')
 const slide = ref(0)
-
-const supplierType = ref(null)
-const productType = ref(null)
-const condition = ref(null)
-const priceRange = ref({ min: 0, max: 10000000 })
-const minOrder = ref({ min: 0, max: 10000 })
-const sortBy = ref('Relevancia')
-const showDiscountOnly = ref(false)
-
-// UI estados
-const loading = ref(false)
-const categoryExpanded = ref(true)
-const priceExpanded = ref(true)
-const featuresExpanded = ref(false)
-
 // Newsletter
 const newsletterEmail = ref('')
 
@@ -422,6 +456,21 @@ async function getAllCategories() {
   }
 }
 
+const category = ref([])
+async function getCategoryById() {
+  try {
+    const response = await getData(`/categories/${categoryId.value}`)
+    if (response.data.length > 0) {
+      category.value = response.data;
+      console.log("categoria seleccionada", category.value);
+    } else {
+      return console.log("no hay categorias", response.data);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 const tabs = ref([
   { label: 'INICIO', route: '/' },
   { label: 'PRODUCTOS', route: '/productos' },
@@ -438,40 +487,13 @@ const menuItems = ref([
   { label: 'Contacto', icon: 'contact_mail', route: '/contacto' }
 ])
 
-const footerCategories = ref([
-  'Laptops', 'Smartphones', 'Tablets', 'Audio', 'Accesorios', 'Componentes'
-])
-
-const helpItems = ref([
-  'Centro de ayuda', 'Cómo comprar', 'Envíos', 'Devoluciones', 'Pagos', 'Garantías'
-])
-
-const supplierOptions = [
-  { label: 'Proveedores verificados', value: 'verified' },
-  { label: 'Proveedores premium', value: 'premium' },
-  { label: 'Todos los proveedores', value: 'all' }
-]
-
-const productOptions = [
-  { label: 'Listo para comprar', value: 'ready' },
-  { label: 'Muestras PaaS', value: 'samples' },
-  { label: 'Productos personalizados', value: 'custom' }
-]
-
-const conditionOptions = [
-  { label: 'Nuevo', value: 'new' },
-  { label: 'Usado', value: 'used' },
-  { label: 'Reacondicionado', value: 'refurbished' }
-]
-
-const sortOptions = [
-  { label: 'Relevancia', value: 'Relevancia' },
-  { label: 'Precio: menor a mayor', value: 'price_asc' },
-  { label: 'Precio: mayor a menor', value: 'price_desc' },
-  { label: 'Más vendidos', value: 'popular' },
-  { label: 'Mejor valorados', value: 'rating' },
-  { label: 'Novedades', value: 'newest' }
-]
+const viewProduct = (product) => {
+  router.push({
+    path: '/SEEPRODUCT',
+    query: { data: JSON.stringify(product) }
+  })
+  console.log('View product:', product)
+}
 
 const products = ref([])
 
@@ -501,9 +523,6 @@ function clearFilters() {
   showDiscountOnly.value = false
 }
 
-function applyFilters() {
-  pagination.value.page = 1
-}
 
 function addToCart(product) {
   store.addToCart(product)
@@ -519,54 +538,12 @@ function addToCart(product) {
   })
 }
 
-function toggleFavorite(product) {
-  product.isFavorite = !product.isFavorite
-  $q.notify({
-    message: product.isFavorite
-      ? 'Añadido a favoritos'
-      : 'Eliminado de favoritos',
-    icon: product.isFavorite ? 'favorite' : 'favorite_border',
-    color: product.isFavorite ? 'pink' : 'grey',
-    position: 'top-right',
-    timeout: 1000
-  })
-}
-
-function viewProduct(product) {
-  // Navegar a la página de detalle del producto
-  console.log('View product:', product)
-}
 
 function handleBannerClick(banner) {
   // Navegar al enlace del banner
   console.log('Banner clicked:', banner)
 }
 
-function selectCategory(category) {
-  searchQuery.value = category.name
-  handleSearch()
-}
-
-function subscribeNewsletter() {
-  if (newsletterEmail.value) {
-    $q.notify({
-      type: 'positive',
-      message: 'Gracias por suscribirte a nuestro boletín',
-      icon: 'email',
-      position: 'top-right'
-    })
-    newsletterEmail.value = ''
-  }
-}
-
-// Watchers
-watch([
-  () => pagination.value.page,
-  sortBy,
-  priceRange,
-  minOrder
-], () => {
-}, { deep: true })
 
 
 
@@ -575,11 +552,10 @@ watch([
 //variables usadas para filtros , estas las pone arroba junto con las demas al inicio del script
 // todo esto esta estatico luego debe hacer esto dinamico osea con v-model y usar inputs para cosas como
 // parameter y precios maximo y minimo para el filtro por categoria usa un select ese es facil de hacer
-// si no sabe como hacer la parte del select me llame y eso se ahce rapidito 
+// si no sabe como hacer la parte del select me llame y eso se hace rapidito 
 const parameter = ref('')
-const categoryId = ref('6830ce51182591e400d08b72')
 const minimumPrice = ref(16000)
-const maximunPrice = ref(2000000)
+const maximunPrice = ref(15000000)
 
 //1 filtro para buscar por cualquier palabra , este es el de la barra de busqueda
 async function searchProducts() {
@@ -593,36 +569,31 @@ async function searchProducts() {
 }
 
 //2 filtro para buscar por categoria 
-async function searchProductsByCategory() {
+async function selectCategory(categoryId) {
   try {
-    const response = await getData(`/product/search-products?categoryId=${categoryId.value}`)
+    const response = await getData(`/product/search-products?categoryId=${categoryId}`)
+    products.value = response.data
     console.log("productos filtrados por categoria", response.data);
   } catch (error) {
     console.log("error al filtrar priductos por categoria", error);
   }
 }
 // 3 filtro por precios
-async function searchProductsByPrice() {
-  try {
-    const response = await getData(`/product/search-products?min_price=${minimumPrice.value}&max_price=${maximunPrice.value}`)
-    console.log("productos filtrados por precios", response.data);
-  } catch (error) {
-    console.log("error al filtrar priductos por precios", error);
-  }
-}
 
 
-function obtainDataSearch (){
+
+function obtainDataSearch() {
   parameter.value = route.query.data || ''
   console.log("parametro de busqueda", parameter.value);
 }
 
 onMounted(() => {
-  searchProductsByCategory()
+  selectCategory()
   searchProductsByPrice()
   getAllCategories()
   obtainDataSearch()
   searchProducts()
+  getCategoryById()
 })
 </script>
 

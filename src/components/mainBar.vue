@@ -16,7 +16,7 @@
                     <q-input v-model="searchQuery" dense standout bg-color="white"
                         placeholder="Buscar productos electrónicos..." class="search-input" input-class="text-black">
                         <template v-slot:prepend>
-                            <q-btn icon="search" @click="productsSearch()"></q-btn>
+                            <q-btn icon="search" flat @click="productsSearch()"></q-btn>
                         </template>
                     </q-input>
                 </div>
@@ -26,7 +26,6 @@
                     <q-btn flat label="Ingresar"  @click="emit('open-logIn-dialog')"  class="text-white" />
                     <q-btn flat label="Registro" @click="emit('open-register-dialog')" class="text-white" />
                     <q-btn flat round icon="shopping_cart" class="text-white" @click="cart()">
-                        <q-badge color="orange" floating>3</q-badge>
                     </q-btn>
                 </div>
             </q-toolbar>
@@ -118,9 +117,9 @@ function toggleLeftDrawer() {
 
 .search-container {
     flex-grow: 1;
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 20px;
-    margin-left: 4px;
+    margin-left: 55px;
 }
 
 .search-input {

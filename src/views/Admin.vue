@@ -154,7 +154,7 @@
             </div>
           </div>
 
-          <!-- Barra de categorías -->
+          <!-- Busqueda por categoria -->
           <div
             class="row q-mb-md items-center q-gutter-md"
             style="display: flex; align-items: flex-start"
@@ -169,13 +169,6 @@
               clearable
               class="col"
               @clear="selectedCategory = null"
-            />
-            <q-btn
-              label="Crear Categoría"
-              color="secondary"
-              icon="add"
-              @click="categoryDialog = true"
-              class="col-auto"
             />
           </div>
 
@@ -269,36 +262,6 @@
       </q-card>
     </q-dialog>
 
-    <!-- Diálogo Crear Categoría -->
-    <q-dialog v-model="categoryDialog" persistent>
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">Agregar Categoría</div>
-        </q-card-section>
-        <q-card-section class="q-gutter-md">
-          <q-input v-model="newCategory.name" label="Nombre de la categoría" />
-          <q-input v-model="newCategory.description" label="Descripción" type="textarea" />
-          <q-card-section class="flex flex-center">
-          <q-input label="Agregar caracteristica" v-model="characteristic" ></q-input>
-          <q-btn icon="check" @click="addCharacteristic()"></q-btn>
-          </q-card-section>
-          <q-card-section class="q-gutter-md flex flex-center">
-            <q-card-section v-for="element of newCategory?.characteristics">
-              <q-span>{{ element }}</q-span>
-            </q-card-section>
-          </q-card-section>
-        </q-card-section>
-        <hr>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn flat label="Guardar" color="primary" @click="saveCategory" :loading="loading" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-
-
-
     <!-- Diálogo Detalle -->
     <q-dialog v-model="detailDialog" persistent>
       <q-card class="q-pa-md" style="min-width: 400px; max-width: 600px">
@@ -361,16 +324,13 @@ const search = ref("");
 const characteristic = ref(null)
 // Diálogos
 const productDialog = ref(false);
-const categoryDialog = ref(false);
+
 const detailDialog = ref(false);
 const editDialog = ref(false);
 
 // Categorías
 const categories = ref([]);
 const selectedCategory = ref(null);
-const newCategory = ref({
-  characteristics:[]
-});
 const dataProducts = ref([]);
 const acceptReturns = ['Si','No']
 const productSelect = ref({});
@@ -399,11 +359,6 @@ const removeImage = (index) => {
   previewImages.value.splice(index, 1);
   files.value.splice(index, 1);
 };
-
-function addCharacteristic (){
-  newCategory.value.characteristics.push(String(characteristic.value))
-  characteristic.value = "";
-}
 
 const saveProduct = async () => {
   try {
@@ -436,33 +391,6 @@ const saveProduct = async () => {
     console.error("Error uploading images:", error);
   }
 };
-async function saveCategory() {
-  loading.value = true;
-  try {
-    if (!newCategory.value.name?.trim() || !newCategory.value.description?.trim()) {
-      Notify.create({ type: 'negative', message: 'Completa los datos.' });
-      return;
-    }
-
-    const catResp = await postData('/categories', { data: newCategory.value });
-    if (!catResp.data){
-      console.log("id de cateogria al crearla" , catResp.data._id);
-      Notify.create({ type: 'negative', message: 'Error al crear categoría.' });
-      return;
-    }
-
-    Notify.create({ type: 'positive', message: `Categoría creada.`});
-    newCategory.value = { name: '', description: '' };
-
-  } catch (error) {
-    const msg = error?.response?.data?.error === 'Duplicate key' ? 'Categoría existente.' : 'Error al guardar.';
-    Notify.create({ type: 'negative', message: msg });
-  } finally {
-    loading.value = false;
-    categoryDialog.value = false;
-  }
-}
-
 
 async function getAllProducts() {
   try {
@@ -505,7 +433,7 @@ const columns = [
     field: "stock",
     align: "center",
   },
-  { name: "categoria", label: "Categoria", field: "categoryId", align: "center"},
+  { name: "categoria", label: "ID Categoria", field: "categoryId", align: "center"},
   { name: "precio", label: "Precio", field: "price", align: "center" },
   { name: "imagen", label: "Imagen", align: "center" },
   { name: "acciones", label: "Acciones", field: "acciones", align: "center" },

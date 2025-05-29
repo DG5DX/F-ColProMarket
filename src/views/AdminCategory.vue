@@ -162,9 +162,7 @@ const dataProduct = ref({
 });
 const loading = ref(false)
 const previewImages = ref([]);
-const search = ref("");
 const searchCategory = ref("");
-const tab = ref("productos");
 const characteristic = ref(null)
 // Diálogos
 const productDialog = ref(false);
@@ -190,6 +188,7 @@ onMounted(() => {
   getAllProducts();
 });
 
+// Crear Categoria
 async function saveCategory() {
   loading.value = true;
   try {
@@ -215,6 +214,15 @@ async function saveCategory() {
     loading.value = false;
     categoryDialog.value = false;
   }
+}
+
+function addCharacteristic (){
+  newCategory.value.characteristics.push(String(characteristic.value))
+  characteristic.value = "";
+}
+
+function removeCharacteristic(index) {
+  newCategory.value.characteristics.splice(index, 1);
 }
 
 async function getAllProducts() {

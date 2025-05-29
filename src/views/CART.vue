@@ -120,12 +120,8 @@
 </template>
 
 <script setup>
-<<<<<<< HEAD
-import { ref, toRaw, } from 'vue'
-=======
 import mainBar from '../components/mainBar.vue';
 import { ref, toRaw } from 'vue'
->>>>>>> 6fd0b3904d5ce65e3d07d396ac1288351b752b7e
 import { useStore } from '../stores/store'
 import { Notify } from 'quasar';
 import { router } from '../routes/routes.js';
@@ -141,11 +137,6 @@ const search = ref('')
 const rightDrawerOpen = ref(false)
 
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 6fd0b3904d5ce65e3d07d396ac1288351b752b7e
 // Función para formatear precio
 const formatPrice = (price) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price)
@@ -157,9 +148,7 @@ const getTotalItems = () => {
     return cart.value.reduce((sum, item) => sum + item.quantity, 0)
 }
 
-async function pago() {
-    router.push('/gateway')
-}
+
 
 
 // Función para calcular el total

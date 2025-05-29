@@ -131,13 +131,20 @@
 import { ref, onMounted, toRaw } from 'vue'
 import { useStore } from '../stores/store.js';
 import { Notify } from 'quasar';
-import { getData, postData } from '../service/service.js';
+import {  postData, putData } from '../service/service.js';
+import { showNotification } from '../utils/utils.js';
 const paypalRef = ref(null)
 const store = useStore()
 const cartDetails = ref(store.cart);
 const formatItems = ref([])
 const paymentValues = ref({})
-const paymentDetails = ref({})
+
+const paymentDetails = ref({
+    userId:store.userId,
+    products:cartDetails.value.items,
+    paypalData:{},
+    total:cartDetails.value.total
+})
 
 const renderPayPalButton = () => {
   if (!window.paypal || !window.paypal.Buttons) {
@@ -162,10 +169,23 @@ const renderPayPalButton = () => {
       })
     },
     onApprove: async (data, actions) => {
+      const paymentId = await savePendingPayment()
+      console.log('id de pago' , paymentId);
       const details = await actions.order.capture()
-      paymentDetails.value = details
-      console.log("detalles de pago" , toRaw(paymentDetails.value));
-      alert(`Pago completado por ${details.payer.name.given_name}`)
+      if(details){
+        paymentDetails.value.paypalData = details;
+        
+        await updatePayment(paymentId);
+      }else{
+        return showNotification('negative','Error al pagar , intenta nuevamente')
+      }
+
+      console.log("detalles de pago" , toRaw(paymentDetails.value.paypalData));
+      return Notify.create({
+        type:'positive',
+        message:`Pago completado por : ${details.payer.name.given_name}`
+      }) 
+
     },
     onError: (err) => {
       console.error('Error en PayPal:', err)
@@ -178,6 +198,33 @@ const renderPayPalButton = () => {
       tagline: false
     }
   }).render(paypalRef.value)
+}
+
+async function savePendingPayment(){
+  try {
+    const response = await postData("/orders",{
+      data:paymentDetails.value
+    })
+    console.log("Datos de pago pendiente guardado", response.data);
+    return response.data._id
+  } catch (error) {
+    showNotification('negative','Error al procesar pago')
+    console.log("[Linea 203] Error en pagos" , error);
+  }
+}
+
+
+async function updatePayment(id){
+  try {
+    data
+    const response = await putData(`/orders/${id}`,{
+      data:paymentDetails.value
+    })
+    console.log("Pago actualizado a  [paid]" , response.data);
+    return showNotification('positive','Pago terminado')
+  } catch (error) {
+    return console.log('[linea 218] error actualizando pago pendiente', error);
+  }
 }
 
 async function convertCurrency(){

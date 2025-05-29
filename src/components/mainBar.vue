@@ -25,7 +25,7 @@
                 <div class="row items-center menu-right">
                     <q-btn flat label="Ingresar"  @click="emit('open-logIn-dialog')"  class="text-white" />
                     <q-btn flat label="Registro" @click="emit('open-register-dialog')" class="text-white" />
-                    <q-btn flat round icon="shopping_cart" class="text-white" @click="cart()">
+                    <q-btn flat round icon="shopping_cart" class="text-white" :label="store.cart.items.length" @click="cart()">
                     </q-btn>
                 </div>
             </q-toolbar>
@@ -76,7 +76,8 @@
 import { ref, defineEmits } from 'vue'
 import { router } from '../routes/routes';
 const emit = defineEmits(['open-register-dialog','open-logIn-dialog']);
-
+import { useStore } from '../stores/store.js';
+const store = useStore ();
 
 const leftDrawerOpen = ref(false)
 const searchQuery = ref('')

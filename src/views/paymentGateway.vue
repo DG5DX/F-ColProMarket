@@ -170,16 +170,14 @@ const renderPayPalButton = () => {
     },
     onApprove: async (data, actions) => {
       const paymentId = await savePendingPayment()
-      console.log('id de pago' , paymentId);
       const details = await actions.order.capture()
-      if(details){
+      if(details.status === 'COMPLETED'){
         paymentDetails.value.paypalData = details;
-        
-        await updatePayment(paymentId);
+        await updatePayment(paymentId, 'paid');
       }else{
+        await updatePayment(paymentId, 'canceled');
         return showNotification('negative','Error al pagar , intenta nuevamente')
       }
-
       console.log("detalles de pago" , toRaw(paymentDetails.value.paypalData));
       return Notify.create({
         type:'positive',
@@ -214,14 +212,12 @@ async function savePendingPayment(){
 }
 
 
-async function updatePayment(id){
+async function updatePayment(id , status){
   try {
-    data
+    paymentDetails.value.status = status
     const response = await putData(`/orders/${id}`,{
       data:paymentDetails.value
     })
-    console.log("Pago actualizado a  [paid]" , response.data);
-    return showNotification('positive','Pago terminado')
   } catch (error) {
     return console.log('[linea 218] error actualizando pago pendiente', error);
   }

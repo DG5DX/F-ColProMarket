@@ -49,35 +49,28 @@
       <q-scroll-area style="height: 100%;">
         <q-list padding>
           <q-item-label header class="text-weight-bold text-primary">
-            Menú Principal
+            Filtrar por Categorias
           </q-item-label>
-
-          <q-item v-for="item in menuItems" :key="item.label" clickable v-ripple :to="item.route"
-            active-class="active-menu-item" class="menu-item">
-            <q-item-section avatar>
-              <q-icon :name="item.icon" />
+          <q-item v-for="categories in categories" :key="categories.id" clickable v-ripple
+            @click="selectCategory(categories._id)">
+            <q-item-section>{{ categories.name }}</q-item-section>
+            <q-item-section side>
+              <q-badge color="grey-4" text-color="dark">{{ categories.count }}</q-badge>
             </q-item-section>
-            <q-item-section>{{ item.label }}</q-item-section>
           </q-item>
 
-          <q-separator class="q-my-md" />
-
-          <q-item-label header class="text-weight-bold text-primary">
-            Mi Cuenta
-          </q-item-label>
-
-          <q-item clickable v-ripple to="/login" class="menu-item">
-            <q-item-section avatar>
-              <q-icon name="login" />
-            </q-item-section>
-            <q-item-section>Iniciar Sesión</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple to="/register" class="menu-item">
-            <q-item-section avatar>
-              <q-icon name="person_add" />
-            </q-item-section>
-            <q-item-section>Registrarse</q-item-section>
+          <q-item v-model="priceExpanded" icon="attach_money" label="Rango de precios"
+            header-class="text-primary">
+            <div class="q-pa-sm">
+              <q-range v-model="internalPriceRange" :min="10000" :max="1500000" :step="100" label-always color="primary"
+                class="q-mt-sm" />
+              <div class="row justify-between q-mt-sm">
+                <q-input v-model.number="internalPriceRange.min" type="number" dense outlined prefix="$"
+                  style="width: 48%" />
+                <q-input v-model.number="internalPriceRange.max" type="number" dense outlined prefix="$"
+                  style="width: 48%" />
+              </div>
+            </div>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -101,71 +94,6 @@
         </div>
 
         <div class="row q-col-gutter-lg">
-          <!-- Filtros mejorados -->
-          <div class="col-12 col-md-3">
-            <q-card class="filter-card sticky" style="top: 140px;">
-              <q-card-section class="bg-primary text-white">
-                <div class="text-h6">Filtros</div>
-                <div class="text-caption">Personaliza tu búsqueda</div>
-              </q-card-section>
-
-              <q-card-section>
-                <q-expansion-item v-model="categoryExpanded" icon="category" label="Categorías"
-                  header-class="text-primary">
-                  <q-list dense>
-                    <q-item  v-for="categories in categories" :key="categories.id" clickable v-ripple @click="selectCategory(categories._id)">
-                      <q-item-section>{{ categories.name }}</q-item-section>
-                      <q-item-section side>
-                        <q-badge color="grey-4" text-color="dark">{{ categories.count }}</q-badge>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-expansion-item>
-
-                <q-separator class="q-my-sm" />
-
-             <q-expansion-item
-    v-model="priceExpanded"
-    icon="attach_money"
-    label="Rango de precios"
-    header-class="text-primary"
-  >
-    <div class="q-pa-sm">
-      <q-range
-        v-model="internalPriceRange"
-        :min="10000"
-        :max="1500000"
-        :step="100"
-        label-always
-        color="primary"
-        class="q-mt-sm"
-      />
-      <div class="row justify-between q-mt-sm">
-        <q-input
-          v-model.number="internalPriceRange.min"
-          type="number"
-          dense
-          outlined
-          prefix="$"
-          style="width: 48%"
-        />
-        <q-input
-          v-model.number="internalPriceRange.max"
-          type="number"
-          dense
-          outlined
-          prefix="$"
-          style="width: 48%"
-        />
-      </div>
-    </div>
-  </q-expansion-item>
-
-                <q-separator class="q-my-sm" />
-              </q-card-section>
-            </q-card>
-          </div>
-
           <!-- Lista de productos -->
           <div class="col-12 col-md-9">
             <!-- Loading state -->
@@ -250,7 +178,7 @@
             </div>
 
             <!-- Empty state -->
-            <div v-if="!loading && products.length === 0" class="column items-center q-my-xl">
+            <div v-if="products.length === 0" class="column items-center q-my-xl">
               <q-icon name="search_off" size="xl" color="grey-5" />
               <div class="text-h6 q-mt-md text-grey-7">No se encontraron productos</div>
               <div class="text-subtitle1 q-mt-sm text-grey-6 text-center">
@@ -338,9 +266,6 @@ import SEEPRODUCT from './SEEPRODUCT.vue'
 import { router } from '../routes/routes'
 import { showNotification } from '../utils/utils'
 
-
-
-
 // Variables reactivas
 const priceExpanded = ref(false);
 const priceRange = ref({
@@ -357,7 +282,7 @@ const internalPriceRange = computed({
     // Validaciones para asegurar que los valores se mantengan dentro de los límites y consistentes
     if (newVal.min < 10000) newVal.min = 10000;
     if (newVal.max > 1500000) newVal.max = 1500000;
-    
+
     // Aseguramos que min no sea mayor que max
     if (newVal.min > newVal.max) {
       newVal.min = newVal.max;
@@ -368,12 +293,10 @@ const internalPriceRange = computed({
     }
 
     priceRange.value = newVal;
-    // Llamar a la función de búsqueda aquí para que se actualice al arrastrar el rango
     searchProductsByPrice(priceRange.value.min, priceRange.value.max);
   },
 });
 
-// Watchers para sincronizar y disparar la búsqueda cuando los inputs individuales cambian
 watch(() => priceRange.value.min, (newVal) => {
   if (newVal > priceRange.value.max) {
     priceRange.value.max = newVal;
@@ -399,19 +322,15 @@ async function searchProductsByPrice() {
   }
 }
 
-
-
 const route = useRoute()
 const $q = useQuasar()
 const store = useStore()
-
 const leftDrawerOpen = ref(false)
 const searchQuery = ref('')
 const slide = ref(0)
-// Newsletter
 const newsletterEmail = ref('')
 
-// Paginación
+
 const pagination = ref({
   page: 1,
   rowsPerPage: 9,
@@ -420,7 +339,6 @@ const pagination = ref({
   to: 0
 })
 
-// Datos de ejemplo
 const banners = ref([
   {
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
@@ -497,11 +415,8 @@ const viewProduct = (product) => {
 }
 
 const products = ref([])
-
-// Computed
 const cartItemCount = computed(() => store.cartItems?.length)
 
-// Métodos
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
@@ -524,7 +439,6 @@ function clearFilters() {
   showDiscountOnly.value = false
 }
 
-
 function addToCart(product) {
   store.addToCart(product)
   $q.notify({
@@ -539,39 +453,29 @@ function addToCart(product) {
   })
 }
 
-
 function handleBannerClick(banner) {
-  // Navegar al enlace del banner
   console.log('Banner clicked:', banner)
 }
 
-
-
-
-
-// datos del backed filtrados
-//variables usadas para filtros , estas las pone arroba junto con las demas al inicio del script
-// todo esto esta estatico luego debe hacer esto dinamico osea con v-model y usar inputs para cosas como
-// parameter y precios maximo y minimo para el filtro por categoria usa un select ese es facil de hacer
-// si no sabe como hacer la parte del select me llame y eso se hace rapidito 
 const parameter = ref('')
-const minimumPrice = ref(16000)
-const maximunPrice = ref(15000000)
+const searchError = ref(false)
 
-//1 filtro para buscar por cualquier palabra , este es el de la barra de busqueda
 async function searchProducts() {
   try {
+    searchError.value = false
     const response = await getData(`/product/search-products?search=${parameter.value}`)
     products.value = response.data
     console.log("productos filtrados por palabra", response.data);
   } catch (error) {
+    searchError.value = true
+    products.value = []
     console.log("error al filtrar priductos por palabras", error);
   }
 }
 
-//2 filtro para buscar por categoria 
 async function selectCategory(categoryId) {
   try {
+    searchError.value = false
     const response = await getData(`/product/search-products?categoryId=${categoryId}`)
     if(response.status === 404){
       showNotification('negative' , 'No se encontraron productos' )
@@ -579,12 +483,11 @@ async function selectCategory(categoryId) {
     products.value = response.data
     console.log("productos filtrados por categoria", response.data);
   } catch (error) {
+    searchError.value = true
     console.log("error al filtrar priductos por categoria", error);
+    products.value = []
   }
 }
-// 3 filtro por precios
-
-
 
 function obtainDataSearch() {
   parameter.value = route.query.data || ''

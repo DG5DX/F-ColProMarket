@@ -1,166 +1,470 @@
 <template>
-    <q-layout style="min-height: 100px;">
-        <q-header bordered class="header-tech">
-            <q-toolbar>
-                <div class="row items-center">
-                    <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" class="menu-btn q-mr-sm" />
-                    <q-avatar circle size="md">
-                        <img src="../assets/MiniLogo.jpeg">
-                    </q-avatar>
-                    <q-toolbar-title class="tech-title">
-                        ColProductMarket
-                    </q-toolbar-title>
-                </div>
+  <q-layout style="min-height: 100px;">
+    <q-header bordered class="header-tech">
+      <!-- Barra principal -->
+      <q-toolbar class="primary-toolbar">
+        <!-- Logo y nombre - siempre visible -->
+        <div class="logo-section">
+          <q-avatar circle size="sm" @click="router.push('/')" class="cursor-pointer">
+            <img src="../assets/MiniLogo.jpeg">
+          </q-avatar>
+          <q-toolbar-title class="tech-title">
+            ColProductMarket
+          </q-toolbar-title>
+        </div>
 
-                <div class="search-container">
-                    <q-input v-model="searchQuery" dense standout bg-color="white"
-                        placeholder="Buscar productos electrónicos..." class="search-input" input-class="text-black">
-                        <template v-slot:prepend>
-                            <q-btn icon="search" flat @click="productsSearch()"></q-btn>
-                        </template>
-                    </q-input>
-                </div>
+        <!-- Búsqueda - se adapta según el espacio -->
+        <div class="search-section">
+          <q-input 
+            v-model="searchQuery"
+            dense
+            standout
+            bg-color="white"
+            placeholder="Buscar..."
+            class="search-input"
+            @keyup.enter="productsSearch()"
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" class="cursor-pointer" />
+            </template>
+          </q-input>
+        </div>
 
-                <!-- Menú superior derecho -->
-                <div class="row items-center menu-right">
-                    <q-btn flat label="Ingresar"  @click="emit('open-logIn-dialog')"  class="text-white" />
-                    <q-btn flat label="Registro" @click="emit('open-register-dialog')" class="text-white" />
-                    <q-btn flat round icon="shopping_cart" class="text-white" :label="store.cart.items.length" @click="cart()">
-                    </q-btn>
-                </div>
-            </q-toolbar>
+        <!-- Acciones de usuario - se adaptan dinámicamente -->
+        <div class="user-actions">
+          <!-- Versión completa -->
+          <div class="full-actions">
+            <template v-if="!store.userId">
+              <q-btn flat label="Ingresar" @click="store.showLoginDialog = true" :class="['action-btn', {'ingresar-animado': !store.showRegister}]"  />
+              <q-btn v-if="store.showRegister" flat label="Registro" @click="store.showRegisterDialog = true" class="action-btn" />
+            </template>
+            <template v-else>
+              <q-btn flat label="Cerrar Sesión" @click="closeSession()" class="action-btn" />
+            </template>
+            <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
+              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+                {{ store.cart.items.length }}
+              </q-badge>
+            </q-btn>
+          </div>
 
-            <!-- Menú de categorías -->
-            <q-tabs align="center" class="categories-tabs">
-                <q-route-tab label="PRODUCTOS" to="/productos" />
-                <q-route-tab label="COMUNIDAD" to="/comunidad" />
-                <q-route-tab label="REBAJAS" to="/rebajas" />
-                <q-route-tab label="CONTACTO" to="/contacto" />
-            </q-tabs>
-        </q-header>
+          <!-- Versión compacta -->
+          <div class="compact-actions">
+            <q-btn flat round icon="person" class="action-btn" v-if="!store.userId" @click="store.showLoginDialog = true" />
+            <q-btn flat round icon="logout" class="action-btn" v-else @click="closeSession()" />
+            <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
+              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+                {{ store.cart.items.length }}
+              </q-badge>
+            </q-btn>
+          </div>
+        </div>
 
-        <q-drawer v-model="leftDrawerOpen" side="left" bordered>
-            <q-list>
-                <q-item-label header>Menú</q-item-label>
-                <q-item clickable to="/productos">
-                    <q-item-section avatar>
-                        <q-icon name="shopping_bag" />
-                    </q-item-section>
-                    <q-item-section>Productos</q-item-section>
-                </q-item>
-                <q-item clickable to="/comunidad">
-                    <q-item-section avatar>
-                        <q-icon name="groups" />
-                    </q-item-section>
-                    <q-item-section>Comunidad</q-item-section>
-                </q-item>
-                <q-item clickable to="/rebajas">
-                    <q-item-section avatar>
-                        <q-icon name="local_offer" />
-                    </q-item-section>
-                    <q-item-section>Rebajas</q-item-section>
-                </q-item>
-                <q-item clickable to="/contacto">
-                    <q-item-section avatar>
-                        <q-icon name="contact_mail" />
-                    </q-item-section>
-                    <q-item-section>Contacto</q-item-section>
-                </q-item>
-            </q-list>
-        </q-drawer>
+        <!-- Menú hamburguesa solo para móviles -->
+        <q-btn 
+          flat 
+          round 
+          dense 
+          icon="menu" 
+          class="mobile-menu-btn" 
+          @click="toggleMobileMenu"
+        />
+      </q-toolbar>
 
-    </q-layout>
+      <!-- Categorías - responsive avanzado -->
+      <q-toolbar class="categories-toolbar" :class="{ 'mobile-menu-open': mobileMenuOpen }">
+        <div class="categories-container">
+          <q-tabs align="left" class="categories-tabs" :breakpoint="0">
+            <q-route-tab label="PRODUCTOS" to="/" exact />
+            <q-route-tab label="FACTURAS" to="/invoice" exact />
+            <q-route-tab label="REBAJAS" to="/" exact />
+            <q-route-tab label="CONTACTO" to="/" exact />
+          </q-tabs>
+        </div>
+      </q-toolbar>
+    </q-header>
+  </q-layout>
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { router } from '../routes/routes';
-const emit = defineEmits(['open-register-dialog','open-logIn-dialog']);
+
 import { useStore } from '../stores/store.js';
-const store = useStore ();
+import { showNotification, validateToken } from '../utils/utils.js';
+const store = useStore();
 
-const leftDrawerOpen = ref(false)
-const searchQuery = ref('')
+const mobileMenuOpen = ref(false);
+const searchQuery = ref('');
 
-function productsSearch (){
+function toggleMobileMenu() {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+}
+
+function productsSearch() {
+  if (searchQuery.value.trim()) {
     router.push({
-        path:"/search" , query:{data:searchQuery.value}
-    })
+      path:"/search",
+      query: { data: searchQuery.value }
+    });
+  }
 }
 
-const cart=()=>{
-    window.location.href = 'http://localhost:5173/#/cart';
+function closeSession() {
+  store.token = null;
+  store.userId = null;
+  store.showRegister = true;
+  showNotification('positive','Has cerrado tu sesión.')
+  router.replace("/");
 }
 
-function toggleLeftDrawer() {
-    leftDrawerOpen.value = !leftDrawerOpen.value
+async function cart() {
+    const canProceed =await validateToken()
+    if(!canProceed) return
+  router.push('/cart');
 }
-
-
 </script>
+
 <style scoped>
+/* Variables y estilos base */
 .header-tech {
-    background: var(--five-color--);
-    height: 112px;
-    position: fixed;
+  background: var(--five-color--);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes pulse-ingresar {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.4); /* Sombra sutil blanca */
+  }
+  50% {
+    transform: scale(1.05); /* Ligeramente más grande */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7); /* Sombra más prominente */
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Aplicar la animación al botón de ingresar */
+.ingresar-animado {
+  animation: pulse-ingresar 2s infinite ease-in-out; /* 2 segundos de duración, loop infinito, aceleración/desaceleración */
+}
+
+.primary-toolbar {
+  height: 60px;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  padding: 0 12px;
+  gap: 12px;
+}
+
+/* Sección del logo */
+.logo-section {
+  display: flex;
+  align-items: center;
+  min-width: max-content;
 }
 
 .tech-title {
-    font-family: 'Roboto Condensed', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 10px;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.search-container {
-    flex-grow: 1;
-    max-width: 700px;
-    margin: 0 20px;
-    margin-left: 55px;
+/* Búsqueda adaptable */
+.search-section {
+  width: 100%;
+  min-width: 120px;
 }
 
 .search-input {
-    border-radius: 4px;
-    margin: 8px;
-    margin-left: 2px;
+  border-radius: 20px;
+  background: white;
+}
+
+.search-input :deep(.q-field__control) {
+  height: 36px;
+}
+
+/* Acciones de usuario inteligentes */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.full-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.compact-actions {
+  display: none;
+  gap: 8px;
+}
+
+.action-btn {
+  color: white;
+  font-weight: 500;
+  padding: 6px 10px;
+}
+
+.cart-btn {
+  position: relative;
+  color: white;
+}
+
+/* Categorías optimizadas */
+.categories-toolbar {
+  height: 48px;
+  background: var(--header-bg-gradient);
+  transition: all 0.3s ease;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.categories-container {
+  min-width: max-content;
+}
+
+.categories-tabs {
+  height: 100%;
+  min-width: max-content;
 }
 
 .categories-tabs .q-tab {
-    color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 0 16px;
+  color: white;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 16px;
+  min-width: auto;
+  font-size: 0.85rem;
 }
 
-.menu-right {
-    margin-left: auto;
+.categories-tabs .q-tab--active {
+  color: var(--six-color--);
+  font-weight: 600;
+}
+
+/* Menú móvil avanzado */
+.mobile-menu-btn {
+  display: none;
+  margin-left: 8px;
+}
+
+/* Sistema de breakpoints inteligentes */
+@media (max-width: 1024px) {
+  .primary-toolbar {
+    grid-template-columns: auto 1fr auto;
+    padding: 0 10px;
+  }
+  
+  .tech-title {
+    font-size: 1.1rem;
+  }
+  
+  .categories-tabs .q-tab {
+    padding: 0 12px;
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 768px) {
-    .tech-title {
-        max-width: 120px;
-        font-size: 1.2rem;
-    }
+  .primary-toolbar {
+    grid-template-columns: auto 1fr auto auto;
+  }
+  
+  .full-actions {
+    display: none;
+  }
+  
+  .compact-actions {
+    display: flex;
+  }
+  
+  .search-section {
+    min-width: 0;
+  }
+  
+  .categories-toolbar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    max-height: 0;
+    height: auto;
+    overflow: hidden;
+    background: var(--five-color--);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .categories-toolbar.mobile-menu-open {
+    max-height: calc(100vh - 60px);
+    padding: 8px 0;
+  }
+  
+  .categories-tabs {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 100%;
+  }
+  
+  .categories-tabs .q-tab {
+    justify-content: flex-start;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .mobile-menu-btn {
+    display: block;
+  }
+}
 
-    .search-container {
-        order: 3;
-        width: 100%;
-        margin: 8px 0;
-        max-width: 100%;
-    }
+@media (max-width: 580px) and (min-width: 361px) {
+  .primary-toolbar {
+    height: 56px;
+    grid-template-columns: auto 1fr auto auto;
+    padding: 0 10px;
+    gap: 10px;
+  }
 
-    .menu-right .q-btn:not(:last-child) {
-        display: none;
-    }
+  .tech-title {
+    font-size: 1.1rem;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
 
-    .categories-tabs .q-tab {
-        padding: 0 8px;
-        font-size: 0.8rem;
-    }
+  .search-section {
+    min-width: 120px;
+    margin-left: 8px;
+  }
+
+  .search-input :deep(.q-field__control) {
+    height: 34px;
+  }
+
+  .search-input :deep(input) {
+    font-size: 0.9rem;
+  }
+
+  .user-actions {
+    gap: 6px;
+  }
+
+  .action-btn, .cart-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .mobile-menu-btn {
+    margin-left: 4px;
+  }
+
+  .categories-toolbar {
+    top: 56px;
+  }
+
+  .categories-tabs .q-tab {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Ajustes adicionales para mejor fluidez */
+@media (max-width: 420px) {
+  .tech-title {
+    font-size: 1rem;
+    max-width: 100px;
+  }
+
+  .search-section {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 360px) {
+  .primary-toolbar {
+    grid-template-columns: auto 1fr auto auto;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .tech-title {
+    display: none;
+  }
+
+  .logo-section .q-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .search-section {
+    margin-left: 4px;
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .primary-toolbar {
+    height: 56px;
+    grid-template-columns: auto 1fr auto auto;
+    padding: 0 8px;
+    gap: 8px;
+  }
+  
+  .tech-title {
+    font-size: 1rem;
+    margin-left: 6px;
+  }
+  
+  .logo-section .q-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .action-btn, .cart-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+  
+  .search-input {
+    min-width: 0;
+  }
+  
+  .search-input :deep(.q-field__control) {
+    height: 32px;
+  }
+  
+  .categories-toolbar {
+    top: 56px;
+  }
+}
+
+@media (max-width: 360px) {
+  .tech-title {
+    display: none;
+  }
+  
+  .search-section {
+    margin-left: 4px;
+  }
 }
 </style>

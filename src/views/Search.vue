@@ -336,6 +336,7 @@ import { useStore } from '../stores/store'
 import { getData } from '../service/service'
 import SEEPRODUCT from './SEEPRODUCT.vue'
 import { router } from '../routes/routes'
+import { showNotification } from '../utils/utils'
 
 
 
@@ -572,6 +573,9 @@ async function searchProducts() {
 async function selectCategory(categoryId) {
   try {
     const response = await getData(`/product/search-products?categoryId=${categoryId}`)
+    if(response.status === 404){
+      showNotification('negative' , 'No se encontraron productos' )
+    }
     products.value = response.data
     console.log("productos filtrados por categoria", response.data);
   } catch (error) {

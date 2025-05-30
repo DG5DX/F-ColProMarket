@@ -1,185 +1,275 @@
 <template>
   <q-layout>
     <mainBar @open-register-dialog="registerDialog = true" @open-logIn-dialog="loginDialog = true" />
-    <!-- Contenedor de página -->
-    <q-page-container class="theContainer">
-      <div class="ContainerMedium">
-        <div class="start">
-        <q-btn icon="arrow_back" style="margin: 5%;" to="/"></q-btn>
-          <div class="boxOne">
-            <div class="sideL">
-              <img v-for="(image, index) in dataProduct.images" :key="index" :class="`thumbnail ${index + 1}`"
-                :src="image.urlImage" @click="selectImage(index)" />
-            </div>
-            <div class="sideR">
-              <img
-  v-if="dataProduct.images && dataProduct.images.length" class="imG" :src="selectedImage || dataProduct.images[0].urlImage"/>
-            </div>
-          </div>
-          
-
-          <div class="row1 ">
-            <q-btn flat icon="favorite_border" label="Favoritos" />
-            <q-btn flat icon="flag" label="Reportar" />
-            <q-btn flat icon="share" label="Compartir" />
-          </div>
-
-
-          <!-- Sección de reseñas -->
-          <div class="reviews">
-            <div class="contemReviews">
-              <label class="reviewsText">Reseñas</label>
-
-              <!-- Lista de reseñas existentes -->
-              <div v-for="(review, index) in dataProduct.reviews" :key="index" class="RVW q-pa-md">
-                <div class="flex items-center q-mb-sm">
-                  <q-avatar color="primary" text-color="white" size="sm">
-                    {{ review.userId.name.charAt(0) }}
-                  </q-avatar>
-                  <span class="q-ml-sm text-weight-bold">{{ review.userId.name }}</span>
-                </div>
-                
-                <q-rating
-                  v-model="review.stars"
-                  size="1em"
-                  color="black"
-                  icon="star_border"
-                  icon-selected="star"
-                  readonly
-                  class="q-mb-sm"
-                />
-                
-                <div class="coment">{{ review.message }}</div>
-              </div>
-
-              <!-- Formulario para nueva reseña -->
-              <div class="input-containerq-mt-lg">
-                <div class="flex items-center q-gutter-sm q-mb-sm">
-                  <span>Tu calificación:</span>
-                  <q-rating
-                    v-model="productQualification"
-                    max="5"
-                    size="2em"
-                    color="black"
-                    icon="star_border"
-                    icon-selected="star"
-                  />
-                </div>
-                
-                <q-input 
-                  class="Testo"
-                  v-model="review" 
-                  placeholder="Escribe tu reseña..." 
-                  outlined
-                  type="textarea"
-                  rows="3"
-                >
-                  <template v-slot:append>
-                    <q-btn round dense flat icon="send" @click="addReview(dataProduct._id)" />
-                  </template>
-                </q-input>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="medium">
-          <q-card class="bg-grey-3-q-pa-md" >
-            <!-- Titulo -->
-            <div class="text-h6 text-bold q-mb-sm">{{ (dataProduct.name) }}</div>
-            <!-- Precio -->
-            <div class="text-h6 text-bold q-mb-sm">Precio: {{ formatPrice(dataProduct.price || 1500) }}</div>
-
-            <!-- Entrega -->
-            <div class="text-body2 q-mb-sm">
-              Entrega <b>GRATIS</b> en todo el país, por compras superiores a $100.000 en artículos elegibles
-            </div>
-
-             <!-- Calificación -->
-        <div class="row2-q-mb-md">
-            <div class="flex ">
-              <span class="text-subtitle1" style="color:black"><h3>{{ dataProduct.averageRating }}</h3></span>
-              <q-rating
-                v-model="dataProduct.averageRating"
-                size="3em"
-                color="black"
-                icon="star_border"
-                icon-selected="star"
-                readonly
+    
+    <q-page-container class="product-page-container">
+      <!-- Botón de regreso -->
+      <q-btn 
+        icon="arrow_back" 
+        flat 
+        round 
+        dense 
+        class="back-btn"
+        to="/"
+      />
+      
+      <!-- Contenido principal -->
+      <div class="product-container">
+        <!-- Sección izquierda - Galería y reseñas -->
+        <div class="left-section">
+          <!-- Galería de imágenes -->
+          <q-card class="gallery-card">
+            <div class="gallery-container">
+              <!-- Imagen principal -->
+              <q-img
+                :src="selectedImage || (dataProduct.images && dataProduct.images[0]?.urlImage)"
+                :ratio="1"
+                class="main-image"
+                spinner-color="primary"
               />
-            </div>
-          </div>
-
-            <!-- Disponible -->
-            <div :class="isProductAvailable" class="text-subtitle2 q-mb-sm"> <p>Quedan {{ dataProduct.stock }}</p></div>
-
-            
-
-
-            <div class="text-blue">Devoluciones:</div>
-            <div class="q-mb-md">{{ dataProduct.acceptReturns === 'si' ? 'Se aceptan devoluciones' : 'No se aceptan devoluciones' }}</div>
-
-            <!-- Botones -->
-            <q-btn label="Agregar al carrito" class="bg-dark text-white full-width q-mb-sm" unelevated
-              @click="addToTheCart(dataProduct)" />
-
-            <!-- Notificación --- si se usa esto ay que crear una coleccion --> 
-            <div class="row items-center q-mt-md">
-              <q-icon name="notifications_none" size="md" class="q-mr-sm" />
-              <div class="text-caption">
-                Recibe notificaciones del estado de tu compra
+              
+              <!-- Miniaturas -->
+              <div class="thumbnails">
+                <q-img
+                  v-for="(image, index) in dataProduct.images"
+                  :key="index"
+                  :src="image.urlImage"
+                  :ratio="1"
+                  class="thumbnail"
+                  :class="{ 'thumbnail-active': selectedImage === image.urlImage }"
+                  @click="selectImage(index)"
+                />
               </div>
             </div>
           </q-card>
           
-          <br><br>
-          <div class="contemMmedium">
-            <!-- Descripción principal -->
-            <div class="text-body1 q-mb-md">
-              {{ dataProduct.description }}
-            </div>
+          <!-- Acciones secundarias -->
+          <div class="secondary-actions">
+            <q-btn 
+              flat 
+              icon="favorite_border" 
+              label="Favoritos" 
+              class="action-btn"
+            />
+            <q-btn 
+              flat 
+              icon="share" 
+              label="Compartir" 
+              class="action-btn"
+            />
           </div>
+          
+          <!-- Reseñas -->
+          <q-card class="reviews-card">
+            <q-card-section>
+              <div class="text-h6">Reseñas ({{ dataProduct.reviews?.length || 0 }})</div>
+              
+              <!-- Promedio de calificaciones -->
+              <div class="rating-summary">
+                <div class="average-rating">
+                  <span class="rating-value">{{ dataProduct.averageRating?.toFixed(1) || 0 }}</span>
+                  <q-rating
+                    v-model="dataProduct.averageRating"
+                    size="1.5em"
+                    color="orange"
+                    icon="star_border"
+                    icon-selected="star"
+                    readonly
+                  />
+                </div>
+              </div>
+              
+              <!-- Lista de reseñas -->
+              <div class="reviews-list">
+                <div 
+                  v-for="(review, index) in dataProduct.reviews" 
+                  :key="index"
+                  class="review-item"
+                >
+                  <div class="review-header">
+                    <q-avatar color="primary" text-color="white">
+                      {{ review.userId?.name?.charAt(0) || 'U' }}
+                    </q-avatar>
+                    <div class="review-user">
+                      <div class="user-name">{{ review.userId?.name || 'Usuario' }}</div>
+                      <q-rating
+                        v-model="review.stars"
+                        size="1em"
+                        color="orange"
+                        icon="star_border"
+                        icon-selected="star"
+                        readonly
+                      />
+                    </div>
+                    <div class="review-date">
+                      {{ formatDate(review.createdAt) }}
+                    </div>
+                  </div>
+                  <div class="review-content">
+                    {{ review.message }}
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Formulario para nueva reseña -->
+              <div class="new-review">
+                <div class="text-subtitle1 q-mb-sm">Deja tu reseña</div>
+                <div class="rating-input">
+                  <span class="q-mr-sm">Calificación:</span>
+                  <q-rating
+                    v-model="productQualification"
+                    size="2em"
+                    color="orange"
+                    icon="star_border"
+                    icon-selected="star"
+                  />
+                </div>
+                <q-input
+                  v-model="review"
+                  outlined
+                  type="textarea"
+                  placeholder="Escribe tu reseña..."
+                  class="q-mt-md"
+                  rows="3"
+                />
+                <q-btn
+                  label="Enviar reseña"
+                  color="primary"
+                  class="q-mt-md"
+                  @click="addReview(dataProduct._id)"
+                  :disable="!review || productQualification === 0"
+                />
+              </div>
+            </q-card-section>
+          </q-card>
         </div>
-
+        
+        <!-- Sección derecha - Información del producto -->
+        <div class="right-section">
+          <q-card class="info-card">
+            <q-card-section>
+              <!-- Nombre y marca -->
+              <div class="product-header">
+                <div class="text-h4 product-name">{{ dataProduct.name }}</div>
+                <div class="text-subtitle1 brand" v-if="dataProduct.brand">{{ dataProduct.brand }}</div>
+              </div>
+              
+              <!-- Precio -->
+              <div class="price-section">
+                <div class="text-h4 price">{{dataProduct.price }}</div>
+                <div class="text-caption price-note">Precio incluye IVA</div>
+              </div>
+              
+              <!-- Disponibilidad -->
+              <div class="availability" :class="isProductAvailable">
+                <q-icon :name="dataProduct.stock > 0 ? 'check_circle' : 'cancel'" />
+                <span v-if="dataProduct.stock > 0">Disponible ({{ dataProduct.stock }} en stock)</span>
+                <span v-else>Agotado</span>
+              </div>
+              
+              <!-- Entrega -->
+              <div class="delivery-info">
+                <q-icon name="local_shipping" size="sm" />
+                <span>Envío <strong>GRATIS</strong> en compras superiores a $100.000</span>
+              </div>
+              
+              <!-- Devoluciones -->
+              <div class="returns-info">
+                <q-icon 
+                  :name="dataProduct.acceptReturns === 'si' ? 'assignment_return' : 'block'" 
+                  size="sm" 
+                  :color="dataProduct.acceptReturns === 'si' ? 'positive' : 'negative'"
+                />
+                <span>
+                  {{ dataProduct.acceptReturns === 'si' ? 'Devoluciones aceptadas' : 'No se aceptan devoluciones' }}
+                </span>
+              </div>
+              
+              <!-- Botones de acción -->
+              <div class="action-buttons">
+                <q-btn
+                  label="Agregar al carrito"
+                  color="primary"
+                  icon="shopping_cart"
+                  class="full-width q-mb-sm"
+                  :disable="dataProduct.stock <= 0"
+                  @click="addToTheCart(dataProduct)"
+                />
+                
+              </div>
+              
+              <!-- Notificaciones -->
+              <div class="notification-preference">
+                <q-checkbox v-model="notifyMe" label="Recibir notificaciones sobre este producto" />
+              </div>
+            </q-card-section>
+          </q-card>
+          
+          <!-- Descripción del producto -->
+          <q-card class="description-card">
+            <q-card-section>
+              <div class="text-h6">Descripción</div>
+              <div class="product-description">
+                {{ dataProduct.description || 'No hay descripción disponible.' }}
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
-      <div class="productos-wrapper">
-  <div class="productos row q-gutter-xl justify-start q-pa-xl">
-    <div
-      v-for="(producto, index) in productos"
-      :key="index"
-      class="my-card card"
-      @click="verDetalleProducto(producto)"
-    >
-      <div class="card-img">
-        <div class="img">
-          <q-img
-            :src="producto.images[0].urlImage"
-            :alt="producto.name"
-            fit="cover"
+      
+      <!-- Productos relacionados -->
+      <div class="related-products">
+        <div class="text-h4 related-title">Productos similares</div>
+        
+        <div class="products-grid">
+          <q-card
+            v-for="(producto, index) in productos"
+            :key="index"
+            class="product-card"
+            @click="verDetalleProducto(producto) ; scrollToTopInstant()"
           >
-            <template v-slot:loading>
-              <q-spinner color="primary" />
-            </template>
-          </q-img>
+            <q-img
+              :src="producto.images[0]?.urlImage"
+              :ratio="1"
+              class="product-image"
+              spinner-color="primary"
+            >
+              <template v-slot:loading>
+                <q-spinner color="primary" />
+              </template>
+            </q-img>
+            
+            <q-card-section>
+              <div class="product-title">{{ producto.name }}</div>
+              <div class="product-brand" v-if="producto.brand">{{ producto.brand }}</div>
+              
+              <div class="product-rating">
+                <q-rating
+                  v-model="producto.averageRating"
+                  size="1em"
+                  color="orange"
+                  icon="star_border"
+                  icon-selected="star"
+                  readonly
+                />
+                <span class="rating-value">{{ producto.averageRating?.toFixed(1) || 0 }}</span>
+              </div>
+              
+              <div class="product-price">{{ producto.price }}</div>
+            </q-card-section>
+            
+            <q-card-actions class="product-actions">
+              <q-btn
+                flat
+                color="primary"
+                icon="shopping_cart"
+                label="Agregar"
+                @click.stop="addToTheCart(producto)"
+              />
+            </q-card-actions>
+          </q-card>
         </div>
       </div>
-      <div class="card-title">{{ producto.name }}</div>
-      <div class="card-subtitle">{{ producto.description }}</div>
-      <hr class="card-divider">
-      <div class="card-footer">
-        <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
-        <button class="card-btn" @click.stop="addToTheCart(producto)">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
-            <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-            <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-            <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
     </q-page-container>
   </q-layout>
 </template>
@@ -192,13 +282,13 @@ import { useStore } from '../stores/store.js'
 import { putData, getData } from '../service/service.js'
 const store = useStore()
 import { useRoute, useRouter } from 'vue-router'
+import { validateToken, scrollToTopInstant } from '../utils/utils.js'
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
 
 // Variables de estado
 const dataProduct = ref({});
-const agregarRecibo = ref(false)
 const review = ref('')
 const selectedImage = ref('')
 const productQualification = ref(0)
@@ -213,6 +303,16 @@ async function products() {
     console.error('Error al cargar productos:', error)
   }
 }
+
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('es-CO', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
 
 // Función para cargar un producto específico por ID
 async function loadProductById(productId) {
@@ -282,7 +382,10 @@ async function initializeProduct() {
 }
 
 // Función para agregar al carrito
-const addToTheCart = (producto) => {
+const addToTheCart =async (producto) => {
+  const canProceed = await validateToken()
+  if(!canProceed) return
+
   store.addToCart(producto)
   Notify.create({
     type: "positive",
@@ -317,9 +420,9 @@ watch(
 )
 
 // Resto de funciones...
-const formatPrice = (precio) => {
+/* const formatPrice = (precio) => {
   return '$' + precio.toLocaleString('es-CO')
-}
+} */
 
 const selectImage = (index) => {
   selectedImage.value = dataProduct.value.images[index].urlImage
@@ -327,6 +430,8 @@ const selectImage = (index) => {
 
 async function addReview(id){
   try {
+    const canProceed = await validateToken()
+    if(!canProceed) return ;
     const response = await putData(`/product/reviews/${id}`,{
       userId:store.userId,
       stars:productQualification.value,
@@ -352,13 +457,7 @@ async function addReview(id){
   }
 }
 
-const comprarAhora = () => {
-  $q.notify({
-    message: 'Procediendo al pago...',
-    color: 'primary',
-    position: 'top'
-  })
-}
+
 
 const isProductAvailable = computed(() => {
   return dataProduct.value.stock >= 0 ? 'text-positive' : 'text-negative'

@@ -1,131 +1,215 @@
 <template>
-  <div class="fullscreen-checkout">
-    <!-- Header con logo y pasos -->
-    <header class="checkout-header">
-      <div class="logo">
-        <i class="fas fa-graduation-cap"></i>
-        <span>ACADEMIA ONLINE</span>
-      </div>
-      <div class="steps">
-        <div class="step completed">
-          <div class="step-number">1</div>
-          <div class="step-name">Carrito</div>
-        </div>
-        <div class="step completed">
-          <div class="step-number">2</div>
-          <div class="step-name">Información</div>
-        </div>
-        <div class="step active">
-          <div class="step-number">3</div>
-          <div class="step-name">Pago</div>
-        </div>
-        <div class="step">
-          <div class="step-number">4</div>
-          <div class="step-name">Confirmación</div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Contenido principal -->
-    <main class="checkout-main">
-      <!-- Sección izquierda - Resumen del pedido -->
-      <div class="order-summary">
-        <div class="summary-header">
-          <h2><i class="fas fa-shopping-bag"></i> Tu pedido</h2>
-          <div class="order-number">Pedido #12345</div>
-        </div>
-
-        <div class="order-items">
-          <div class="order-item">
-            <div class="item-image" style="background-color: #FF9A8B;"></div>
-            <div class="item-details">
-              <h3>Curso de Vue.js Avanzado</h3>
-              <p class="item-meta">Acceso por 12 meses</p>
-              <div class="item-quantity">1 × 89.00€</div>
-            </div>
-            <div class="item-price">89.00€</div>
-          </div>
-
-          <div class="order-item">
-            <div class="item-image" style="background-color: #4FC0D0;"></div>
-            <div class="item-details">
-              <h3>Curso de Diseño UX/UI</h3>
-              <p class="item-meta">Acceso por 12 meses</p>
-              <div class="item-quantity">1 × 65.00€</div>
-            </div>
-            <div class="item-price">95.00€</div>
-          </div>
-        </div>
-
-        <div class="promo-section">
-          <input type="text" placeholder="Código promocional" class="promo-input">
-          <button class="apply-btn">Aplicar</button>
-        </div>
-
-        <div class="order-totals">
-          <div class="total-row">
-            <span>Subtotal</span>
-            <span>{{ cartDetails.total }}</span>
-          </div>
-          <div class="total-row">
-            <span>Descuento</span>
-            <span class="discount">-10000</span>
-          </div>
-          <div class="total-row grand-total">
-            <span>Total</span>
-            <span>falta arreglar logica de esto</span>
-          </div>
-        </div>
-
-        <div class="guarantee-banner">
-          <i class="fas fa-shield-alt"></i>
-          <span>Garantía de satisfacción de 30 días</span>
-        </div>
-      </div>
-
-      <!-- Sección derecha - Método de pago -->
-      <div class="payment-section">
-        <div class="payment-container">
-          <h2><i class="fas fa-credit-card"></i> Método de pago</h2>
+  <q-layout>
+    <q-page-container>
+      <!-- Header con pasos del checkout -->
+      <q-header elevated class="checkout-header bg-primary text-white">
+        <q-toolbar>
+          <q-toolbar-title class="text-h5">
+                    <q-avatar circle size="sm" @click="router.push('/')" class="cursor-pointer">
+            <img src="../assets/MiniLogo.jpeg">
+          </q-avatar>
+            Colpromarket
+          </q-toolbar-title>
           
-          <div class="payment-method selected">
-            <div class="method-logo">
-              <i class="fab fa-paypal"></i>
-            </div>
-            <div class="method-info">
-              <h3>PayPal</h3>
-              <p>Paga con tu cuenta PayPal o tarjeta</p>
-            </div>
+          <q-stepper
+            v-model="step"
+            header-nav
+            inactive-color="white"
+            active-color="yellow"
+            done-color="green"
+            class="no-box-shadow bg-transparent text-white"
+          >
+            <q-step
+              :name="1"
+              title="Carrito"
+              icon="shopping_cart"
+              :done="step > 1"
+            />
+            <q-step
+              :name="2"
+              title="Información"
+              icon="person"
+              :done="step > 2"
+            />
+            <q-step
+              :name="3"
+              title="Pago"
+              icon="credit_card"
+              active
+            />
+            <q-step
+              :name="4"
+              title="Confirmación"
+              icon="check_circle"
+            />
+          </q-stepper>
+        </q-toolbar>
+      </q-header>
+
+      <!-- Contenido principal -->
+      <q-page class="checkout-page">
+        <div class="row q-col-gutter-lg">
+          <!-- Columna izquierda - Resumen del pedido -->
+          <div class="col-md-7 col-12">
+            <q-card class="order-summary-card">
+              <q-card-section>
+                <div class="text-h5 q-mb-md">
+                  <q-icon name="shopping_bag" class="q-mr-sm" />
+                  Tu pedido #{{ 2131 }}
+                </div>
+
+                <!-- Lista de productos -->
+                <q-list bordered separator>
+                  <q-item v-for="(item, index) in cartDetails.items" :key="index" class="q-pa-none">
+                    <q-item-section avatar>
+                      <q-img
+                        :src="item.images[0].urlImage"
+                        :ratio="1"
+                        width="80px"
+                        class="rounded-borders"
+                      />
+                    </q-item-section>
+                    
+                    <q-item-section>
+                      <q-item-label class="text-weight-bold">{{ item.name }}</q-item-label>
+                      <q-item-label caption>
+                        <div v-for="(value, key) in item.details" :key="key" class="text-caption">
+                          {{ key }}: {{ value }}
+                        </div>
+                      </q-item-label>
+                    </q-item-section>
+                    
+                    <q-item-section side>
+                      <div class="text-right">
+                        <div class="text-body1">{{ formatPrice(item.price) }}</div>
+                        <div class="text-caption">x {{ item.quantity }}</div>
+                      </div>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+
+                <!-- Cupón de descuento -->
+                <q-input
+                  v-model="couponCode"
+                  label="Código promocional"
+                  outlined
+                  class="q-mt-md"
+                >
+                  <template v-slot:append>
+                    <q-btn
+                      label="Aplicar"
+                      color="primary"
+                      flat
+                      @click="applyCoupon"
+                    />
+                  </template>
+                </q-input>
+
+                <!-- Resumen de totales -->
+                <div class="order-totals q-mt-lg">
+                  <div class="row items-center q-py-sm">
+                    <div class="col text-grey-7">Subtotal:</div>
+                    <div class="col text-right">{{ formatPrice(cartDetails.total) }}</div>
+                  </div>
+                  
+                  <div class="row items-center q-py-sm">
+                    <div class="col text-grey-7">Descuento:</div>
+                    <div class="col text-right text-negative">-{{ formatPrice(10000) }}</div>
+                  </div>
+                  
+                  <q-separator class="q-my-sm" />
+                  
+                  <div class="row items-center q-py-sm">
+                    <div class="col text-h6">Total:</div>
+                    <div class="col text-right text-h6 text-primary">
+                      {{ formatPrice(cartDetails.total - 10000) }}
+                    </div>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+
+            <!-- Garantía -->
+            <q-card class="q-mt-md guarantee-card">
+              <q-card-section horizontal>
+                <q-card-section class="bg-yellow-1 text-center flex flex-center">
+                  <q-icon name="verified" size="xl" color="positive" />
+                </q-card-section>
+                <q-card-section>
+                  <div class="text-h6">Garantía de satisfacción</div>
+                  <div class="text-caption">30 días para probar nuestros productos. Si no estás satisfecho, te devolvemos tu dinero.</div>
+                </q-card-section>
+              </q-card-section>
+            </q-card>
           </div>
 
-          <div class="paypal-button-container">
-            <div ref="paypalRef" class="paypal-button"></div>
-            <p class="secure-payment">
-              <i class="fas fa-lock"></i> Pago seguro con encriptación SSL
-            </p>
-          </div>
+          <!-- Columna derecha - Métodos de pago -->
+          <div class="col-md-5 col-12">
+            <q-card class="payment-methods-card">
+              <q-card-section>
+                <div class="text-h5 q-mb-md">
+                  <q-icon name="credit_card" class="q-mr-sm" />
+                  Método de pago
+                </div>
 
-          <div class="customer-support">
-            <h3><i class="fas fa-headset"></i> ¿Necesitas ayuda?</h3>
-            <p>Contacta con nuestro equipo de soporte en <strong>soporte@academiaonline.com</strong></p>
-            <p>Horario: L-V de 9:00 a 18:00</p>
+                <!-- Selección de método de pago -->
+                <q-option-group
+                  v-model="paymentMethod"
+                  :options="paymentOptions"
+                  type="radio"
+                  inline
+                  class="q-mb-md"
+                />
+
+                <!-- Botón de PayPal -->
+                <div class="paypal-container q-mt-lg">
+                  <div ref="paypalRef" class="paypal-button"></div>
+                  <div class="text-caption text-center q-mt-sm">
+                    <q-icon name="lock" color="positive" />
+                    Pago seguro con encriptación SSL
+                  </div>
+                </div>
+
+                <!-- Información de soporte -->
+                <q-card class="support-card q-mt-md">
+                  <q-card-section>
+                    <div class="text-h6">
+                      <q-icon name="help" class="q-mr-sm" />
+                      ¿Necesitas ayuda?
+                    </div>
+                    <div class="q-mt-sm">
+                      <q-icon name="email" size="sm" class="q-mr-xs" />
+                      soporte@academiaonline.com
+                    </div>
+                    <div>
+                      <q-icon name="schedule" size="sm" class="q-mr-xs" />
+                      L-V de 9:00 a 18:00
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </q-card-section>
+            </q-card>
           </div>
         </div>
-      </div>
-    </main>
+      </q-page>
 
-    <!-- Footer -->
-    <footer class="checkout-footer">
-      <div class="footer-links">
-        <a href="#">Términos y condiciones</a>
-        <a href="#">Política de privacidad</a>
-        <a href="#">Reembolsos</a>
-      </div>
-      <div class="copyright">
-        © 2023 Academia Online. Todos los derechos reservados.
-      </div>
-    </footer>
-  </div>
+      <!-- Footer -->
+      <q-footer elevated class="checkout-footer bg-grey-9 text-white">
+        <q-toolbar>
+          <q-toolbar-title class="text-center">
+            <div class="footer-links">
+              <a href="#" class="text-white q-mx-sm">Términos y condiciones</a>
+              <a href="#" class="text-white q-mx-sm">Política de privacidad</a>
+              <a href="#" class="text-white q-mx-sm">Reembolsos</a>
+            </div>
+            <div class="copyright q-mt-sm">
+              © 2023 Academia Online. Todos los derechos reservados.
+            </div>
+          </q-toolbar-title>
+        </q-toolbar>
+      </q-footer>
+    </q-page-container>
+  </q-layout>
 </template>
 <script setup>
 import { ref, onMounted, toRaw } from 'vue'
@@ -136,8 +220,41 @@ import { showNotification } from '../utils/utils.js';
 const paypalRef = ref(null)
 const store = useStore()
 const cartDetails = ref(store.cart);
+import { router } from '../routes/routes.js';
 const formatItems = ref([])
 const paymentValues = ref({})
+const step = ref(3);
+const couponCode = ref('');
+const paymentMethod = ref('paypal');
+const paymentOptions = [
+  {
+    label: 'PayPal',
+    value: 'paypal',
+    icon: 'fab fa-paypal'
+  },
+  {
+    label: 'Tarjeta de crédito',
+    value: 'credit_card',
+    icon: 'credit_card'
+  }
+];
+
+const formatPrice = (price) => {
+  if (!price) return '$0';
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0
+  }).format(price);
+};
+
+function applyCoupon() {
+  // Lógica para aplicar cupón
+  Notify.create({
+    type: 'info',
+    message: 'Cupón aplicado correctamente'
+  });
+}
 
 const paymentDetails = ref({
     userId:store.userId,

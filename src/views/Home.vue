@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf" id="body">
-    <mainBar @open-register-dialog="registerDialog = true" @open-logIn-dialog="loginDialog = true" />
+    <mainBar/>
       <!-- Contenido principal -->
     <div>
       <div class="Home">
@@ -34,7 +34,7 @@
   </div>
   <div class="productos-wrapper">
   <div class="productos row q-gutter-xl justify-start q-pa-xl">
-    <div
+    <div 
       v-for="(producto, index) in productos"
       :key="index"
       class="my-card card"
@@ -149,37 +149,9 @@
   </div>
 </footer>
 
-    <!-- Modal Login -->
-    <q-dialog v-model="loginDialog" persistent>
-      <q-card style="min-width: 500px; max-width: 600px">
-        <q-card-section>
-          <div class="text-h6">Iniciar sesión</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-input
-            v-model="loginEmail"
-            label="Correo Electrónico"
-            type="email"
-            :rules="[val => !!val || 'Campo obligatorio']"
-          />
-          <q-input 
-            v-model="loginPassword" 
-            label="Contraseña" 
-            type="password"
-            :rules="[val => !!val || 'Campo obligatorio']"
-          />
-        </q-card-section>
-
-        <q-card-actions>
-          <q-btn label="Cerrar" color="secondary" @click="Dialog('closeLogin')" />
-          <q-btn label="Iniciar sesión" color="primary" @click="login" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
 
     <!-- Modal Register -->
-    <q-dialog class="form-container" v-model="registerDialog">
+    <q-dialog class="form-container" v-model="store.showRegisterDialog">
   <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
     <q-card-section class="q-pb-none">
       <p class="title">Registrate</p>
@@ -193,7 +165,7 @@
           <q-input v-model="user.password" label="Contraseña" type="password" />
           <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
         </div>
-        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--four-color--);" @click="registerUser()" />
+        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser()" />
       </form>
     </q-card-section>
   </q-card>
@@ -202,7 +174,7 @@
 
   <!--modal para loguearse-->
 
-  <q-dialog class="form-container" v-model="loginDialog">
+  <q-dialog class="form-container" v-model="store.showLoginDialog">
   <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
     <q-card-section class="q-pb-none">
       <p class="title">Entra a tu cuenta</p>
@@ -214,7 +186,7 @@
           <q-input v-model="user.email" label="Correo Electronico" type="text" />
           <q-input v-model="user.password" label="Contraseña" type="password" />
         </div>
-        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--four-color--);" @click="login()" />
+        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" />
       </form>
     </q-card-section>
   </q-card>
@@ -226,7 +198,7 @@
 
 <script setup>
 import { onMounted, ref, toRaw } from 'vue'
-import { showNotification } from '../utils/utils.js'
+import { showNotification, validateToken, scrollToTopInstant } from '../utils/utils.js'
 import mainBar from '../components/mainBar.vue';
 import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';
@@ -235,14 +207,9 @@ import { Notify } from 'quasar';
 const store = useStore();
 const slide = ref(1);
 const autoplay = ref(true);
-const loginDialog = ref(false);
-const registerDialog = ref(false);
-const loginEmail = ref("");
-const loginPassword = ref("");
 const productos = ref([]);
 const user = ref({});
 const loading = ref(false);
-
 
 // Imágenes del carrusel optimizadas
 const imagenesCarrusel = ref([
@@ -282,9 +249,12 @@ async function registerUser() {
     if(response.success == true){
       Notify.create({
         type:'positive',
-        message:'Registro exitoso'
+        message:'¡Cuenta creada con éxito! Inicia sesión para continuar.'
       })
     }
+
+    store.showRegister = false;
+    store.showRegisterDialog = false
 
     console.log(response);
     Dialog('closeRegister');
@@ -319,6 +289,7 @@ async function login() {
   }
   finally{
     loading.value = false
+    store.showLoginDialog = false
   }
 }
 
@@ -332,37 +303,14 @@ async function products() {
   }
 }
 
-
-function Dialog(action){
-  switch (action){
-    case "openLogin":
-      loginDialog.value = true
-    break;
-
-    case "openRegister":
-    registerDialog.value = true
-    break;
-
-    case "closeLogin":
-    loginDialog.value = false
-    break;
-
-    case "closeRegister":
-    registerDialog.value = false
-    break;
-  }
-} 
-
 // Función para agregar al carrito
-const addToTheCart = (producto) => {
-  store.addToCart(producto)
-  console.log("producto en home", producto);
-  Notify.create({
-        type: "positive",
-        message: "Producto agregado al carrito"
-      })
-  console.log('Agregado al carrito:', producto.name);
-}
+const addToTheCart = async (producto) => {
+  const canProceed = await validateToken();
+  if (!canProceed) return;
+
+  store.addToCart(producto);
+  console.log("Agregado al carrito:", producto.name);
+};
 
 // Función para ver el detalle del producto
 const verDetalleProducto = (producto) => {
@@ -379,6 +327,7 @@ const verDetalleProducto = (producto) => {
 }
 
 onMounted(()=>{
+  scrollToTopInstant()
   products();
 })
 

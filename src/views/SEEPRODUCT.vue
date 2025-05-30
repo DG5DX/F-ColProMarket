@@ -465,6 +465,7 @@ const isProductAvailable = computed(() => {
 
 // Inicialización
 onMounted(async () => {
+  scrollToTopInstant()
   await products(); // Cargar productos primero
   await initializeProduct(); // Luego inicializar el producto específico
 })

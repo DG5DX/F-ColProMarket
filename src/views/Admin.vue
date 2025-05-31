@@ -21,13 +21,13 @@
 
 
             <!-- Total de Pedidos -->
-            <q-card class="col metric-card bg-green-1">
+      <!--       <q-card class="col metric-card bg-green-1">
               <q-card-section>
                 <div class="text-h6">Total de Pedidos</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="shopping_cart" size="md" class="metric-icon" />
               </q-card-section>
-            </q-card>
+            </q-card> -->
 
             <!-- Total en Stock -->
             <q-card class="col metric-card bg-orange-1">

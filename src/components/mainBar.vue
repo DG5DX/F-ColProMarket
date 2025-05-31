@@ -78,6 +78,7 @@
             <q-route-tab label="PRODUCTOS" to="/" exact />
             <q-route-tab label="FACTURAS" to="/invoice" exact />
             <q-route-tab label="REBAJAS" to="/" exact />
+            <q-route-tab label="PERFIL" to="/userProfile" exact />
             <q-route-tab label="CONTACTO" to="/" exact />
           </q-tabs>
         </div>

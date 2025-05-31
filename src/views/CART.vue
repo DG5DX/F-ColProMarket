@@ -46,8 +46,8 @@
                                     :style="{ borderLeft: `4px solid ${index % 2 === 0 ? 'var(--four-color--)' : 'var(--six-color--)'}` }">
                                     <div class="product-card-content">
                                         <!-- Columna de Imagen -->
-                                        <div class="product-image-col">
-                                            <q-img :src="product.images[0].urlImage || '/api/placeholder/300/200'"
+                                        <div  class="product-image-col">
+                                            <q-img @click="sendProduct(product)"  :src="product.images[0].urlImage || '/api/placeholder/300/200'"
                                                 :ratio="1" class="product-image" spinner-color="var(--seven-color--)">
                                                 <q-badge v-if="product.discount" floating color="negative"
                                                     class="discount-badge">
@@ -325,6 +325,13 @@ const addToWishlist = (product) => {
         position: 'top-right'
     })
 }
+
+function sendProduct (product){
+      router.push({
+    path:"/seeproduct", query:{data:JSON.stringify(product)}
+  });
+}
+
 
 // Acortar descripción
 const truncateDescription = (text) => {

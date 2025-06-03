@@ -66,3 +66,17 @@ export function scrollToTopInstant() {
   window.scrollTo(0, 0); // Desplaza a las coordenadas (0,0) de la página
   console.log("Desplazamiento instantáneo al inicio de la página.");
 }
+
+export function formatNum(value) {
+  if (typeof value !== 'number') {
+    console.error("Error: The provided value is not a number.");
+    return String(value);
+  }
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
+
+  return formatter.format(value);
+}

@@ -7,10 +7,11 @@ import AdminUsers from "../views/AdminUsers.vue"
 import userProfile from "../views/userProfile.vue"
 import invoice from "../components/invoice.vue"
 import AdminSales from "../views/AdminSales.vue"
-import {createRouter, createWebHashHistory} from "vue-router"
 import PaymentGateway from "../views/paymentGateway.vue"
 import Search from "../views/Search.vue"
-  
+import sales from "../views/sales.vue"
+import {createRouter, createWebHashHistory} from "vue-router"
+
 const routes = [
   { path: '/', component: Home },
   { path: '/cart', component: Cart },
@@ -21,6 +22,7 @@ const routes = [
   { path: '/adminsales', component: AdminSales},
   { path: '/gateway', component: PaymentGateway },
   { path: '/search', component: Search },
+  { path: '/sales', component: sales },
   { path:'/invoice' , component:invoice},
   {path:'/userProfile', component:userProfile}
 ]

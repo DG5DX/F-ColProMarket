@@ -22,6 +22,7 @@
             bg-color="white"
             placeholder="Buscar..."
             class="search-input"
+            input-class="text-black"
             @keyup.enter="productsSearch()"
           >
             <template v-slot:prepend>
@@ -42,7 +43,7 @@
               <q-btn flat label="Cerrar Sesión" @click="closeSession()" class="action-btn" />
             </template>
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
               </q-badge>
             </q-btn>
@@ -53,7 +54,7 @@
             <q-btn flat round icon="person" class="action-btn" v-if="!store.userId" @click="store.showLoginDialog = true" />
             <q-btn flat round icon="logout" class="action-btn" v-else @click="closeSession()" />
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
               </q-badge>
             </q-btn>

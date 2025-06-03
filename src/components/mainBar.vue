@@ -15,8 +15,16 @@
 
         <!-- Búsqueda - se adapta según el espacio -->
         <div class="search-section">
-          <q-input v-model="searchQuery" dense standout bg-color="white" placeholder="Buscar..." class="search-input"
-            @keyup.enter="productsSearch()">
+          <q-input 
+            v-model="searchQuery"
+            dense
+            standout
+            bg-color="white"
+            placeholder="Buscar..."
+            class="search-input"
+            input-class="text-black"
+            @keyup.enter="productsSearch()"
+          >
             <template v-slot:prepend>
               <q-icon name="search" class="cursor-pointer" />
             </template>
@@ -58,7 +66,7 @@
               </q-btn>
             </template>
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
               </q-badge>
             </q-btn>
@@ -90,7 +98,7 @@
               </q-menu>
             </q-btn>
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
               </q-badge>
             </q-btn>

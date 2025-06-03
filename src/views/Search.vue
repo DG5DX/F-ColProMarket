@@ -6,7 +6,7 @@
         <!-- Logo y marca -->
         <div class="row items-center no-wrap">
           <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" class="q-mr-sm" />
-          <q-avatar size="42px" class="q-mr-sm">
+          <q-avatar size="42px" class="q-mr-sm" @click="router.push('/')">
             <img src="../assets/MiniLogo.jpeg">
           </q-avatar>
           <q-toolbar-title class="brand-title text-weight-bold">
@@ -16,9 +16,9 @@
 
         <!-- Barra de búsqueda destacada -->
         <div class="search-container q-mx-lg">
-          <q-input v-model="parameter" dense standout="bg-white text-dark" bg-color="white"
+          <q-input v-model="parameter" dense standout="" color="black" bg-color="white"
             placeholder="Buscar productos electrónicos..." class="search-input"
-            @update:model-value="searchProducts(parameter)">
+            @update:model-value="searchProducts(parameter)" input-class="text-black" @keyup.enter="productsSearch()">
             <template v-slot:prepend>
               <q-icon name="search" color="primary" />
             </template>
@@ -28,20 +28,47 @@
           </q-input>
         </div>
 
-        <!-- Acciones de usuario -->
-        <div class="row items-center no-wrap q-gutter-x-sm">
-          <q-btn flat round icon="favorite_border" class="text-white" />
-          <q-btn flat round icon="person_outline" class="text-white" to="/login" />
-          <q-btn flat round icon="shopping_cart" class="text-white" @click="cart">
-            <q-badge color="orange" floating>{{ cartItemCount }}</q-badge>
+        <div class="full-actions">
+          <template v-if="!store.userId">
+            <q-btn flat label="Ingresar" @click="store.showLoginDialog = true"
+              :class="['action-btn', { 'ingresar-animado': !store.showRegister }]" />
+            <q-btn v-if="store.showRegister" flat label="Registro" @click="store.showRegisterDialog = true"
+              class="action-btn" />
+          </template>
+          <template v-else>
+            <q-btn flat label="Cerrar Sesión" @click="closeSession()" class="action-btn" />
+          </template>
+          <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
+            <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
+              {{ store.cart.items.length }}
+            </q-badge>
+          </q-btn>
+        </div>
+
+        <div class="compact-actions">
+          <q-btn flat round icon="person" class="action-btn" v-if="!store.userId"
+            @click="store.showLoginDialog = true" />
+          <q-btn flat round icon="logout" class="action-btn" v-else @click="closeSession()" />
+          <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
+            <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
+              {{ store.cart.items.length }}
+            </q-badge>
           </q-btn>
         </div>
       </q-toolbar>
 
       <!-- Categorías con efecto hover -->
-      <q-tabs align="center" class="categories-tabs text-white" active-color="white" indicator-color="transparent">
-        <q-route-tab v-for="tab in tabs" :key="tab.name" :label="tab.label" :to="tab.route" exact class="tab-item" />
-      </q-tabs>
+      <q-toolbar class="categories-toolbar" :class="{ 'mobile-menu-open': mobileMenuOpen }">
+        <div class="categories-container">
+          <q-tabs align="left" class="categories-tabs" :breakpoint="0">
+            <q-route-tab label="PRODUCTOS" to="/" exact />
+            <q-route-tab label="FACTURAS" to="/invoice" exact />
+            <q-route-tab label="REBAJAS" to="/" exact />
+            <q-route-tab label="PERFIL" to="/userProfile" exact />
+            <q-route-tab label="CONTACTO" to="/" exact />
+          </q-tabs>
+        </div>
+      </q-toolbar>
     </q-header>
 
     <!-- Drawer mejorado -->
@@ -59,8 +86,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item v-model="priceExpanded" icon="attach_money" label="Rango de precios"
-            header-class="text-primary">
+          <q-item v-model="priceExpanded" icon="attach_money" label="Rango de precios" header-class="text-primary">
             <div class="q-pa-sm">
               <q-range v-model="internalPriceRange" :min="10000" :max="1500000" :step="100" label-always color="primary"
                 class="q-mt-sm" />
@@ -477,8 +503,8 @@ async function selectCategory(categoryId) {
   try {
     searchError.value = false
     const response = await getData(`/product/search-products?categoryId=${categoryId}`)
-    if(response.status === 404){
-      showNotification('negative' , 'No se encontraron productos' )
+    if (response.status === 404) {
+      showNotification('negative', 'No se encontraron productos')
     }
     products.value = response.data
     console.log("productos filtrados por categoria", response.data);
@@ -493,6 +519,15 @@ function obtainDataSearch() {
   parameter.value = route.query.data || ''
   console.log("parametro de busqueda", parameter.value);
 }
+
+function closeSession() {
+  store.token = null;
+  store.userId = null;
+  store.showRegister = true;
+  showNotification('positive', 'Has cerrado tu sesión.')
+  router.replace("/");
+}
+
 
 onMounted(() => {
   selectCategory()

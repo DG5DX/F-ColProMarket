@@ -22,6 +22,7 @@
             bg-color="white"
             placeholder="Buscar..."
             class="search-input"
+            input-class="text-black"
             @keyup.enter="productsSearch()"
           >
             <template v-slot:prepend>
@@ -35,14 +36,37 @@
           <!-- Versión completa -->
           <div class="full-actions">
             <template v-if="!store.userId">
-              <q-btn flat label="Ingresar" @click="store.showLoginDialog = true" :class="['action-btn', {'ingresar-animado': !store.showRegister}]"  />
-              <q-btn v-if="store.showRegister" flat label="Registro" @click="store.showRegisterDialog = true" class="action-btn" />
+              <q-btn flat label="Ingresar" @click="store.showLoginDialog = true"
+                :class="['action-btn', { 'ingresar-animado': !store.showRegister }]" />
+              <q-btn v-if="store.showRegister" flat label="Registro" @click="store.showRegisterDialog = true"
+                class="action-btn" />
             </template>
             <template v-else>
-              <q-btn flat label="Cerrar Sesión" @click="closeSession()" class="action-btn" />
+              <q-btn flat round icon="person" class="action-btn">
+                <q-menu>
+                  <div class="user-profile-menu q-pa-md">
+                    <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
+                    <div class="column items-center q-mb-md">
+                      <q-avatar size="70px" class="q-mb-sm">
+                        <img :src="store.profilePicture || 'https://cdn.quasar.dev/img/avatar.png'">
+                      </q-avatar>
+                      <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.email || 'test@gmail.com' }}
+                      </div>
+                    </div>
+
+                    <q-btn flat label="Administrar cuenta" class="full-width" icon="manage_accounts"
+                      style="color: #1976D2;" @click="router.push('/userProfile')" />
+
+                    <q-separator class="q-my-sm" />
+
+                    <q-btn flat label="Cerrar Sesión" icon="logout" class="full-width" style="color: #C10015;"
+                      @click="closeSession" />
+                  </div>
+                </q-menu>
+              </q-btn>
             </template>
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
               </q-badge>
             </q-btn>
@@ -50,10 +74,31 @@
 
           <!-- Versión compacta -->
           <div class="compact-actions">
-            <q-btn flat round icon="person" class="action-btn" v-if="!store.userId" @click="store.showLoginDialog = true" />
-            <q-btn flat round icon="logout" class="action-btn" v-else @click="closeSession()" />
+            <q-btn flat round icon="person" class="action-btn" v-if="!store.userId"
+              @click="store.showLoginDialog = true" />
+            <q-btn flat round icon="person" class="action-btn" v-else>
+              <q-menu>
+                <div class="user-profile-menu q-pa-md">
+                  <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
+                  <div class="column items-center q-mb-md">
+                    <q-avatar size="70px" class="q-mb-sm">
+                      <img :src="store.profilePicture || 'https://cdn.quasar.dev/img/avatar.png'">
+                    </q-avatar>
+                    <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.email || 'test@gmail.com' }}
+                    </div>
+                  </div>
+                  <q-btn flat label="Administrar cuenta" class="full-width" icon="manage_accounts"
+                    style="color: #1976D2;" @click="router.push('/userProfile')" />
+
+                  <q-separator class="q-my-sm" />
+
+                  <q-btn flat label="Cerrar Sesión" icon="logout" class="full-width" style="color: #C10015;"
+                    @click="closeSession" />
+                </div>
+              </q-menu>
+            </q-btn>
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items.length > 0" color="red" floating rounded>
+              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
               </q-badge>
             </q-btn>
@@ -61,14 +106,7 @@
         </div>
 
         <!-- Menú hamburguesa solo para móviles -->
-        <q-btn 
-          flat 
-          round 
-          dense 
-          icon="menu" 
-          class="mobile-menu-btn" 
-          @click="toggleMobileMenu"
-        />
+        <q-btn flat round dense icon="menu" class="mobile-menu-btn" @click="toggleMobileMenu" />
       </q-toolbar>
 
       <!-- Categorías - responsive avanzado -->
@@ -105,7 +143,7 @@ function toggleMobileMenu() {
 function productsSearch() {
   if (searchQuery.value.trim()) {
     router.push({
-      path:"/search",
+      path: "/search",
       query: { data: searchQuery.value }
     });
   }
@@ -115,13 +153,13 @@ function closeSession() {
   store.token = null;
   store.userId = null;
   store.showRegister = true;
-  showNotification('positive','Has cerrado tu sesión.')
+  showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }
 
 async function cart() {
-    const canProceed =await validateToken()
-    if(!canProceed) return
+  const canProceed = await validateToken()
+  if (!canProceed) return
   router.push('/cart');
 }
 </script>
@@ -139,12 +177,17 @@ async function cart() {
 @keyframes pulse-ingresar {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 0 rgba(255, 255, 255, 0.4); /* Sombra sutil blanca */
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
+    /* Sombra sutil blanca */
   }
+
   50% {
-    transform: scale(1.05); /* Ligeramente más grande */
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7); /* Sombra más prominente */
+    transform: scale(1.05);
+    /* Ligeramente más grande */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+    /* Sombra más prominente */
   }
+
   100% {
     transform: scale(1);
     box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
@@ -153,7 +196,8 @@ async function cart() {
 
 /* Aplicar la animación al botón de ingresar */
 .ingresar-animado {
-  animation: pulse-ingresar 2s infinite ease-in-out; /* 2 segundos de duración, loop infinito, aceleración/desaceleración */
+  animation: pulse-ingresar 2s infinite ease-in-out;
+  /* 2 segundos de duración, loop infinito, aceleración/desaceleración */
 }
 
 .primary-toolbar {
@@ -266,17 +310,33 @@ async function cart() {
   margin-left: 8px;
 }
 
+/*Perfil de usuario */
+.user-profile-menu {
+  text-align: center;
+}
+
+.user-profile-menu .q-avatar {
+  position: relative;
+}
+
+.user-profile-menu .absolute-bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+}
+
 /* Sistema de breakpoints inteligentes */
 @media (max-width: 1024px) {
   .primary-toolbar {
     grid-template-columns: auto 1fr auto;
     padding: 0 10px;
   }
-  
+
   .tech-title {
     font-size: 1.1rem;
   }
-  
+
   .categories-tabs .q-tab {
     padding: 0 12px;
     font-size: 0.8rem;
@@ -287,19 +347,19 @@ async function cart() {
   .primary-toolbar {
     grid-template-columns: auto 1fr auto auto;
   }
-  
+
   .full-actions {
     display: none;
   }
-  
+
   .compact-actions {
     display: flex;
   }
-  
+
   .search-section {
     min-width: 0;
   }
-  
+
   .categories-toolbar {
     position: fixed;
     top: 60px;
@@ -309,26 +369,26 @@ async function cart() {
     height: auto;
     overflow: hidden;
     background: var(--five-color--);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
-  
+
   .categories-toolbar.mobile-menu-open {
     max-height: calc(100vh - 60px);
     padding: 8px 0;
   }
-  
+
   .categories-tabs {
     flex-direction: column;
     align-items: stretch;
     min-width: 100%;
   }
-  
+
   .categories-tabs .q-tab {
     justify-content: flex-start;
     padding: 10px 20px;
     font-size: 0.9rem;
   }
-  
+
   .mobile-menu-btn {
     display: block;
   }
@@ -368,7 +428,8 @@ async function cart() {
     gap: 6px;
   }
 
-  .action-btn, .cart-btn {
+  .action-btn,
+  .cart-btn {
     width: 38px;
     height: 38px;
     min-width: 38px;
@@ -429,31 +490,32 @@ async function cart() {
     padding: 0 8px;
     gap: 8px;
   }
-  
+
   .tech-title {
     font-size: 1rem;
     margin-left: 6px;
   }
-  
+
   .logo-section .q-avatar {
     width: 32px;
     height: 32px;
   }
-  
-  .action-btn, .cart-btn {
+
+  .action-btn,
+  .cart-btn {
     width: 36px;
     height: 36px;
     min-width: 36px;
   }
-  
+
   .search-input {
     min-width: 0;
   }
-  
+
   .search-input :deep(.q-field__control) {
     height: 32px;
   }
-  
+
   .categories-toolbar {
     top: 56px;
   }
@@ -463,7 +525,7 @@ async function cart() {
   .tech-title {
     display: none;
   }
-  
+
   .search-section {
     margin-left: 4px;
   }

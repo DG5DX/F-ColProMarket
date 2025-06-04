@@ -401,20 +401,7 @@ async function getAllCategories() {
   }
 }
 
-const category = ref([])
-async function getCategoryById() {
-  try {
-    const response = await getData(`/categories/${categoryId.value}`)
-    if (response.data.length > 0) {
-      category.value = response.data;
-      console.log("categoria seleccionada", category.value);
-    } else {
-      return console.log("no hay categorias", response.data);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
+
 
 const tabs = ref([
   { label: 'INICIO', route: '/' },
@@ -510,7 +497,7 @@ async function selectCategory(categoryId) {
     console.log("productos filtrados por categoria", response.data);
   } catch (error) {
     searchError.value = true
-    console.log("error al filtrar priductos por categoria", error);
+    console.log("error al filtrar productos por categoria", error);
     products.value = []
   }
 }
@@ -530,12 +517,9 @@ function closeSession() {
 
 
 onMounted(() => {
-  selectCategory()
-  searchProductsByPrice()
   getAllCategories()
   obtainDataSearch()
   searchProducts()
-  getCategoryById()
 })
 </script>
 

@@ -6,6 +6,7 @@ import AdminCategory from "../views/AdminCategory.vue"
 import AdminUsers from "../views/AdminUsers.vue"
 import userProfile from "../views/userProfile.vue"
 import invoice from "../components/invoice.vue"
+import Contact from "../views/Contact.vue"
 import AdminSales from "../views/AdminSales.vue"
 import {createRouter, createWebHashHistory} from "vue-router"
 import PaymentGateway from "../views/paymentGateway.vue"
@@ -22,7 +23,8 @@ const routes = [
   { path: '/gateway', component: PaymentGateway },
   { path: '/search', component: Search },
   { path:'/invoice' , component:invoice},
-  {path:'/userProfile', component:userProfile}
+  {path:'/userProfile', component:userProfile},
+  {path:'/contact', component: Contact},
 ]
   
 export const router = createRouter({

@@ -116,8 +116,7 @@
             <q-route-tab label="PRODUCTOS" to="/" exact />
             <q-route-tab label="FACTURAS" to="/invoice" exact />
             <q-route-tab label="REBAJAS" to="/sales" exact />
-            <q-route-tab label="PERFIL" to="/userProfile" exact />
-            <q-route-tab label="CONTACTO" to="/" exact />
+            <q-route-tab label="CONTACTO" to="/contact" exact />
           </q-tabs>
         </div>
       </q-toolbar>

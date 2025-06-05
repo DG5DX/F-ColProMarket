@@ -1,5 +1,53 @@
 
 
+.product-price {
+    display: flex; /* Para alinear los precios uno al lado del otro */
+    align-items: baseline; /* Alinea los textos en la misma línea base */
+    gap: 8px; /* Espacio entre el precio original y el actual */
+    flex-wrap: wrap; /* En caso de que no quepan en una sola línea */
+}
+
+.original-price {
+    color: var(--text-secondary); /* Un color más suave para el precio anterior */
+    text-decoration: line-through; /* ¡La magia del tachado! */
+    font-size: 0.9em; /* Más pequeño que el precio actual */
+    opacity: 0.8; /* Ligeramente menos prominente */
+}
+
+.current-price {
+    color: var(--seven-color--); /* Un color llamativo, como tu `--seven-color--` (azul) */
+    font-size: 1.3em; /* Más grande para que destaque */
+    font-weight: bold; /* Negrita para mayor énfasis */
+    /* Puedes añadir una sombra sutil para que resalte más si quieres */
+    /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
+}
+
+.product-summary-name {
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 5px; /* Espacio debajo del nombre */
+}
+
+.product-summary-meta {
+    display: flex; /* Para alinear la cantidad y los precios */
+    align-items: baseline; /* Alinea los textos por su línea base */
+    gap: 6px; /* Espacio entre los elementos (cantidad, original, actual) */
+    font-size: 0.95em; /* Tamaño de fuente ligeramente más pequeño para el meta */
+    color: var(--text-secondary); /* Color general para la info meta */
+}
+
+.summary-original-price {
+    color: var(--text-secondary); /* Color gris o secundario */
+    text-decoration: line-through; /* ¡El efecto de tachado! */
+    font-size: 0.9em; /* Un poco más pequeño que el actual */
+    opacity: 0.8; /* Ligeramente más tenue */
+}
+
+.summary-current-price {
+    color: var(--seven-color--); /* Color destacado, como tu azul */
+    font-weight: bold; /* Negrita */
+    font-size: 1.1em; /* Ligeramente más grande para el precio final */
+}
 
 .remove-btn {
     width: 150px;

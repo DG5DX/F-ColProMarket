@@ -80,3 +80,4 @@ export function formatNum(value) {
 
   return formatter.format(value);
 }
+

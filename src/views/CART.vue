@@ -13,7 +13,7 @@
                         <h1 class="hero-title">TU CARRITO DE COMPRAS</h1>
                         <p class="hero-subtitle">
                             Revisa y gestiona los productos que estás por adquirir.
-                            <span class="highlight-text">¡No pierdas tus artículos favoritos!</span>
+                            <span class="highlight-text" style="">¡No pierdas tus artículos favoritos!</span>
                         </p>
                         <q-badge class="hero-badge" color="var(--cambio--)">
                             {{ cart.length }} {{ cart.length === 1 ? 'artículo' : 'artículos' }}

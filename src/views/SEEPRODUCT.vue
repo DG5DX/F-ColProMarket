@@ -10,7 +10,7 @@
         round 
         dense 
         class="back-btn"
-        to="/"
+        @click="$router.go(-1)"
       />
       
       <!-- Contenido principal -->

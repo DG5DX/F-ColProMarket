@@ -48,7 +48,7 @@
                     <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
                     <div class="column items-center q-mb-md">
                       <q-avatar size="70px" class="q-mb-sm">
-                        <img :src="store.profilePicture || 'https://cdn.quasar.dev/img/avatar.png'">
+                        <img :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
                       </q-avatar>
                       <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.email || 'test@gmail.com' }}
                       </div>
@@ -82,7 +82,7 @@
                   <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
                   <div class="column items-center q-mb-md">
                     <q-avatar size="70px" class="q-mb-sm">
-                      <img :src="store.profilePicture || 'https://cdn.quasar.dev/img/avatar.png'">
+                      <img :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
                     </q-avatar>
                     <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.email || 'test@gmail.com' }}
                     </div>
@@ -167,7 +167,7 @@ async function cart() {
 /* Variables y estilos base */
 .header-tech {
   background: var(--five-color--);
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

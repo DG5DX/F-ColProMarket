@@ -16,14 +16,14 @@
         <div class="profile-header bg-primary text-white">
           <q-parallax :height="200" :speed="0.5">
             <template v-slot:media>
-              <img src="https://cdn.quasar.dev/img/parallax2.jpg">
+              <img src="https://www.channelengine.com/hubfs/Blogs/2023-07/Marketplace%20strategy.jpg">
             </template>
 
             <div class="header-content absolute-full flex flex-center">
               <div class="header-overlay flex items-center q-px-lg" style="max-width: 1200px; width: 100%;">
                 <!-- Avatar -->
                 <q-avatar size="120px" class="q-mr-md">
-                  <img :src="user.profilePicture !== 'N/A' ? user.profilePicture : 'https://cdn.quasar.dev/img/avatar.png'">
+                  <img :src="user.profilePicture !== 'N/A' ? user.profilePicture : 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
                 </q-avatar>
 
                 <!-- Información básica -->

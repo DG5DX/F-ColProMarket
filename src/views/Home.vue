@@ -274,14 +274,14 @@ async function login() {
     })
 
     store.save_Token(response.data.token)
-
     if(response.data.user.role === 0){
       router.push('/admin')
       showNotification('positive', `Hola ${response.data.user.name} ¡Bienvenido al panel de administración! Gestiona la tienda y las ventas.`)
     }else{
-    showNotification('postive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
+    showNotification('positive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
     }
     user.value = {}
+    await getUserInformation()
   } catch (error) {
     showNotification('negative', 'Inicio de sesion fallido')
     user.value = {}
@@ -292,6 +292,19 @@ async function login() {
     store.showLoginDialog = false
   }
 }
+
+
+async function getUserInformation(){
+  try {
+    const response = await getData(`/users/${store.userId}`)
+    store.userInformation = response.user
+    console.log("informacion de usuario encontrada", store.userInformation);
+  } catch (error) {
+    console.error('error getting user information',error)
+    store.userInformation = false
+  }
+}
+
 
 // Función para cargar productos
 async function products() {

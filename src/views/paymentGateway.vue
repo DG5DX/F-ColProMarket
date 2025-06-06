@@ -238,7 +238,6 @@ const renderPayPalButton = () => {
       if (details.status === 'COMPLETED') {
         paymentDetails.value.paypalData = details;
         await updatePayment(paymentId, 'paid');
-
         showNotification('positive', `Pago completado por : ${details.payer.name.given_name}`)
       } else {
           await updatePayment(paymentId, 'canceled');

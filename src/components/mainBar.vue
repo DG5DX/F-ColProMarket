@@ -45,12 +45,12 @@
               <q-btn flat round icon="person" class="action-btn">
                 <q-menu>
                   <div class="user-profile-menu q-pa-md">
-                    <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
+                    <div class="text-h6 text-center q-mt-sm">{{ store.userInformation.name || 'Usuario' }}</div>
                     <div class="column items-center q-mb-md">
                       <q-avatar size="70px" class="q-mb-sm">
                         <img :src="store.profilePicture || 'https://cdn.quasar.dev/img/avatar.png'">
                       </q-avatar>
-                      <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.email || 'test@gmail.com' }}
+                      <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.userInformation.email || 'test@gmail.com' }}
                       </div>
                     </div>
 
@@ -79,7 +79,7 @@
             <q-btn flat round icon="person" class="action-btn" v-else>
               <q-menu>
                 <div class="user-profile-menu q-pa-md">
-                  <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
+                  <div class="text-h6 text-center q-mt-sm">{{ store.userInformation.name || 'Usuario' }}</div>
                   <div class="column items-center q-mb-md">
                     <q-avatar size="70px" class="q-mb-sm">
                       <img :src="store.profilePicture || 'https://cdn.quasar.dev/img/avatar.png'">

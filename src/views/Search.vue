@@ -427,8 +427,8 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
- async function cart() {
- const canProceed = await validateToken()
+async function cart() {
+  const canProceed = await validateToken()
   if (!canProceed) return
   window.location.href = 'http://localhost:5173/#/cart'
 }
@@ -447,7 +447,9 @@ function clearFilters() {
   showDiscountOnly.value = false
 }
 
-function addToCart(product) {
+async function addToCart(product) {
+  const canProceed = await validateToken()
+  if (!canProceed) return
   store.addToCart(product)
   $q.notify({
     type: 'positive',

@@ -5,44 +5,41 @@
       <q-header elevated class="checkout-header bg-primary text-white">
         <q-toolbar>
           <q-toolbar-title class="text-h5">
-                    <q-avatar circle size="sm" @click="router.push('/')" class="cursor-pointer">
-            <img src="../assets/MiniLogo.jpeg">
-          </q-avatar>
+            <q-avatar circle size="sm" @click="router.push('/')" class="cursor-pointer">
+              <img src="../assets/MiniLogo.jpeg">
+            </q-avatar>
             Colpromarket
           </q-toolbar-title>
-          
-          <q-stepper
-            v-model="step"
-            header-nav
-            inactive-color="white"
-            active-color="yellow"
-            done-color="green"
-            class="no-box-shadow bg-transparent text-white"
-          >
-            <q-step
-              :name="1"
-              title="Carrito"
-              icon="shopping_cart"
-              :done="step > 1"
-            />
-            <q-step
-              :name="2"
-              title="Información"
-              icon="person"
-              :done="step > 2"
-            />
-            <q-step
-              :name="3"
-              title="Pago"
-              icon="credit_card"
-              active
-            />
-            <q-step
-              :name="4"
-              title="Confirmación"
-              icon="check_circle"
-            />
+
+          <q-stepper v-model="step" header-nav inactive-color="white" active-color="yellow" done-color="green"
+            class="no-box-shadow bg-transparent text-white">
+            <q-step :name="1" title="Carrito" icon="shopping_cart" :done="step > 1" />
+            <q-step :name="2" title="Información" icon="person" :done="step > 2" />
+            <q-step :name="3" title="Pago" icon="credit_card" :done="step > 3" />
+            <q-step :name="4" title="Confirmación" icon="check_circle" />
           </q-stepper>
+
+          <div v-if="step === 1">
+            <!-- Contenido del carrito -->
+            <q-btn label="Continuar" @click="step = 2" color="primary" />
+          </div>
+
+          <div v-else-if="step === 2">
+            <!-- Información del usuario -->
+            <q-btn label="Atrás" @click="step = 1" flat />
+            <q-btn label="Continuar" @click="step = 3" color="primary" />
+          </div>
+
+          <div v-else-if="step === 3">
+            <!-- Método de pago -->
+            <q-btn label="Atrás" @click="step = 2" flat />
+            <q-btn label="Continuar" @click="step = 4" color="primary" />
+          </div>
+
+          <div v-else-if="step === 4">
+            <!-- Confirmación final -->
+            <q-btn label="Volver al inicio" @click="step = 1" />
+          </div>
         </q-toolbar>
       </q-header>
 
@@ -62,14 +59,9 @@
                 <q-list bordered separator>
                   <q-item v-for="(item, index) in cartDetails.items" :key="index" class="q-pa-none">
                     <q-item-section avatar>
-                      <q-img
-                        :src="item.images[0].urlImage"
-                        :ratio="1"
-                        width="80px"
-                        class="rounded-borders"
-                      />
+                      <q-img :src="item.images[0].urlImage" :ratio="1" width="80px" class="rounded-borders" />
                     </q-item-section>
-                    
+
                     <q-item-section>
                       <q-item-label class="text-weight-bold">{{ item.name }}</q-item-label>
                       <q-item-label caption>
@@ -78,7 +70,7 @@
                         </div>
                       </q-item-label>
                     </q-item-section>
-                    
+
                     <q-item-section side>
                       <div class="text-right">
                         <div class="text-body1">{{ formatPrice(item.price) }}</div>
@@ -89,19 +81,9 @@
                 </q-list>
 
                 <!-- Cupón de descuento -->
-                <q-input
-                  v-model="couponCode"
-                  label="Código promocional"
-                  outlined
-                  class="q-mt-md"
-                >
+                <q-input v-model="couponCode" label="Código promocional" outlined class="q-mt-md">
                   <template v-slot:append>
-                    <q-btn
-                      label="Aplicar"
-                      color="primary"
-                      flat
-                      @click="applyCoupon"
-                    />
+                    <q-btn label="Aplicar" color="primary" flat @click="applyCoupon" />
                   </template>
                 </q-input>
 
@@ -111,14 +93,14 @@
                     <div class="col text-grey-7">Subtotal:</div>
                     <div class="col text-right">{{ formatPrice(cartDetails.total) }}</div>
                   </div>
-                  
+
                   <div class="row items-center q-py-sm">
                     <div class="col text-grey-7">Descuento:</div>
                     <div class="col text-right text-negative">-{{ formatPrice(10000) }}</div>
                   </div>
-                  
+
                   <q-separator class="q-my-sm" />
-                  
+
                   <div class="row items-center q-py-sm">
                     <div class="col text-h6">Total:</div>
                     <div class="col text-right text-h6 text-primary">
@@ -137,7 +119,9 @@
                 </q-card-section>
                 <q-card-section>
                   <div class="text-h6">Garantía de satisfacción</div>
-                  <div class="text-caption">30 días para probar nuestros productos. Si no estás satisfecho, te devolvemos tu dinero.</div>
+                  <div class="text-caption">30 días para probar nuestros productos. Si no estás satisfecho, te
+                    devolvemos tu dinero.
+                  </div>
                 </q-card-section>
               </q-card-section>
             </q-card>
@@ -153,13 +137,7 @@
                 </div>
 
                 <!-- Selección de método de pago -->
-                <q-option-group
-                  v-model="paymentMethod"
-                  :options="paymentOptions"
-                  type="radio"
-                  inline
-                  class="q-mb-md"
-                />
+                <q-option-group v-model="paymentMethod" :options="paymentOptions" type="radio" inline class="q-mb-md" />
 
                 <!-- Botón de PayPal -->
                 <div class="paypal-container q-mt-lg">
@@ -215,7 +193,7 @@
 import { ref, onMounted, toRaw } from 'vue'
 import { useStore } from '../stores/store.js';
 import { Notify } from 'quasar';
-import {  postData, putData } from '../service/service.js';
+import { postData, putData } from '../service/service.js';
 import { showNotification } from '../utils/utils.js';
 const paypalRef = ref(null)
 const store = useStore()
@@ -257,10 +235,10 @@ function applyCoupon() {
 }
 
 const paymentDetails = ref({
-    userId:store.userId,
-    products:cartDetails.value.items,
-    paypalData:{},
-    total:cartDetails.value.total
+  userId: store.userId,
+  products: cartDetails.value.items,
+  paypalData: {},
+  total: cartDetails.value.total
 })
 
 const renderPayPalButton = () => {
@@ -281,25 +259,25 @@ const renderPayPalButton = () => {
               discount: { value: String(paymentValues.value.discount), currency_code: 'USD' }
             }
           },
-          items:paymentValues.items
+          items: paymentValues.items
         }]
       })
     },
     onApprove: async (data, actions) => {
       const paymentId = await savePendingPayment()
       const details = await actions.order.capture()
-      if(details.status === 'COMPLETED'){
+      if (details.status === 'COMPLETED') {
         paymentDetails.value.paypalData = details;
         await updatePayment(paymentId, 'paid');
-      }else{
+      } else {
         await updatePayment(paymentId, 'canceled');
-        return showNotification('negative','Error al pagar , intenta nuevamente')
+        return showNotification('negative', 'Error al pagar , intenta nuevamente')
       }
-      console.log("detalles de pago" , toRaw(paymentDetails.value.paypalData));
+      console.log("detalles de pago", toRaw(paymentDetails.value.paypalData));
       return Notify.create({
-        type:'positive',
-        message:`Pago completado por : ${details.payer.name.given_name}`
-      }) 
+        type: 'positive',
+        message: `Pago completado por : ${details.payer.name.given_name}`
+      })
 
     },
     onError: (err) => {
@@ -315,36 +293,36 @@ const renderPayPalButton = () => {
   }).render(paypalRef.value)
 }
 
-async function savePendingPayment(){
+async function savePendingPayment() {
   try {
-    const response = await postData("/orders",{
-      data:paymentDetails.value
+    const response = await postData("/orders", {
+      data: paymentDetails.value
     })
     console.log("Datos de pago pendiente guardado", response.data);
     return response.data._id
   } catch (error) {
-    showNotification('negative','Error al procesar pago')
-    console.log("[Linea 203] Error en pagos" , error);
+    showNotification('negative', 'Error al procesar pago')
+    console.log("[Linea 203] Error en pagos", error);
   }
 }
 
 
-async function updatePayment(id , status){
+async function updatePayment(id, status) {
   try {
     paymentDetails.value.status = status
-    const response = await putData(`/orders/${id}`,{
-      data:paymentDetails.value
+    const response = await putData(`/orders/${id}`, {
+      data: paymentDetails.value
     })
   } catch (error) {
     return console.log('[linea 218] error actualizando pago pendiente', error);
   }
 }
 
-async function convertCurrency(){
+async function convertCurrency() {
   try {  //por el momento el descuento es estatico luego cuando se complete la logica de ofertas ay que arreglarlo
-    const response = await postData(`/orders/convertCurrency`,{
-      discount: 10000, 
-      items: toRaw(cartDetails.value.items) 
+    const response = await postData(`/orders/convertCurrency`, {
+      discount: 10000,
+      items: toRaw(cartDetails.value.items)
     })
     paymentValues.value = response.data
     console.log('valores de pago', toRaw(paymentValues.value));
@@ -354,24 +332,24 @@ async function convertCurrency(){
   }
 }
 
-function formatProducts(){
-if(cartDetails.value.items){
-    cartDetails.value.items.forEach((product)=>{
+function formatProducts() {
+  if (cartDetails.value.items) {
+    cartDetails.value.items.forEach((product) => {
       const unitPriceInDollars = (product.price / 3900).toFixed(2)
-    formatItems.value.push({
-      name:product.name,
-      unit_amount:{value:unitPriceInDollars , currency_code:'USD'},
-      quantity:product.quantity
+      formatItems.value.push({
+        name: product.name,
+        unit_amount: { value: unitPriceInDollars, currency_code: 'USD' },
+        quantity: product.quantity
+      })
     })
-  })
-}else{
-  Notify.create({
-    type:'negative',
-    message:'No hay datos del carrito'
-  })
-}
+  } else {
+    Notify.create({
+      type: 'negative',
+      message: 'No hay datos del carrito'
+    })
+  }
 
-console.log("datos de items formateados", toRaw(formatItems.value));
+  console.log("datos de items formateados", toRaw(formatItems.value));
 
 }
 
@@ -379,7 +357,7 @@ onMounted(() => {
   formatProducts()
   renderPayPalButton()
   convertCurrency()
-  console.log("datos del carrito en pagos" , toRaw(cartDetails.value));
+  console.log("datos del carrito en pagos", toRaw(cartDetails.value));
 })
 </script>
 

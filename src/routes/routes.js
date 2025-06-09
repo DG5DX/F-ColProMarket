@@ -7,6 +7,7 @@ import AdminUsers from "../views/AdminUsers.vue"
 import userProfile from "../views/userProfile.vue"
 import invoice from "../components/invoice.vue"
 import Contact from "../views/Contact.vue"
+import changePassword from "../components/changePassword.vue"
 import AdminSales from "../views/AdminSales.vue"
 import PaymentGateway from "../views/paymentGateway.vue"
 import Search from "../views/Search.vue"
@@ -27,6 +28,7 @@ const routes = [
   { path:'/invoice' , component:invoice},
   {path:'/userProfile', component:userProfile},
   {path:'/contact', component: Contact},
+  {path:'/password', component: changePassword},
 ]
   
 export const router = createRouter({

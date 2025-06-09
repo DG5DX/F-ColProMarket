@@ -195,11 +195,20 @@
         </div>
         <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" />
         
+        <div>
+        <!-- Cambiar contraseña-->
+                <div class="text-center q-mt-md">
+          <p class="text-caption"> 
+            <a href="#" class="text-primary" @click.prevent="handlePasswordRecovery">Perdí mi contraseña</a>
+          </p>
+        </div>
+
         <!-- Enlace para cambiar a registro -->
         <div class="text-center q-mt-md">
           <p class="text-caption">¿No tienes una cuenta? 
             <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Regístrate aquí</a>
           </p>
+        </div>
         </div>
       </form>
     </q-card-section>
@@ -353,6 +362,22 @@ const verDetalleProducto = (producto) => {
   });
 }
 
+
+const handlePasswordRecovery = () => {
+  // Cierra el modal
+  store.showLoginDialog = false;
+  
+  // Pequeño delay para asegurar que el modal se cierre antes de la navegación
+  setTimeout(() => {
+    router.push('/password')
+      .then(() => console.log('Redirección exitosa a /password'))
+      .catch(err => {
+        console.error('Error en redirección:', err);
+        // Fallback por si hay error en la navegación programática
+        window.location.href = '/password';
+      });
+  }, 100);
+};
 
 // Funcion para abrir modales en modales
 const toggleAuthModals = () => {

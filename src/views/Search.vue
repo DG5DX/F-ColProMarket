@@ -49,11 +49,6 @@
           <q-btn flat round icon="person" class="action-btn" v-if="!store.userId"
             @click="store.showLoginDialog = true" />
           <q-btn flat round icon="logout" class="action-btn" v-else @click="closeSession()" />
-          <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-            <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
-              {{ store.cart.items.length }}
-            </q-badge>
-          </q-btn>
         </div>
       </q-toolbar>
 
@@ -290,7 +285,7 @@ import { useStore } from '../stores/store'
 import { getData } from '../service/service'
 import SEEPRODUCT from './SEEPRODUCT.vue'
 import { router } from '../routes/routes'
-import { showNotification } from '../utils/utils'
+import { showNotification, validateToken } from '../utils/utils'
 
 // Variables reactivas
 const priceExpanded = ref(false);
@@ -401,21 +396,6 @@ async function getAllCategories() {
   }
 }
 
-const category = ref([])
-async function getCategoryById() {
-  try {
-    const response = await getData(`/categories/${categoryId.value}`)
-    if (response.data.length > 0) {
-      category.value = response.data;
-      console.log("categoria seleccionada", category.value);
-    } else {
-      return console.log("no hay categorias", response.data);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 const tabs = ref([
   { label: 'INICIO', route: '/' },
   { label: 'PRODUCTOS', route: '/productos' },
@@ -447,7 +427,9 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
-function cart() {
+async function cart() {
+  const canProceed = await validateToken()
+  if (!canProceed) return
   window.location.href = 'http://localhost:5173/#/cart'
 }
 
@@ -465,7 +447,9 @@ function clearFilters() {
   showDiscountOnly.value = false
 }
 
-function addToCart(product) {
+async function addToCart(product) {
+  const canProceed = await validateToken()
+  if (!canProceed) return
   store.addToCart(product)
   $q.notify({
     type: 'positive',
@@ -530,12 +514,9 @@ function closeSession() {
 
 
 onMounted(() => {
-  selectCategory()
-  searchProductsByPrice()
   getAllCategories()
   obtainDataSearch()
   searchProducts()
-  getCategoryById()
 })
 </script>
 

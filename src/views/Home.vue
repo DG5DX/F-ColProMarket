@@ -151,7 +151,7 @@
 
 
     <!-- Modal Register -->
-    <q-dialog class="form-container" v-model="store.showRegisterDialog">
+<q-dialog class="form-container" v-model="store.showRegisterDialog">
   <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
     <q-card-section class="q-pb-none">
       <p class="title">Registrate</p>
@@ -166,6 +166,13 @@
           <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
         </div>
         <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser()" />
+        
+        <!-- Enlace para cambiar a login -->
+        <div class="text-center q-mt-md">
+          <p class="text-caption">¿Ya tienes una cuenta? 
+            <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Inicia sesión aquí</a>
+          </p>
+        </div>
       </form>
     </q-card-section>
   </q-card>
@@ -174,7 +181,7 @@
 
   <!--modal para loguearse-->
 
-  <q-dialog class="form-container" v-model="store.showLoginDialog">
+<q-dialog class="form-container" v-model="store.showLoginDialog">
   <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
     <q-card-section class="q-pb-none">
       <p class="title">Entra a tu cuenta</p>
@@ -187,6 +194,13 @@
           <q-input v-model="user.password" label="Contraseña" type="password" />
         </div>
         <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" />
+        
+        <!-- Enlace para cambiar a registro -->
+        <div class="text-center q-mt-md">
+          <p class="text-caption">¿No tienes una cuenta? 
+            <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Regístrate aquí</a>
+          </p>
+        </div>
       </form>
     </q-card-section>
   </q-card>
@@ -338,6 +352,13 @@ const verDetalleProducto = (producto) => {
     path:"/seeproduct", query:{data:JSON.stringify(producto)}
   });
 }
+
+
+// Funcion para abrir modales en modales
+const toggleAuthModals = () => {
+  store.showLoginDialog = !store.showLoginDialog;
+  store.showRegisterDialog = !store.showRegisterDialog;
+};
 
 onMounted(()=>{
   scrollToTopInstant()

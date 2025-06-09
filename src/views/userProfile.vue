@@ -16,14 +16,14 @@
         <div class="profile-header bg-primary text-white">
           <q-parallax :height="200" :speed="0.5">
             <template v-slot:media>
-              <img src="https://cdn.quasar.dev/img/parallax2.jpg">
+              <img src="https://www.channelengine.com/hubfs/Blogs/2023-07/Marketplace%20strategy.jpg">
             </template>
 
             <div class="header-content absolute-full flex flex-center">
               <div class="header-overlay flex items-center q-px-lg" style="max-width: 1200px; width: 100%;">
                 <!-- Avatar -->
                 <q-avatar size="120px" class="q-mr-md">
-                  <img :src="user.profilePicture !== 'N/A' ? user.profilePicture : 'https://cdn.quasar.dev/img/avatar.png'">
+                  <img :src="user.profilePicture !== 'N/A' ? user.profilePicture : 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
                 </q-avatar>
 
                 <!-- Información básica -->
@@ -50,8 +50,17 @@
             <!-- Columna izquierda - Información personal -->
             <div class="col-12 col-md-6">
               <q-card class="my-card">
-                <q-card-section class="bg-primary text-white">
+                <q-card-section class="bg-primary text-white flex justify-between items-center">
                   <div class="text-h6">Información Personal</div>
+                  <q-btn 
+                    icon="edit" 
+                    flat 
+                    round 
+                    dense 
+                    color="white" 
+                    @click="openPersonalEditDialog"
+                    title="Editar información personal"
+                  />
                 </q-card-section>
 
                 <q-separator/>
@@ -101,8 +110,17 @@
             <div class="col-12 col-md-6">
               <!-- Tarjeta de dirección -->
               <q-card class="my-card q-mb-md">
-                <q-card-section class="bg-primary text-white">
+                <q-card-section class="bg-primary text-white flex justify-between items-center">
                   <div class="text-h6">Dirección de Envío</div>
+                  <q-btn 
+                    icon="edit" 
+                    flat 
+                    round 
+                    dense 
+                    color="white" 
+                    @click="openAddressEditDialog"
+                    title="Editar dirección"
+                  />
                 </q-card-section>
 
                 <q-separator/>
@@ -184,213 +202,202 @@
           </div>
         </div>
 
-        <!-- Botones flotantes de acción -->
+        <!-- Botón flotante solo para cambiar contraseña -->
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
-          <q-fab
+          <q-btn
             color="primary"
-            icon="settings"
-            direction="up"
-            vertical-actions-align="right"
-          >
-            <q-fab-action color="primary" @click="openEditDialog" icon="edit" label="Editar perfil"/>
-            <q-fab-action color="secondary" @click="changePassword" icon="lock" label="Cambiar contraseña"/>
-          </q-fab>
+            icon="lock"
+            round
+            @click="changePassword"
+            title="Cambiar contraseña"
+          />
         </q-page-sticky>
 
-        <!-- Diálogo de edición de perfil -->
-        <q-dialog v-model="editDialog" persistent>
+        <!-- Diálogo de edición de datos personales -->
+        <q-dialog v-model="personalEditDialog" persistent>
           <q-card style="min-width: 70vw;">
             <q-toolbar class="bg-primary text-white">
-              <q-toolbar-title>Editar Perfil</q-toolbar-title>
+              <q-toolbar-title>Editar Datos Personales</q-toolbar-title>
               <q-btn flat round dense icon="close" v-close-popup />
             </q-toolbar>
 
-            <q-tabs
-              v-model="editTab"
-              dense
-              class="text-grey"
-              active-color="primary"
-              indicator-color="primary"
-              align="justify"
-              narrow-indicator
-            >
-              <q-tab name="personal" icon="person" label="Datos Personales" />
-              <q-tab name="address" icon="home" label="Dirección" />
-            </q-tabs>
-
-            <q-separator />
-
-            <q-tab-panels v-model="editTab" animated>
-              <!-- Panel de datos personales -->
-              <q-tab-panel name="personal">
-                <q-form @submit="savePersonalInfo">
-                  <div class="row q-col-gutter-md">
-                    <div class="col-12 col-sm-6">
-                      <q-input
-                        v-model="editForm.name"
-                        label="Nombre"
-                        outlined
-                        lazy-rules
-                        :rules="[
-                          val => !!val || 'El nombre es requerido',
-                          val => val.length >= 2 || 'Mínimo 2 caracteres',
-                          val => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val) || 'Solo letras y espacios'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-input
-                        v-model="editForm.lastName"
-                        label="Apellido"
-                        outlined
-                        :rules="[
-                          val => !val || val.length >= 2 || 'Mínimo 2 caracteres',
-                          val => !val || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val) || 'Solo letras y espacios'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-input
-                        v-model="editForm.email"
-                        label="Correo electrónico"
-                        type="email"
-                        outlined
-                        lazy-rules
-                        :rules="[
-                          val => !!val || 'El correo es requerido',
-                          val => /.+@.+\..+/.test(val) || 'Correo no válido',
-                          val => val.length <= 100 || 'Máximo 100 caracteres'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-input
-                        v-model="editForm.phone"
-                        label="Teléfono"
-                        outlined
-                        mask="(+57) ### #######"
-                        unmasked-value
-                        hint="Formato: (+57) XXX XXXXXX"
-                        :rules="[
-                          val => !!val || 'El teléfono es requerido',
-                          val => !val || val.length === 10 || 'Deben ser 10 dígitos',
-                          val => !val || /^[0-9]+$/.test(val) || 'Solo números permitidos'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-input
-                        v-model="editForm.dateOfBirth"
-                        label="Fecha de nacimiento"
-                        outlined
-                        type="date"
-                        :rules="[
-                          val => !!val || 'Debes poner tu fecha de nacimiento',
-                          val => !val || isValidDate(val) || 'Fecha inválida',
-                          val => !val || isAdult(val) || 'Debes ser mayor de 18 años',
-                          val => !val || !isTooOld(val) || 'Fecha no válida'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-select
-                        v-model="editForm.gender"
-                        :options="genderOptions"
-                        label="Género"
-                        outlined
-                        :rules="[
-                          val => !!val || 'Por favor diligencie su genero',
-                          val => !val || genderOptions.includes(val) || 'Seleccione una opción válida'
-                        ]"
-                      />
-                    </div>
+            <q-card-section>
+              <q-form @submit="savePersonalInfo">
+                <div class="row q-col-gutter-md">
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="editForm.name"
+                      label="Nombre"
+                      outlined
+                      lazy-rules
+                      :rules="[
+                        val => !!val || 'El nombre es requerido',
+                        val => val.length >= 2 || 'Mínimo 2 caracteres',
+                        val => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val) || 'Solo letras y espacios'
+                      ]"
+                    />
                   </div>
-
-                  <div class="q-mt-lg flex justify-end">
-                    <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
-                    <q-btn label="Guardar" type="submit" color="primary" />
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="editForm.lastName"
+                      label="Apellido"
+                      outlined
+                      :rules="[
+                        val => !val || val.length >= 2 || 'Mínimo 2 caracteres',
+                        val => !val || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val) || 'Solo letras y espacios'
+                      ]"
+                    />
                   </div>
-                </q-form>
-              </q-tab-panel>
-
-              <!-- Panel de dirección -->
-              <q-tab-panel name="address">
-                <q-form @submit="saveAddressInfo">
-                  <div class="row q-col-gutter-md">
-                    <div class="col-12">
-                      <q-input
-                        v-model="editForm.shippingAddress.street"
-                        label="Dirección (Calle, número, apartamento)"
-                        outlined
-                        lazy-rules
-                        :rules="[
-                          val => !!val || 'La dirección es requerida',
-                          val => val.length >= 5 || 'Mínimo 5 caracteres',
-                          val => val.length <= 100 || 'Máximo 100 caracteres'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-select
-                        v-model="editForm.shippingAddress.state"
-                        :options="colombianStates"
-                        label="Departamento"
-                        outlined
-                        use-input
-                        @filter="filterStates"
-                        :rules="[
-                          val => !!val || 'El departamento es requerido',
-                          val => allColombianStates.includes(val) || 'Seleccione un departamento válido'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-select
-                        v-model="editForm.shippingAddress.city"
-                        :options="filteredCities"
-                        label="Ciudad"
-                        outlined
-                        use-input
-                        @filter="filterCities"
-                        :rules="[
-                          val => !!val || 'La ciudad es requerida',
-                          val => allColombianCities.includes(val) || 'Seleccione una ciudad válida'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-input
-                        v-model="editForm.shippingAddress.zipCode"
-                        label="Código Postal"
-                        outlined
-                        mask="######"
-                        unmasked-value
-                        hint="Código postal de 6 dígitos"
-                        :rules="[
-                          val => !!val || 'Por favor ingrese su código postal',
-                          val => !val || val.length === 6 || 'Deben ser 6 dígitos',
-                          val => !val || /^[0-9]+$/.test(val) || 'Solo números permitidos'
-                        ]"
-                      />
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <q-input
-                        v-model="editForm.shippingAddress.country"
-                        label="País"
-                        outlined
-                        readonly
-                        value="Colombia"
-                      />
-                    </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="editForm.email"
+                      label="Correo electrónico"
+                      type="email"
+                      outlined
+                      lazy-rules
+                      :rules="[
+                        val => !!val || 'El correo es requerido',
+                        val => /.+@.+\..+/.test(val) || 'Correo no válido',
+                        val => val.length <= 100 || 'Máximo 100 caracteres'
+                      ]"
+                    />
                   </div>
-
-                  <div class="q-mt-lg flex justify-end">
-                    <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
-                    <q-btn label="Guardar" type="submit" color="primary" />
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="editForm.phone"
+                      label="Teléfono"
+                      outlined
+                      mask="(+57) ### #######"
+                      unmasked-value
+                      hint="Formato: (+57) XXX XXXXXX"
+                      :rules="[
+                        val => !!val || 'El teléfono es requerido',
+                        val => !val || val.length === 10 || 'Deben ser 10 dígitos',
+                        val => !val || /^[0-9]+$/.test(val) || 'Solo números permitidos'
+                      ]"
+                    />
                   </div>
-                </q-form>
-              </q-tab-panel>
-            </q-tab-panels>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="editForm.dateOfBirth"
+                      label="Fecha de nacimiento"
+                      outlined
+                      type="date"
+                      :rules="[
+                        val => !!val || 'Debes poner tu fecha de nacimiento',
+                        val => !val || isValidDate(val) || 'Fecha inválida',
+                        val => !val || isAdult(val) || 'Debes ser mayor de 18 años',
+                        val => !val || !isTooOld(val) || 'Fecha no válida'
+                      ]"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-select
+                      v-model="editForm.gender"
+                      :options="genderOptions"
+                      label="Género"
+                      outlined
+                      :rules="[
+                        val => !!val || 'Por favor diligencie su genero',
+                        val => !val || genderOptions.includes(val) || 'Seleccione una opción válida'
+                      ]"
+                    />
+                  </div>
+                </div>
+
+                <div class="q-mt-lg flex justify-end">
+                  <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
+                  <q-btn label="Guardar" type="submit" color="primary" />
+                </div>
+              </q-form>
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+
+        <!-- Diálogo de edición de dirección -->
+        <q-dialog v-model="addressEditDialog" persistent>
+          <q-card style="min-width: 70vw;">
+            <q-toolbar class="bg-primary text-white">
+              <q-toolbar-title>Editar Dirección</q-toolbar-title>
+              <q-btn flat round dense icon="close" v-close-popup />
+            </q-toolbar>
+
+            <q-card-section>
+              <q-form @submit="saveAddressInfo">
+                <div class="row q-col-gutter-md">
+                  <div class="col-12">
+                    <q-input
+                      v-model="editForm.shippingAddress.street"
+                      label="Dirección (Calle, número, apartamento)"
+                      outlined
+                      lazy-rules
+                      :rules="[
+                        val => !!val || 'La dirección es requerida',
+                        val => val.length >= 5 || 'Mínimo 5 caracteres',
+                        val => val.length <= 100 || 'Máximo 100 caracteres'
+                      ]"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-select
+                      v-model="editForm.shippingAddress.state"
+                      :options="colombianStates"
+                      label="Departamento"
+                      outlined
+                      use-input
+                      @filter="filterStates"
+                      :rules="[
+                        val => !!val || 'El departamento es requerido',
+                        val => allColombianStates.includes(val) || 'Seleccione un departamento válido'
+                      ]"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-select
+                      v-model="editForm.shippingAddress.city"
+                      :options="filteredCities"
+                      label="Ciudad"
+                      outlined
+                      use-input
+                      @filter="filterCities"
+                      :rules="[
+                        val => !!val || 'La ciudad es requerida',
+                        val => allColombianCities.includes(val) || 'Seleccione una ciudad válida'
+                      ]"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="editForm.shippingAddress.zipCode"
+                      label="Código Postal"
+                      outlined
+                      mask="######"
+                      unmasked-value
+                      hint="Código postal de 6 dígitos"
+                      :rules="[
+                        val => !!val || 'Por favor ingrese su código postal',
+                        val => !val || val.length === 6 || 'Deben ser 6 dígitos',
+                        val => !val || /^[0-9]+$/.test(val) || 'Solo números permitidos'
+                      ]"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      v-model="editForm.shippingAddress.country"
+                      label="País"
+                      outlined
+                      readonly
+                      value="Colombia"
+                    />
+                  </div>
+                </div>
+
+                <div class="q-mt-lg flex justify-end">
+                  <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
+                  <q-btn label="Guardar" type="submit" color="primary" />
+                </div>
+              </q-form>
+            </q-card-section>
           </q-card>
         </q-dialog>
       </q-page>
@@ -445,9 +452,9 @@ const allColombianCities = [
 const colombianStates = ref([...allColombianStates]);
 const filteredCities = ref([...allColombianCities]);
 
-// Estado del diálogo de edición
-const editDialog = ref(false);
-const editTab = ref('personal');
+// Estado de los diálogos de edición
+const personalEditDialog = ref(false);
+const addressEditDialog = ref(false);
 
 // Formulario de edición
 const editForm = ref({
@@ -560,7 +567,7 @@ const isTooOld = (dateString) => {
   return age > 120;
 };
 
-const openEditDialog = () => {
+const openPersonalEditDialog = () => {
   // Copiar los datos actuales del usuario al formulario de edición
   editForm.value = {
     name: user.value.name,
@@ -570,15 +577,28 @@ const openEditDialog = () => {
     dateOfBirth: user.value.dateOfBirth ? formatDateForInput(user.value.dateOfBirth) : null,
     gender: user.value.gender !== 'No especificado' ? user.value.gender : '',
     shippingAddress: {
-      street: user.value.shippingAddress.street !== 'No especificado' ? user.value.shippingAddress.street : '',
-      city: user.value.shippingAddress.city !== 'No especificada' ? user.value.shippingAddress.city : '',
-      state: user.value.shippingAddress.state !== 'No especificado' ? user.value.shippingAddress.state : '',
-      zipCode: user.value.shippingAddress.zipCode !== 'N/A' ? user.value.shippingAddress.zipCode : '',
-      country: 'Colombia'
+      street: user.value.shippingAddress.street,
+      city: user.value.shippingAddress.city,
+      state: user.value.shippingAddress.state,
+      zipCode: user.value.shippingAddress.zipCode,
+      country: user.value.shippingAddress.country
     }
   };
   
-  editDialog.value = true;
+  personalEditDialog.value = true;
+};
+
+const openAddressEditDialog = () => {
+  // Copiar los datos actuales de dirección al formulario de edición
+  editForm.value.shippingAddress = {
+    street: user.value.shippingAddress.street !== 'No especificado' ? user.value.shippingAddress.street : '',
+    city: user.value.shippingAddress.city !== 'No especificada' ? user.value.shippingAddress.city : '',
+    state: user.value.shippingAddress.state !== 'No especificado' ? user.value.shippingAddress.state : '',
+    zipCode: user.value.shippingAddress.zipCode !== 'N/A' ? user.value.shippingAddress.zipCode : '',
+    country: 'Colombia'
+  };
+  
+  addressEditDialog.value = true;
 };
 
 const formatDateForInput = (dateString) => {
@@ -587,16 +607,25 @@ const formatDateForInput = (dateString) => {
   return date.toISOString().split('T')[0];
 };
 
-const savePersonalInfo = async () => {
-  try {
-    const response = await putData(`/users/${user.value._id}`,{
+const savePersonalInfo =async () => {
+  // Actualizar los datos del usuario
+  user.value.name = editForm.value.name;
+  user.value.lastName = editForm.value.lastName || 'No especificado';
+  user.value.email = editForm.value.email;
+  user.value.phone = editForm.value.phone || 'N/A';
+  user.value.dateOfBirth = editForm.value.dateOfBirth || null;
+  user.value.gender = editForm.value.gender || 'No especificado';
+  user.value.updatedAt = new Date().toISOString();
+  
+  const response = await putData(`/users/${user.value._id}`,{
       data:editForm.value
     })
-    showNotification("positive", "informacion actualizada correctamente")
-  } catch (error) {
-    console.log("error updating user information", error);
-    showNotification("negative","Error actualizando informacion")
-  }
+  $q.notify({
+    type: 'positive',
+    message: 'Datos personales actualizados correctamente',
+    position: 'top'
+  });
+  personalEditDialog.value = false;
 };
 
 const saveAddressInfo = () => {
@@ -618,7 +647,7 @@ const saveAddressInfo = () => {
   });
   
   // Cerrar el diálogo
-  editDialog.value = false;
+  addressEditDialog.value = false;
 };
 
 const changePassword = () => {

@@ -8,7 +8,7 @@
             <q-card class="hero-card">
               <q-card-section class="hero-section">
                 <div class="hero-content">
-                  <div class="text-h3 hero-title">MarketPro Team</div>
+                  <div class="text-h3 hero-title">ColProductMarket</div>
                   <div class="text-h6 hero-subtitle">Soluciones digitales para tu negocio</div>
                 </div>
                 <div class="hero-decoration"></div>

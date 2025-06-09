@@ -44,11 +44,9 @@
             </q-badge>
           </q-btn>
         </div>
-
+        <q-btn flat round icon="person" class="action-btn" @click="userProfile()" />
         <div class="compact-actions">
-          <q-btn flat round icon="person" class="action-btn" v-if="!store.userId"
-            @click="store.showLoginDialog = true" />
-          <q-btn flat round icon="logout" class="action-btn" v-else @click="closeSession()" />
+          <q-btn flat round icon="logout" class="action-btn" v-if="store.userId" @click="closeSession()" />
         </div>
       </q-toolbar>
 
@@ -431,6 +429,12 @@ async function cart() {
   const canProceed = await validateToken()
   if (!canProceed) return
   window.location.href = 'http://localhost:5173/#/cart'
+}
+
+async function userProfile() {
+  const canProceed = await validateToken()
+  if (!canProceed) return
+  window.location.href = 'http://localhost:5173/#/user-profile'
 }
 
 function formatPrice(price) {

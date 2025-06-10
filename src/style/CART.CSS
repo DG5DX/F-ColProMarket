@@ -9,13 +9,13 @@
     margin: 5%;
     margin-left: -2%;
     align-items: center;
-    justify-content: center;  /* Centra el contenido */
+    justify-content: center; 
     background: #e62222;
     border: none;
     border-radius: 5px;
     box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
-    position: relative;  /* Para contener elementos absolutos */
-    overflow: hidden;    /* Para que nada se salga del botón */
+    position: relative;
+    overflow: hidden; 
   }
   
   .remove-btn span {
@@ -31,7 +31,7 @@
     position: absolute;
     right: 0;
     height: 100%;
-    width: 0;  /* Oculto por defecto */
+    width: 0; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,7 +46,7 @@
   }
   
   .remove-btn:hover .btn-icon {
-    width: 40px;  /* Se muestra al hacer hover */
+    width: 40px; 
   }
   
   .remove-btn:active .btn-icon svg {

@@ -677,40 +677,5 @@ const changePassword = () => {
 </script>
 
 <style lang="scss" scoped>
-.profile-page {
-  padding: 0;
-  background-color: var(--three-color--);
-}
-
-.profile-header {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-
-  .header-overlay {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(2px);
-  }
-}
-
-.profile-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.my-card {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
-}
-
-.q-item__label--caption {
-  color: var(--text-secondary);
-}
-
-.q-item__label {
-  color: var(--text-primary);
-  font-weight: 500;
-}
+@import url("../style/userProfile.css");
 </style>

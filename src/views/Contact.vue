@@ -2,6 +2,14 @@
   <q-layout>
     <q-page-container>
       <q-page class="custom-page">
+              <q-btn 
+        icon="arrow_back" 
+        flat 
+        round 
+        dense 
+        class="back-btn"
+        @click="$router.go(-1)"
+      />
         <div class="row q-col-gutter-md">
           <!-- Sección principal -->
           <div class="col-12">
@@ -36,8 +44,8 @@
                 <div class="section-title">Quiénes somos</div>
                 <div class="section-content">
                   <p>
-                    MarketPro es un equipo de profesionales con más de 8 años de experiencia en el desarrollo
-                    de plataformas de comercio electrónico. Nos especializamos en crear soluciones
+                    ColProductMarket es un equipo de aprendices con más de 3 años de experiencia en el desarrollo
+                    de software. Nos especializamos en crear soluciones
                     personalizadas que se adaptan a las necesidades específicas de cada negocio.
                   </p>
                   <p>
@@ -101,7 +109,7 @@
                     <q-icon name="email" class="contact-icon" />
                     <div class="contact-content">
                       <div class="contact-label">Email</div>
-                      <div class="contact-value">contacto@marketpro.example</div>
+                      <div class="contact-value">colproductmarket@gmail.com</div>
                     </div>
                   </div>
 
@@ -109,7 +117,7 @@
                     <q-icon name="phone" class="contact-icon" />
                     <div class="contact-content">
                       <div class="contact-label">Teléfono</div>
-                      <div class="contact-value">+34 123 456 789</div>
+                      <div class="contact-value">+57 123 456 789</div>
                     </div>
                   </div>
 
@@ -117,7 +125,7 @@
                     <q-icon name="location_on" class="contact-icon" />
                     <div class="contact-content">
                       <div class="contact-label">Dirección</div>
-                      <div class="contact-value">Av. Digital 123, Barcelona</div>
+                      <div class="contact-value">Av. Digital 123, Santander</div>
                     </div>
                   </div>
 
@@ -134,10 +142,38 @@
               <q-card-section class="social-section">
                 <div class="social-title">Síguenos</div>
                 <div class="social-buttons">
-                  <q-btn round class="social-btn facebook" icon="facebook" />
-                  <q-btn round class="social-btn twitter" icon="twitter" />
-                  <q-btn round class="social-btn instagram" icon="instagram" />
-                  <q-btn round class="social-btn linkedin" icon="linkedin" />
+                  <q-btn 
+                    round 
+                    class="social-btn facebook" 
+                    icon="fa-brands fa-facebook-f" 
+                    type="a"
+                    href="https://facebook.com" 
+                    target="_blank"
+                  />
+                  <q-btn 
+                    round 
+                    class="social-btn twitter" 
+                    icon="fa-brands fa-twitter" 
+                    type="a"
+                    href="https://twitter.com" 
+                    target="_blank"
+                  />
+                  <q-btn 
+                    round 
+                    class="social-btn instagram" 
+                    icon="fa-brands fa-instagram" 
+                    type="a"
+                    href="https://instagram.com" 
+                    target="_blank"
+                  />
+                  <q-btn 
+                    round 
+                    class="social-btn linkedin" 
+                    icon="fa-brands fa-linkedin-in" 
+                    type="a"
+                    href="https://linkedin.com" 
+                    target="_blank"
+                  />
                 </div>
               </q-card-section>
             </q-card>
@@ -186,46 +222,32 @@ const stats = ref([
 const team = ref([
   {
     id: 1,
-    name: 'María López',
-    position: 'CEO & Fundadora',
+    name: 'Andres Felipe',
+    position: 'CEO & Fundador',
     skills: ['Estrategia', 'Negocios', 'Liderazgo'],
-    avatar: 'https://randomuser.me/api/portraits/women/32.jpg'
+    avatar: new URL('../assets/Andres.jpeg', import.meta.url).href
   },
   {
     id: 2,
-    name: 'Carlos Ruiz',
+    name: 'Bryan Zarate',
     position: 'CTO',
     skills: ['Vue', 'Node.js', 'Arquitectura'],
-    avatar: 'https://randomuser.me/api/portraits/men/22.jpg'
+    avatar: new URL('../assets/Bryan.jpeg', import.meta.url).href
   },
   {
     id: 3,
-    name: 'Ana Martínez',
-    position: 'Diseñadora UX/UI',
+    name: 'Daniel Fernando',
+    position: 'Diseñador UX/UI',
     skills: ['Figma', 'Prototipado', 'Research'],
-    avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+    avatar: new URL('../assets/Daniel.jpeg', import.meta.url).href
   },
   {
     id: 4,
-    name: 'David García',
+    name: 'Jhaider Ortiz',
     position: 'Desarrollador Frontend',
     skills: ['Vue', 'Quasar', 'JavaScript'],
-    avatar: 'https://randomuser.me/api/portraits/men/65.jpg'
+    avatar: new URL('../assets/Jhaider.jpeg', import.meta.url).href
   },
-  {
-    id: 5,
-    name: 'Sofía Pérez',
-    position: 'Desarrolladora Backend',
-    skills: ['Node.js', 'Python', 'APIs'],
-    avatar: 'https://randomuser.me/api/portraits/women/68.jpg'
-  },
-  {
-    id: 6,
-    name: 'Javier Moreno',
-    position: 'Marketing Digital',
-    skills: ['SEO', 'Ads', 'Analítica'],
-    avatar: 'https://randomuser.me/api/portraits/men/75.jpg'
-  }
 ]);
 
 // Proyectos recientes
@@ -326,6 +348,14 @@ const projects = ref([
   padding: 2rem;
 }
 
+.back-btn {
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.8);
+}
+
 .custom-banner {
   background: linear-gradient(135deg, var(--four-color--) 0%, var(--six-color--) 100%);
   border: none;
@@ -421,7 +451,7 @@ const projects = ref([
 /* Team Grid */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
@@ -538,28 +568,58 @@ const projects = ref([
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .social-buttons {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .social-btn {
-  width: 40px;
-  height: 40px;
-  transition: transform 0.2s ease;
+  width: 44px;
+  height: 44px;
+  transition: all 0.3s ease;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .social-btn:hover {
-  transform: scale(1.1);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.social-btn.facebook { background: #1877f2; }
-.social-btn.twitter { background: #1da1f2; }
-.social-btn.instagram { background: #e4405f; }
-.social-btn.linkedin { background: #0077b5; }
+.social-btn.facebook { 
+  background: #1877f2; 
+}
+.social-btn.facebook:hover { 
+  background: #166fe5; 
+}
+
+.social-btn.twitter { 
+  background: #1da1f2; 
+}
+.social-btn.twitter:hover { 
+  background: #1a95e0; 
+}
+
+.social-btn.instagram { 
+  background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+}
+.social-btn.instagram:hover { 
+  opacity: 0.9; 
+}
+
+.social-btn.linkedin { 
+  background: #0077b5; 
+}
+.social-btn.linkedin:hover { 
+  background: #00669c; 
+}
 
 /* Projects Timeline */
 .projects-timeline {

@@ -249,7 +249,7 @@ const imagenesCarrusel = ref([
     alt: "Phantom HD"
   },
   {
-    src: "https://img.fcbayern.com/image/upload/f_auto,q_auto,w_1280/eCommerce/produkte/51116",
+    src: new URL('../assets/Bryan.jpeg', import.meta.url).href,
     alt: "Product Image"
   }
 ]);

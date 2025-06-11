@@ -12,6 +12,11 @@ client.interceptors.request.use(
             const token = store ? store.token : "";
             config.headers.Authorization = `Bearer ${token}`;
         }   
+
+        if (config.url.includes("/invoice")) {
+            config.responseType = 'blob'; 
+        }
+
         return config;
     },
     (error) => {

@@ -423,6 +423,7 @@ const toggleAuthModals = () => {
 
 onMounted(()=>{
   scrollToTopInstant()
+  store.dataFavorites(store.userId)
   products();
 })
 

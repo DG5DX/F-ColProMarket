@@ -6,6 +6,7 @@ import { getData } from "../service/service";
 
 export const useStore = defineStore ("store",()=>{
 let userId = ref("");
+let userInformation = ref(false)
 const showLoginDialog = ref(false)
 const showRegisterDialog = ref(false)
 const token = ref("");
@@ -62,6 +63,7 @@ const favorites =ref([])
     return{
         token,
         userId,
+        userInformation,
         showLoginDialog,
         showRegisterDialog,
         showRegister,

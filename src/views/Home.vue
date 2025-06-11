@@ -33,43 +33,67 @@
     </q-carousel>
   </div>
   <div class="productos-wrapper">
-  <div class="productos row q-gutter-xl justify-start q-pa-xl">
-    <div 
-      v-for="(producto, index) in productos"
-      :key="index"
-      class="my-card card"
-      @click="verDetalleProducto(producto)"
-    >
-      <div class="card-img">
-        <div class="img">
-          <q-img
-            :src="producto.images[0].urlImage"
-            :alt="producto.name"
-            fit="cover"
-          >
-            <template v-slot:loading>
-              <q-spinner color="primary" />
-            </template>
-          </q-img>
+    <!-- Skeleton Loader -->
+    <div v-if="productos.length === 0" class="productos row q-gutter-xl justify-start q-pa-xl">
+      <div 
+        v-for="n in 8" 
+        :key="'skeleton-'+n"
+        class="my-card card skeleton-card"
+      >
+        <div class="card-img skeleton">
+          <div class="img skeleton"></div>
+        </div>
+        <div class="card-title skeleton"></div>
+        <div class="card-subtitle skeleton"></div>
+        <hr class="card-divider">
+        <div class="card-footer">
+          <div class="card-price skeleton"></div>
+          <button class="card-btn skeleton"></button>
         </div>
       </div>
-      <div class="card-title">{{ producto.name }}</div>
-      <div class="card-subtitle">{{ producto.description }}</div>
-      <hr class="card-divider">
-      <div class="card-footer">
-        <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
-        <button class="card-btn" @click.stop="addToTheCart(producto)">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
-            <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-            <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-            <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
-          </svg>
-        </button>
+    </div>
+
+    <!-- Productos reales -->
+    <div 
+      v-else
+      class="productos row q-gutter-xl justify-start q-pa-xl"
+    >
+      <div 
+        v-for="(producto, index) in productos"
+        :key="index"
+        class="my-card card"
+        @click="verDetalleProducto(producto)"
+      >
+        <div class="card-img">
+          <div class="img">
+            <q-img
+              :src="producto.images[0].urlImage"
+              :alt="producto.name"
+              fit="cover"
+            >
+              <template v-slot:loading>
+                <q-spinner color="primary" />
+              </template>
+            </q-img>
+          </div>
+        </div>
+        <div class="card-title">{{ producto.name }}</div>
+        <div class="card-subtitle">{{ producto.description }}</div>
+        <hr class="card-divider">
+        <div class="card-footer">
+          <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
+          <button class="card-btn" @click.stop="addToTheCart(producto)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
+              <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+              <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+              <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
       </div>
     </div>
     
@@ -162,6 +186,7 @@
         <div class="input-group">
           <q-input v-model="user.name" label="Nombre" type="text" />
           <q-input v-model="user.email" label="Correo Electronico" type="text" />
+          <q-input v-model="user.phone" label="Telefono" type="tel"></q-input>
           <q-input v-model="user.password" label="Contraseña" type="password" />
           <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
         </div>
@@ -195,11 +220,20 @@
         </div>
         <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" />
         
+        <div>
+        <!-- Cambiar contraseña-->
+                <div class="text-center q-mt-md">
+          <p class="text-caption"> 
+            <a href="#" class="text-primary" @click.prevent="handlePasswordRecovery">Perdí mi contraseña</a>
+          </p>
+        </div>
+
         <!-- Enlace para cambiar a registro -->
         <div class="text-center q-mt-md">
           <p class="text-caption">¿No tienes una cuenta? 
             <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Regístrate aquí</a>
           </p>
+        </div>
         </div>
       </form>
     </q-card-section>
@@ -264,6 +298,17 @@ async function registerUser() {
       Notify.create({
         type:'positive',
         message:'¡Cuenta creada con éxito! Inicia sesión para continuar.'
+      });
+
+      await postData("/email/welcome",{
+        to:response.user.email,
+        subject:'!Bienvenido a ColproMarket',
+        templateFile:'welcome.ejs',
+        data:{
+          userName:response.user.name,
+          dashboardLink:"https://backend-proyectofinal-vrso.onrender.com/userProfile",
+          currentYear:2025
+        }
       })
     }
 
@@ -288,14 +333,15 @@ async function login() {
     })
 
     store.save_Token(response.data.token)
-
     if(response.data.user.role === 0){
       router.push('/admin')
       showNotification('positive', `Hola ${response.data.user.name} ¡Bienvenido al panel de administración! Gestiona la tienda y las ventas.`)
     }else{
-    showNotification('postive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
+    store.dataFavorites("68498575ef2b465bde886ea6")
+    showNotification('positive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
     }
     user.value = {}
+    await getUserInformation()
   } catch (error) {
     showNotification('negative', 'Inicio de sesion fallido')
     user.value = {}
@@ -306,6 +352,19 @@ async function login() {
     store.showLoginDialog = false
   }
 }
+
+
+async function getUserInformation(){
+  try {
+    const response = await getData(`/users/${store.userId}`)
+    store.userInformation = response.user
+    console.log("informacion de usuario encontrada", store.userInformation);
+  } catch (error) {
+    console.error('error getting user information',error)
+    store.userInformation = false
+  }
+}
+
 
 // Función para cargar productos
 async function products() {
@@ -341,6 +400,22 @@ const verDetalleProducto = (producto) => {
 }
 
 
+const handlePasswordRecovery = () => {
+  // Cierra el modal
+  store.showLoginDialog = false;
+  
+  // Pequeño delay para asegurar que el modal se cierre antes de la navegación
+  setTimeout(() => {
+    router.push('/password')
+      .then(() => console.log('Redirección exitosa a /password'))
+      .catch(err => {
+        console.error('Error en redirección:', err);
+        // Fallback por si hay error en la navegación programática
+        window.location.href = '/password';
+      });
+  }, 100);
+};
+
 // Funcion para abrir modales en modales
 const toggleAuthModals = () => {
   store.showLoginDialog = !store.showLoginDialog;
@@ -349,7 +424,6 @@ const toggleAuthModals = () => {
 
 onMounted(()=>{
   scrollToTopInstant()
-  store.dataFavorites(store.userId)
   products();
 })
 

@@ -9,6 +9,50 @@
       </q-toolbar>
     </q-header>
 
+    <!-- Drawer lateral -->
+    <q-drawer
+      v-model="leftDrawerOpen"
+      :width="300"
+      :breakpoint="700"
+      bordered
+      class="bg-grey-3"
+      :mini="miniState"
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
+    >
+      <q-scroll-area class="fit">
+        <q-list padding>
+          <q-item 
+            clickable 
+            v-ripple
+            :active="activeTab === 'profile'"
+            @click="activeTab = 'profile'"
+          >
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+            <q-item-section>
+              Perfil
+            </q-item-section>
+          </q-item>
+
+          <q-item 
+            clickable 
+            v-ripple
+            :active="activeTab === 'movements'"
+            @click="activeTab = 'movements'"
+          >
+            <q-item-section avatar>
+              <q-icon name="receipt" />
+            </q-item-section>
+            <q-item-section>
+              Movimientos
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
+
     <!-- Contenido de la página -->
     <q-page-container>
       <q-page class="profile-page">
@@ -44,163 +88,186 @@
           </q-parallax>
         </div>
 
-        <!-- Contenido principal -->
-        <div class="profile-content q-pa-lg">
-          <div class="row q-col-gutter-lg">
-            <!-- Columna izquierda - Información personal -->
-            <div class="col-12 col-md-6">
-              <q-card class="my-card">
-                <q-card-section class="bg-primary text-white flex justify-between items-center">
-                  <div class="text-h6">Información Personal</div>
-                  <q-btn 
-                    icon="edit" 
-                    flat 
-                    round 
-                    dense 
-                    color="white" 
-                    @click="openPersonalEditDialog"
-                    title="Editar información personal"
-                  />
-                </q-card-section>
+        <!-- Contenido principal basado en pestaña activa -->
+        <template v-if="activeTab === 'profile'">
+          <div class="profile-content q-pa-lg">
+            <div class="row q-col-gutter-lg">
+              <!-- Columna izquierda - Información personal -->
+              <div class="col-12 col-md-6">
+                <q-card class="my-card">
+                  <q-card-section class="bg-primary text-white flex justify-between items-center">
+                    <div class="text-h6">Información Personal</div>
+                    <q-btn 
+                      icon="edit" 
+                      flat 
+                      round 
+                      dense 
+                      color="white" 
+                      @click="openPersonalEditDialog"
+                      title="Editar información personal"
+                    />
+                  </q-card-section>
 
-                <q-separator/>
+                  <q-separator/>
 
-                <q-card-section>
-                  <q-list bordered separator>
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Nombre completo</q-item-label>
-                        <q-item-label>{{ fullName }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                  <q-card-section>
+                    <q-list bordered separator>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Nombre completo</q-item-label>
+                          <q-item-label>{{ fullName }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Correo electrónico</q-item-label>
-                        <q-item-label>{{ user.email }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Correo electrónico</q-item-label>
+                          <q-item-label>{{ user.email }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Teléfono</q-item-label>
-                        <q-item-label>{{ user.phone !== 'N/A' ? user.phone : 'No especificado' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Teléfono</q-item-label>
+                          <q-item-label>{{ user.phone !== 'N/A' ? user.phone : 'No especificado' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Fecha de nacimiento</q-item-label>
-                        <q-item-label>{{ user.dateOfBirth ? formatDate(user.dateOfBirth) : 'No especificada' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Fecha de nacimiento</q-item-label>
+                          <q-item-label>{{ user.dateOfBirth ? formatDate(user.dateOfBirth) : 'No especificada' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Género</q-item-label>
-                        <q-item-label>{{ user.gender !== 'No especificado' ? user.gender : 'No especificado' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card-section>
-              </q-card>
-            </div>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Género</q-item-label>
+                          <q-item-label>{{ user.gender !== 'No especificado' ? user.gender : 'No especificado' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card-section>
+                </q-card>
+              </div>
 
-            <!-- Columna derecha - Dirección y detalles de cuenta -->
-            <div class="col-12 col-md-6">
-              <!-- Tarjeta de dirección -->
-              <q-card class="my-card q-mb-md">
-                <q-card-section class="bg-primary text-white flex justify-between items-center">
-                  <div class="text-h6">Dirección de Envío</div>
-                  <q-btn 
-                    icon="edit" 
-                    flat 
-                    round 
-                    dense 
-                    color="white" 
-                    @click="openAddressEditDialog"
-                    title="Editar dirección"
-                  />
-                </q-card-section>
+              <!-- Columna derecha - Dirección y detalles de cuenta -->
+              <div class="col-12 col-md-6">
+                <!-- Tarjeta de dirección -->
+                <q-card class="my-card q-mb-md">
+                  <q-card-section class="bg-primary text-white flex justify-between items-center">
+                    <div class="text-h6">Dirección de Envío</div>
+                    <q-btn 
+                      icon="edit" 
+                      flat 
+                      round 
+                      dense 
+                      color="white" 
+                      @click="openAddressEditDialog"
+                      title="Editar dirección"
+                    />
+                  </q-card-section>
 
-                <q-separator/>
+                  <q-separator/>
 
-                <q-card-section>
-                  <q-list bordered separator>
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Calle</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.street }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                  <q-card-section>
+                    <q-list bordered separator>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Calle</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.street }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Ciudad</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.city }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Ciudad</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.city }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Estado/Provincia</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.state }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Estado/Provincia</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.state }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Código Postal</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.zipCode !== 'N/A' ? user.shippingAddress.zipCode : 'No especificado' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Código Postal</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.zipCode !== 'N/A' ? user.shippingAddress.zipCode : 'No especificado' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>País</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.country }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card-section>
-              </q-card>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>País</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.country }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card-section>
+                </q-card>
 
-              <!-- Tarjeta de detalles de cuenta -->
-              <q-card class="my-card">
-                <q-card-section class="bg-primary text-white">
-                  <div class="text-h6">Detalles de la Cuenta</div>
-                </q-card-section>
+                <!-- Tarjeta de detalles de cuenta -->
+                <q-card class="my-card">
+                  <q-card-section class="bg-primary text-white">
+                    <div class="text-h6">Detalles de la Cuenta</div>
+                  </q-card-section>
 
-                <q-separator/>
+                  <q-separator/>
 
-                <q-card-section>
-                  <q-list bordered separator>
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>ID de Usuario</q-item-label>
-                        <q-item-label>{{ user._id }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                  <q-card-section>
+                    <q-list bordered separator>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>ID de Usuario</q-item-label>
+                          <q-item-label>{{ user._id }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Fecha de Creación</q-item-label>
-                        <q-item-label>{{ formatDate(user.createdAt) }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Fecha de Creación</q-item-label>
+                          <q-item-label>{{ formatDate(user.createdAt) }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Última Actualización</q-item-label>
-                        <q-item-label>{{ formatDate(user.updatedAt) }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card-section>
-              </q-card>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Última Actualización</q-item-label>
+                          <q-item-label>{{ formatDate(user.updatedAt) }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card-section>
+                </q-card>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+
+        <!-- Contenido para movimientos -->
+        <template v-else-if="activeTab === 'movements'">
+          <div class="movements-content q-pa-lg">
+            <q-card>
+              <q-card-section class="bg-primary text-white">
+                <div class="text-h6">Movimientos del Usuario</div>
+              </q-card-section>
+              
+              <q-separator />
+              
+              <q-card-section>
+                <!-- Aquí puedes agregar el contenido de los movimientos del usuario -->
+                <div class="text-center q-pa-lg">
+                  <q-icon name="receipt" size="xl" color="grey-5" />
+                  <div class="text-grey-5 q-mt-md">No hay movimientos registrados</div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </template>
 
         <!-- Botón flotante solo para cambiar contraseña -->
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
@@ -408,33 +475,20 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useQuasar } from 'quasar';
-
+import { useStore } from '../stores/store';
+import { putData } from '../service/service';
+import { showNotification } from '../utils/utils';
+const store = useStore();
 const $q = useQuasar();
 
 // Datos estáticos del usuario
-const user = ref({
-  _id: "6839b32addd3364c6bc45fa8",
-  name: "elias",
-  email: "elias@gmail.com",
-  password: "$2b$10$apZNdy7xxaVq2v7Q0LlJfO/./MZKpdWMqo8IIJ7aS.8gJZDZKTpnO",
-  lastName: "No especificado",
-  phone: "N/A",
-  shippingAddress: {
-    street: "No especificado",
-    city: "No especificada",
-    state: "No especificado",
-    zipCode: "N/A",
-    country: "Colombia"
-  },
-  dateOfBirth: null,
-  gender: "No especificado",
-  profilePicture: "N/A",
-  role: 1,
-  state: 1,
-  createdAt: "2025-05-30T13:31:22.170+00:00",
-  updatedAt: "2025-05-30T13:31:22.170+00:00",
-  __v: 0
-});
+const user = ref(store.userInformation);
+
+
+// Estado del drawer
+const leftDrawerOpen = ref(true);
+const miniState = ref(true);
+const activeTab = ref('profile');
 
 // Datos de Colombia
 const allColombianStates = [
@@ -625,7 +679,7 @@ const formatDateForInput = (dateString) => {
   return date.toISOString().split('T')[0];
 };
 
-const savePersonalInfo = () => {
+const savePersonalInfo =async () => {
   // Actualizar los datos del usuario
   user.value.name = editForm.value.name;
   user.value.lastName = editForm.value.lastName || 'No especificado';
@@ -633,18 +687,16 @@ const savePersonalInfo = () => {
   user.value.phone = editForm.value.phone || 'N/A';
   user.value.dateOfBirth = editForm.value.dateOfBirth || null;
   user.value.gender = editForm.value.gender || 'No especificado';
-  
-  // Actualizar la fecha de modificación
   user.value.updatedAt = new Date().toISOString();
   
-  // Mostrar notificación de éxito
+  const response = await putData(`/users/${user.value._id}`,{
+      data:editForm.value
+    })
   $q.notify({
     type: 'positive',
     message: 'Datos personales actualizados correctamente',
     position: 'top'
   });
-  
-  // Cerrar el diálogo
   personalEditDialog.value = false;
 };
 
@@ -677,40 +729,51 @@ const changePassword = () => {
 </script>
 
 <style lang="scss" scoped>
-.profile-page {
-  padding: 0;
-  background-color: var(--three-color--);
-}
+@import url("../style/userProfile.css");
 
-.profile-header {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-
-  .header-overlay {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(2px);
-  }
-}
-
-.profile-content {
+.profile-content, .movements-content {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
 
-.my-card {
+.q-drawer {
+  background-color: #f5f5f5;
+}
+
+.q-item {
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
+  margin: 4px 8px;
+  
+  &--active {
+    background-color: #e0e0e0;
+    color: #1976d2;
+    font-weight: 500;
+    
+    .q-icon {
+      color: #1976d2;
+    }
+  }
 }
 
-.q-item__label--caption {
-  color: var(--text-secondary);
+.q-page-container {
+  padding-left: 300px;
+  transition: padding-left 0.3s ease;
+  
+  @media (max-width: 700px) {
+    padding-left: 0;
+  }
 }
 
-.q-item__label {
-  color: var(--text-primary);
-  font-weight: 500;
+.q-drawer--mini {
+  width: 60px !important;
+  
+  .q-item__section--avatar {
+    min-width: 0;
+  }
+  
+  .q-item__section--main {
+    display: none;
+  }
 }
 </style>

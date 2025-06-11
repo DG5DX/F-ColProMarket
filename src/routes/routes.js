@@ -7,12 +7,15 @@ import AdminUsers from "../views/AdminUsers.vue"
 import userProfile from "../views/userProfile.vue"
 import invoice from "../components/invoice.vue"
 import Contact from "../views/Contact.vue"
+import changePassword from "../components/changePassword.vue"
 import AdminSales from "../views/AdminSales.vue"
-import {createRouter, createWebHashHistory} from "vue-router"
 import PaymentGateway from "../views/paymentGateway.vue"
 import Search from "../views/Search.vue"
 import Favorite from "../views/FAVORITE.vue"
-  
+import sales from "../views/sales.vue"
+import movements from "../views/movements.vue"
+import {createRouter, createWebHashHistory} from "vue-router"
+
 const routes = [
   { path: '/', component: Home },
   { path: '/cart', component: Cart },
@@ -23,10 +26,14 @@ const routes = [
   { path: '/adminsales', component: AdminSales},
   { path: '/gateway', component: PaymentGateway },
   { path: '/search', component: Search },
+  { path: '/sales', component: sales },
   { path:'/invoice' , component:invoice},
-  { path:'/userProfile', component:userProfile},
   { path:'/contact', component: Contact},
-  { path:'/favorite',component: Favorite}
+  { path:'/favorite',component: Favorite},
+  {path:'/userProfile', component:userProfile},
+  {path:'/password', component: changePassword},
+  {path:'/movements', component: movements},
+
 ]
   
 export const router = createRouter({

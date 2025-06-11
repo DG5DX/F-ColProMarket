@@ -19,14 +19,16 @@
       :mini="miniState"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
+      :show-if-above="$q.screen.gt.sm"
     >
-      <q-scroll-area class="fit">
+      <q-scroll-area class="fit" :thumb-style="{ width: '4px' }">
         <q-list padding>
           <q-item 
             clickable 
             v-ripple
             :active="activeTab === 'profile'"
             @click="activeTab = 'profile'"
+            class="q-my-sm"
           >
             <q-item-section avatar>
               <q-icon name="person" />
@@ -41,6 +43,7 @@
             v-ripple
             :active="activeTab === 'movements'"
             @click="activeTab = 'movements'"
+            class="q-my-sm"
           >
             <q-item-section avatar>
               <q-icon name="receipt" />
@@ -94,7 +97,7 @@
             <div class="row q-col-gutter-lg">
               <!-- Columna izquierda - Información personal -->
               <div class="col-12 col-md-6">
-                <q-card class="my-card">
+                <q-card class="my-card shadow-3">
                   <q-card-section class="bg-primary text-white flex justify-between items-center">
                     <div class="text-h6">Información Personal</div>
                     <q-btn 
@@ -112,38 +115,38 @@
 
                   <q-card-section>
                     <q-list bordered separator>
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Nombre completo</q-item-label>
-                          <q-item-label>{{ fullName }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ fullName }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Correo electrónico</q-item-label>
-                          <q-item-label>{{ user.email }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.email }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Teléfono</q-item-label>
-                          <q-item-label>{{ user.phone !== 'N/A' ? user.phone : 'No especificado' }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.phone !== 'N/A' ? user.phone : 'No especificado' }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Fecha de nacimiento</q-item-label>
-                          <q-item-label>{{ user.dateOfBirth ? formatDate(user.dateOfBirth) : 'No especificada' }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.dateOfBirth ? formatDate(user.dateOfBirth) : 'No especificada' }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Género</q-item-label>
-                          <q-item-label>{{ user.gender !== 'No especificado' ? user.gender : 'No especificado' }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.gender !== 'No especificado' ? user.gender : 'No especificado' }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -154,7 +157,7 @@
               <!-- Columna derecha - Dirección y detalles de cuenta -->
               <div class="col-12 col-md-6">
                 <!-- Tarjeta de dirección -->
-                <q-card class="my-card q-mb-md">
+                <q-card class="my-card q-mb-md shadow-3">
                   <q-card-section class="bg-primary text-white flex justify-between items-center">
                     <div class="text-h6">Dirección de Envío</div>
                     <q-btn 
@@ -172,38 +175,38 @@
 
                   <q-card-section>
                     <q-list bordered separator>
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Calle</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.street }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.shippingAddress?.street }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Ciudad</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.city }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.shippingAddress?.city }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Estado/Provincia</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.state }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.shippingAddress?.state }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Código Postal</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.zipCode !== 'N/A' ? user.shippingAddress.zipCode : 'No especificado' }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.shippingAddress?.zipCode !== 'N/A' ? user.shippingAddress?.zipCode : 'No especificado' }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>País</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.country }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user.shippingAddress?.country }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -211,7 +214,7 @@
                 </q-card>
 
                 <!-- Tarjeta de detalles de cuenta -->
-                <q-card class="my-card">
+                <q-card class="my-card shadow-3">
                   <q-card-section class="bg-primary text-white">
                     <div class="text-h6">Detalles de la Cuenta</div>
                   </q-card-section>
@@ -220,24 +223,24 @@
 
                   <q-card-section>
                     <q-list bordered separator>
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>ID de Usuario</q-item-label>
-                          <q-item-label>{{ user._id }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ user._id }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Fecha de Creación</q-item-label>
-                          <q-item-label>{{ formatDate(user.createdAt) }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ formatDate(user.createdAt) }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item>
+                      <q-item class="q-pa-md">
                         <q-item-section>
                           <q-item-label caption>Última Actualización</q-item-label>
-                          <q-item-label>{{ formatDate(user.updatedAt) }}</q-item-label>
+                          <q-item-label class="text-weight-medium">{{ formatDate(user.updatedAt) }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -251,7 +254,7 @@
         <!-- Contenido para movimientos -->
         <template v-else-if="activeTab === 'movements'">
           <div class="movements-content q-pa-lg">
-            <q-card>
+            <q-card class="shadow-3">
               <q-card-section class="bg-primary text-white">
                 <div class="text-h6">Movimientos del Usuario</div>
               </q-card-section>
@@ -259,118 +262,126 @@
               <q-separator />
               
               <q-card-section>
-                          <q-page class="q-pa-md movements-viewer-page">
+                <q-page class="q-pa-md movements-viewer-page">
+                  <div v-if="movements.length === 0" class="text-center text-grey-7 q-pa-lg empty-state">
+                    <q-icon name="info" size="xl" class="q-mb-md" />
+                    <p class="text-h6">No hay movimientos registrados.</p>
+                    <p>Cuando realices una compra, aparecerá aquí.</p>
+                  </div>
 
-    <div v-if="movements.length === 0" class="text-center text-grey-7 q-pa-lg empty-state">
-      <q-icon name="info" size="xl" class="q-mb-md" />
-      <p class="text-h6">No hay movimientos registrados.</p>
-      <p>Cuando realices una compra, aparecerá aquí.</p>
-    </div>
+                  <q-list bordered class="rounded-borders movements-list">
+                    <q-item
+                      v-for="movement in movements"
+                      :key="movement.paypalData ? movement.paypalData.id : movement._id"
+                      class="q-mb-md movement-item"
+                    >
+                      <q-card flat bordered class="full-width movement-card shadow-1">
+                        <q-card-section class="q-pb-none row items-center justify-between movement-header">
+                          <div class="text-h6 text-primary">
+                            <q-icon name="receipt" class="q-mr-sm" />
+                            Movimiento ID:
+                            <span class="movement-id">{{ movement.paypalData ? movement.paypalData.id : movement._id }}</span>
+                          </div>
+                          <div :class="['text-subtitle1', `status-${movement.status}`]">
+                            <q-icon :name="getStatusIcon(movement.status)" class="q-mr-xs" />
+                            Estado: <span class="status-text">{{ getStatusText(movement.status) }}</span>
+                          </div>
+                        </q-card-section>
 
-    <q-list bordered class="rounded-borders movements-list">
-      <q-item
-        v-for="movement in movements"
-        :key="movement.paypalData ? movement.paypalData.id : movement._id"
-        class="q-mb-md movement-item"
-      >
-        <q-card flat bordered class="full-width movement-card">
-          <q-card-section class="q-pb-none row items-center justify-between movement-header">
-            <div class="text-h6 text-primary">
-              <q-icon name="receipt" class="q-mr-sm" />
-              Movimiento ID:
-              <span class="movement-id">{{ movement.paypalData ? movement.paypalData.id : movement._id }}</span>
-            </div>
-            <div :class="['text-subtitle1', `status-${movement.status}`]">
-              <q-icon :name="getStatusIcon(movement.status)" class="q-mr-xs" />
-              Estado: <span class="status-text">{{ getStatusText(movement.status) }}</span>
-            </div>
-          </q-card-section>
+                        <q-card-section class="q-pt-xs movement-details">
+                          <div class="row q-col-gutter-sm">
+                            <div class="col-12 col-md-6">
+                              <p class="q-mb-xs">
+                                <q-icon name="event" class="q-mr-xs" />
+                                <span class="text-weight-bold">Fecha:</span> {{ formatDate(movement.createdAt) }}
+                              </p>
+                              <p class="q-mb-xs">
+                                <q-icon name="update" class="q-mr-xs" />
+                                <span class="text-weight-bold">Última Actualización:</span> {{ formatDate(movement.updatedAt) }}
+                              </p>
+                            </div>
+                            <div class="col-12 col-md-6 text-right">
+                              <p class="text-h5 text-weight-bold q-mb-xs total-amount">
+                                <q-icon name="payments" class="q-mr-sm" />
+                                Total: {{ formatCurrency(movement.total) }}
+                              </p>
+                              <p class="text-caption text-grey-6 q-mb-none" v-if="movement.paypalData">
+                                Pago via PayPal ({{ movement.paypalData.intent }})
+                              </p>
+                            </div>
+                          </div>
+                        </q-card-section>
 
-          <q-card-section class="q-pt-xs movement-details">
-            <div class="row q-col-gutter-sm">
-              <div class="col-12 col-md-6">
-                <p class="q-mb-xs">
-                  <q-icon name="event" class="q-mr-xs" />
-                  <span class="text-weight-bold">Fecha:</span> {{ formatDate(movement.createdAt) }}
-                </p>
-                <p class="q-mb-xs">
-                  <q-icon name="update" class="q-mr-xs" />
-                  <span class="text-weight-bold">Última Actualización:</span> {{ formatDate(movement.updatedAt) }}
-                </p>
-              </div>
-              <div class="col-12 col-md-6 text-right">
-                <p class="text-h5 text-weight-bold q-mb-xs total-amount">
-                  <q-icon name="payments" class="q-mr-sm" />
-                  Total: {{ formatCurrency(movement.total) }}
-                </p>
-                <p class="text-caption text-grey-6 q-mb-none" v-if="movement.paypalData">
-                  Pago via PayPal ({{ movement.paypalData.intent }})
-                </p>
-              </div>
-            </div>
-          </q-card-section>
+                        <q-separator />
 
-          <q-separator />
+                        <q-card-actions align="left" class="q-pa-none">
+                          <div class="full-width">
+                            <!-- Botón para ver factura -->
+                            <q-btn 
+                              flat 
+                              icon="eye" 
+                              label="Ver Factura" 
+                              color="primary"
+                              class="full-width q-mb-sm"
+                              @click="seeInvoice(movement)"
+                            />
+                            
+                            <q-expansion-item
+                              expand-separator
+                              icon="shopping_bag"
+                              label="Ver Productos"
+                              class="full-width products-expansion"
+                            >
+                              <q-card-section class="q-pt-none product-list-section">
+                                <q-list separator>
+                                  <q-item
+                                    v-for="(product, index) in movement.products"
+                                    :key="index"
+                                    class="product-item q-my-sm"
+                                  >
+                                    <q-item-section avatar>
+                                      <q-avatar rounded size="60px">
+                                        <img :src="product.images[0].urlImage || 'https://via.placeholder.com/60x60?text=No+Image'" alt="Product Image">
+                                      </q-avatar>
+                                    </q-item-section>
 
-          <q-card-actions align="left">
-            <q-expansion-item
-              expand-separator
-              icon="shopping_bag"
-              label="Ver Productos"
-              class="full-width products-expansion"
-            >
-              <q-card-section class="q-pt-none product-list-section">
-                <q-list separator>
-                  <q-item
-                    v-for="(product, index) in movement.products"
-                    :key="index"
-                    class="product-item q-my-sm"
-                  >
-                    <q-item-section avatar>
-                      <q-avatar rounded size="60px">
-                        <img :src="product.images[0].urlImage || 'https://via.placeholder.com/60x60?text=No+Image'" alt="Product Image">
-                      </q-avatar>
-                    </q-item-section>
+                                    <q-item-section>
+                                      <q-item-label class="text-weight-bold">{{ product.name }}</q-item-label>
+                                      <q-item-label caption lines="2">{{ product.description }}</q-item-label>
+                                      <q-item-label class="text-weight-medium">Cantidad: {{ product.quantity }}</q-item-label>
+                                    </q-item-section>
 
-                    <q-item-section>
-                      <q-item-label class="text-weight-bold">{{ product.name }}</q-item-label>
-                      <q-item-label caption lines="2">{{ product.description }}</q-item-label>
-                      <q-item-label class="text-weight-medium">Cantidad: {{ product.quantity }}</q-item-label>
-                    </q-item-section>
-
-                    <q-item-section side top>
-                      <q-item-label class="text-body1 text-right">{{ formatCurrency(product.total) }}</q-item-label>
-                      <q-item-label caption v-if="product.discountPercentage">
-                        <span class="text-strike text-grey-6">{{ formatCurrency(product.subtotal) }}</span>
-                        <span class="text-positive q-ml-xs">(-{{ product.discountPercentage }}%)</span>
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-card-section>
-            </q-expansion-item>
-          </q-card-actions>
-        </q-card>
-      </q-item>
-    </q-list>
-  </q-page>
-                <div class="text-center q-pa-lg">
-                  <q-icon name="receipt" size="xl" color="grey-5" />
-                  <div class="text-grey-5 q-mt-md">No hay movimientos registrados</div>
-                </div>
+                                    <q-item-section side top>
+                                      <q-item-label class="text-body1 text-right">{{ formatCurrency(product.total) }}</q-item-label>
+                                      <q-item-label caption v-if="product.discountPercentage">
+                                        <span class="text-strike text-grey-6">{{ formatCurrency(product.subtotal) }}</span>
+                                        <span class="text-positive q-ml-xs">(-{{ product.discountPercentage }}%)</span>
+                                      </q-item-label>
+                                    </q-item-section>
+                                  </q-item>
+                                </q-list>
+                              </q-card-section>
+                            </q-expansion-item>
+                          </div>
+                        </q-card-actions>
+                      </q-card>
+                    </q-item>
+                  </q-list>
+                </q-page>
               </q-card-section>
             </q-card>
           </div>
         </template>
 
-        <!-- Botón flotante solo para cambiar contraseña -->
+        <!-- Botón flotante para mostrar/ocultar el drawer en pantallas pequeñas -->
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
           <q-btn
             color="primary"
-            icon="lock"
+            :icon="leftDrawerOpen ? 'close' : 'menu'"
             round
-            @click="changePassword"
-            title="Cambiar contraseña"
+            @click="leftDrawerOpen = !leftDrawerOpen"
+            title="Mostrar/Ocultar menú"
+            v-if="$q.screen.lt.md"
           />
         </q-page-sticky>
 
@@ -561,6 +572,144 @@
             </q-card-section>
           </q-card>
         </q-dialog>
+        <!-- Diálogo maximizado para ver factura -->
+<q-dialog v-model="invoiceDialog" maximized transition-show="slide-up" transition-hide="slide-down">
+  <q-card class="full-height">
+    <q-toolbar class="bg-primary text-white">
+      <q-toolbar-title>
+        Factura #{{ selectedMovement?.paypalData ? selectedMovement.paypalData.id : selectedMovement?._id }}
+      </q-toolbar-title>
+      <q-btn flat round dense icon="close" v-close-popup />
+    </q-toolbar>
+
+    <q-card-section class="scroll invoice-container">
+      <div v-if="selectedMovement" class="invoice-content">
+        <!-- Encabezado de la factura -->
+        <div class="row justify-between items-center q-mb-lg">
+          <div>
+            <div class="text-h6">Tienda Online</div>
+            <div class="text-caption">NIT: 123456789-0</div>
+            <div class="text-caption">Dirección: Calle Falsa 123</div>
+          </div>
+          <div class="text-right">
+            <div class="text-subtitle1">Fecha: {{ formatDate(selectedMovement.createdAt) }}</div>
+            <div class="text-subtitle1">Estado: 
+              <q-badge :color="getStatusColor(selectedMovement.status)">
+                {{ getStatusText(selectedMovement.status) }}
+              </q-badge>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información del cliente -->
+        <div class="row q-mb-lg">
+          <div class="col">
+            <div class="text-subtitle1 q-mb-sm">Cliente:</div>
+            <div>{{ fullName }}</div>
+            <div>{{ user.email }}</div>
+            <div v-if="user.phone !== 'N/A'">{{ user.phone }}</div>
+          </div>
+          <div class="col">
+            <div class="text-subtitle1 q-mb-sm">Dirección de envío:</div>
+            <div>{{ user.shippingAddress.street }}</div>
+            <div>{{ user.shippingAddress.city }}, {{ user.shippingAddress.state }}</div>
+            <div>{{ user.shippingAddress.country }} - {{ user.shippingAddress.zipCode }}</div>
+          </div>
+        </div>
+
+        <!-- Tabla de productos -->
+        <q-table
+          :rows="selectedMovement.products"
+          :columns="invoiceColumns"
+          row-key="name"
+          hide-pagination
+          flat
+          bordered
+          class="q-mb-lg"
+        >
+          <template v-slot:body-cell-price="props">
+            <q-td :props="props">
+              {{ formatCurrency(props.row.price) }}
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-total="props">
+            <q-td :props="props">
+              {{ formatCurrency(props.row.total) }}
+            </q-td>
+          </template>
+        </q-table>
+
+        <!-- Resumen del pedido -->
+        <div class="row justify-end">
+          <div class="col-12 col-md-6">
+            <q-list bordered class="rounded-borders">
+              <q-item>
+                <q-item-section>
+                  <q-item-label>Subtotal</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label>{{ formatCurrency(selectedMovement.subtotal) }}</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item v-if="selectedMovement.discount > 0">
+                <q-item-section>
+                  <q-item-label>Descuento</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label class="text-negative">-{{ formatCurrency(selectedMovement.discount) }}</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item>
+                <q-item-section>
+                  <q-item-label>Envío</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label>{{ formatCurrency(selectedMovement.shipping || 0) }}</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item class="bg-grey-2">
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">Total</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label class="text-weight-bold text-h6">
+                    {{ formatCurrency(selectedMovement.total) }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </div>
+
+        <!-- Información de pago -->
+        <div class="row q-mt-lg" v-if="selectedMovement.paypalData">
+          <div class="col-12">
+            <div class="text-subtitle1 q-mb-sm">Información de pago:</div>
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div><strong>Método:</strong> PayPal</div>
+                <div><strong>ID de transacción:</strong> {{ selectedMovement.paypalData.id }}</div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div><strong>Estado:</strong> {{ selectedMovement.paypalData.status }}</div>
+                <div><strong>Fecha de pago:</strong> {{ formatDate(selectedMovement.paypalData.create_time) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </q-card-section>
+
+    <q-card-actions align="right" class="bg-grey-2">
+      <q-btn label="Imprimir" icon="print" color="primary" @click="printInvoice" />
+      <q-btn label="Cerrar" color="primary" flat v-close-popup />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -569,14 +718,70 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-import { useStore } from '../stores/store';
+import { useStore } from '../stores/store.js';
 import { getData, putData } from '../service/service';
 import { showNotification } from '../utils/utils';
 const store = useStore();
 const $q = useQuasar();
 
-//movimientos 
-const movements = ref([]);
+const invoiceDialog = ref(false);
+const selectedMovement = ref(null);
+
+// Imprimir factura 
+const printInvoice = () => {
+  window.print();
+};
+
+// Función para ver factura en diálogo maximizado
+const seeInvoice = (movement) => {
+  selectedMovement.value = movement;
+  invoiceDialog.value = true;
+};
+
+const invoiceColumns = [
+  {
+    name: 'name',
+    required: true,
+    label: 'Producto',
+    align: 'left',
+    field: row => row.name,
+    sortable: true
+  },
+  {
+    name: 'price',
+    label: 'Precio Unitario',
+    align: 'right',
+    field: row => row.price
+  },
+  {
+    name: 'quantity',
+    label: 'Cantidad',
+    align: 'center',
+    field: row => row.quantity
+  },
+  {
+    name: 'discount',
+    label: 'Descuento',
+    align: 'right',
+    field: row => row.discountPercentage ? `${row.discountPercentage}%` : '0%'
+  },
+  {
+    name: 'total',
+    label: 'Total',
+    align: 'right',
+    field: row => row.total
+  }
+];
+
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'paid': return 'positive';
+    case 'pending': return 'warning';
+    case 'refunded': return 'info';
+    case 'failed': return 'negative';
+    default: return 'grey';
+  }
+}; 
 
 // Datos estáticos del usuario
 const user = ref(store.userInformation);
@@ -584,7 +789,9 @@ const user = ref(store.userInformation);
 const leftDrawerOpen = ref(true);
 const miniState = ref(true);
 const activeTab = ref('profile');
-// Datos de Colombia
+//movimientos 
+const movements = ref([]);
+
 const allColombianStates = [
   'Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bolívar', 
   'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca', 
@@ -647,8 +854,6 @@ const genderOptions = [
 onMounted(()=>{
   dataMovements()
 })
-
-
 
 // Computed properties
 const fullName = computed(() => {
@@ -822,16 +1027,7 @@ const saveAddressInfo = () => {
   addressEditDialog.value = false;
 };
 
-const changePassword = () => {
-  console.log("Cambiar contraseña");
-  // Lógica para cambiar contraseña
-};
-
-
-
 //movements
-
-
 async function dataMovements(){
   try {
     const response = await getData(`/orders/${store.userId}`)
@@ -842,8 +1038,6 @@ async function dataMovements(){
   }
 }
 
-// Datos de ejemplo para los movimientos (simulando tu array de objetos vacío)
-
 const formatCurrency = (amount) => {
   if (typeof amount !== 'number') {
     // Intenta convertir si es un string que parezca un número
@@ -853,9 +1047,9 @@ const formatCurrency = (amount) => {
   }
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',
-    currency: 'COP', // Moneda colombiana, ajusta si es necesario
-    minimumFractionDigits: 0, // No mostrar decimales si son 0
-    maximumFractionDigits: 0, // No mostrar decimales si son 0
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(amount);
 };
 
@@ -881,7 +1075,21 @@ const getStatusIcon = (status) => {
 </script>
 
 <style lang="scss" scoped>
-@import url("../style/userProfile.css");
+.profile-page {
+  background-color: #f5f7fa;
+}
+
+.profile-header {
+  position: relative;
+  z-index: 1;
+  
+  .header-overlay {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    padding: 20px;
+    border-radius: 8px;
+  }
+}
 
 .profile-content, .movements-content {
   max-width: 1200px;
@@ -889,21 +1097,77 @@ const getStatusIcon = (status) => {
   width: 100%;
 }
 
-.q-drawer {
-  background-color: #f5f5f5;
+.invoice-container {
+  height: calc(100% - 50px);
+  padding: 20px;
 }
 
-.q-item {
-  border-radius: 8px;
-  margin: 4px 8px;
+.invoice-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .invoice-content, .invoice-content * {
+    visibility: visible;
+  }
+  .invoice-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  .q-toolbar, .q-card__actions {
+    display: none;
+  }
+}
+
+.my-card {
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   
-  &--active {
-    background-color: #e0e0e0;
-    color: #1976d2;
-    font-weight: 500;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .q-card-section {
+    &:first-child {
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+  }
+}
+
+.q-drawer {
+  background-color: #f5f5f5;
+  transition: width 0.3s ease;
+  
+  .q-item {
+    border-radius: 8px;
+    margin: 4px 8px;
+    transition: background-color 0.3s ease;
     
-    .q-icon {
+    &--active {
+      background-color: #e0e0e0;
       color: #1976d2;
+      font-weight: 500;
+      
+      .q-icon {
+        color: #1976d2;
+      }
+    }
+    
+    &:hover:not(.q-item--active) {
+      background-color: rgba(0, 0, 0, 0.05);
     }
   }
 }
@@ -926,6 +1190,137 @@ const getStatusIcon = (status) => {
   
   .q-item__section--main {
     display: none;
+  }
+}
+
+.movements-viewer-page {
+  .movement-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .movement-header {
+      padding: 16px;
+      background-color: #f9f9f9;
+    }
+    
+    .movement-details {
+      padding: 16px;
+    }
+    
+    .product-item {
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+      }
+    }
+  }
+  
+  .status-paid {
+    color: $positive;
+  }
+  
+  .status-pending {
+    color: $warning;
+  }
+  
+  .status-refunded {
+    color: $info;
+  }
+  
+  .status-failed {
+    color: $negative;
+  }
+  
+  .total-amount {
+    color: $primary;
+  }
+  
+  .empty-state {
+    padding: 40px;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    
+    .q-icon {
+      opacity: 0.7;
+    }
+  }
+}
+
+.products-expansion {
+  .q-item__section--main {
+    flex: 1 1 auto;
+  }
+  
+  .q-item__section--side {
+    flex: 0 0 auto;
+  }
+}
+
+.q-list--bordered {
+  border-radius: 8px;
+}
+
+.q-item {
+  padding: 12px 16px;
+}
+
+.q-item__label {
+  font-size: 0.9rem;
+}
+
+.q-item__label--caption {
+  font-size: 0.8rem;
+  color: $grey-7;
+}
+
+.q-badge {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.q-parallax {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.q-page-sticky {
+  z-index: 2000;
+}
+
+@media (max-width: 600px) {
+  .profile-header {
+    .header-overlay {
+      flex-direction: column;
+      text-align: center;
+      
+      .q-avatar {
+        margin-right: 0;
+        margin-bottom: 16px;
+      }
+    }
+  }
+  
+  .movement-details {
+    flex-direction: column;
+    
+    .text-right {
+      text-align: left !important;
+      margin-top: 12px;
+    }
   }
 }
 </style>

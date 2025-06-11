@@ -107,12 +107,12 @@
       <div class="col-12 col-sm-6 col-md-3">
         <div class="footer-section animated-item animated-delay-1">
           <h3>Sobre Nosotros</h3>
-          <p>ColproMarket es tu destino online para encontrar los mejores productos colombianos con la mejor calidad y precio.</p>
+          <p>ColProductMarket es tu destino online para encontrar los mejores productos colombianos con la mejor calidad y precio.</p>
           <div class="social-icons">
-            <a href="#" class="social-icon facebook"><q-icon name="fa-brands fa-facebook" /></a>
-            <a href="#" class="social-icon twitter"><q-icon name="fa-brands fa-x-twitter" /></a>
-            <a href="#" class="social-icon instagram"><q-icon name="fa-brands fa-instagram" /></a>
-            <a href="#" class="social-icon youtube"><q-icon name="fa-brands fa-youtube" /></a>
+            <a href="https://facebook.com" target="_blank" class="social-icon facebook"><q-icon name="fa-brands fa-facebook" /></a>
+            <a href="https://twitter.com" target="_blank" class="social-icon twitter"><q-icon name="fa-brands fa-x-twitter" /></a>
+            <a href="https://instagram.com" target="_blank" class="social-icon instagram"><q-icon name="fa-brands fa-instagram" /></a>
+            <a href="https://youtube.com" target="_blank" class="social-icon youtube"><q-icon name="fa-brands fa-youtube" /></a>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@
           <h3>Contacto</h3>
           <div class="footer-contact-item">
             <i class="q-icon material-icons">email</i>
-            <span>colpromarket@gmail.com</span>
+            <span>colproductmarket@gmail.com</span>
           </div>
           <div class="footer-contact-item">
             <i class="q-icon material-icons">phone</i>
@@ -162,7 +162,7 @@
 
     <!-- Sección Copyright -->
     <div class="copyright-section">
-      <p>&copy; 2025 ColproMarket. Todos los derechos reservados.</p>
+      <p>&copy; 2025 ColProductMarket. Todos los derechos reservados.</p>
       <div class="payment-methods">
         <q-icon name="fa-brands fa-cc-visa" size="24px" />
         <q-icon name="fa-brands fa-cc-mastercard" size="24px" />
@@ -184,13 +184,13 @@
     <q-card-section class="q-pt-none">
       <form class="form q-gutter-md">
         <div class="input-group">
-          <q-input v-model="user.name" label="Nombre" type="text" />
-          <q-input v-model="user.email" label="Correo Electronico" type="text" />
-          <q-input v-model="user.phone" label="Telefono" type="tel"></q-input>
-          <q-input v-model="user.password" label="Contraseña" type="password" />
-          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
+          <q-input v-model="user.name" label="Nombre" type="text":rules="[val => !!val || 'El nombre es obligatorio']"/>
+          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El correo es obligatorio', val => /.+@.+\..+/.test(val) || 'Debe ser un correo válido']"/>
+          <q-input v-model="user.phone" label="Telefono" type="tel" :rules="[val => !!val || 'El teléfono es obligatorio', val => /^[0-9]{10,15}$/.test(val) || 'Teléfono no válido (10-15 dígitos)']" @keydown="onlyNumbers"/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules/>
+          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" :rules="[val => !!val || 'Confirma tu contraseña', val => val === user.password || 'Las contraseñas no coinciden']" lazy-rules/>
         </div>
-        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser()" />
+        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser()" :disable="!isRegisterFormValid"/>
         
         <!-- Enlace para cambiar a login -->
         <div class="text-center q-mt-md">
@@ -215,10 +215,10 @@
     <q-card-section class="q-pt-none">
       <form class="form q-gutter-md">
         <div class="input-group">
-          <q-input v-model="user.email" label="Correo Electronico" type="text" />
-          <q-input v-model="user.password" label="Contraseña" type="password" />
+          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El email es requerido', val => /.+@.+\..+/.test(val) || 'Email no válido']" lazy-rules/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']"lazy-rules/>
         </div>
-        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" />
+        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" :disable="!isLoginFormValid"/>
         
         <div>
         <!-- Cambiar contraseña-->
@@ -245,7 +245,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, toRaw } from 'vue'
+import { onMounted, computed, ref, toRaw } from 'vue'
 import { showNotification, validateToken, scrollToTopInstant } from '../utils/utils.js'
 import mainBar from '../components/mainBar.vue';
 import { getData, postData } from '../service/service'
@@ -278,6 +278,43 @@ const imagenesCarrusel = ref([
     alt: "Product Image"
   }
 ]);
+
+const onlyNumbers = (e) => {
+  // Permitir: teclas de control, números y teclado numérico
+  if (
+    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key) ||
+    (e.key >= '0' && e.key <= '9') ||
+    (e.key >= 'NumPad0' && e.key <= 'NumPad9')
+  ) {
+    return; // Permitir la entrada
+  }
+  e.preventDefault(); // Bloquear otros caracteres
+};
+
+// Validación para el formulario de login
+const isLoginFormValid = computed(() => {
+  return (
+    user.value.email && 
+    user.value.password && 
+    /.+@.+\..+/.test(user.value.email) && 
+    user.value.password.length >= 6
+  );
+});
+
+// Validación para el formulario de registro (ahora incluye teléfono)
+const isRegisterFormValid = computed(() => {
+  return (
+    user.value.name &&
+    user.value.email && 
+    user.value.phone &&
+    user.value.password && 
+    user.value.ConfirmPassword && 
+    /.+@.+\..+/.test(user.value.email) &&
+    /^[0-9]{10,15}$/.test(user.value.phone) &&
+    user.value.password.length >= 6 &&
+    user.value.password === user.value.ConfirmPassword
+  );
+});
 
 // Función para registrar usuario
 async function registerUser() {

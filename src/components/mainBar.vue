@@ -97,6 +97,9 @@
                 </div>
               </q-menu>
             </q-btn>
+
+
+
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
               <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
@@ -132,6 +135,7 @@ import { router } from '../routes/routes';
 
 import { useStore } from '../stores/store.js';
 import { showNotification, validateToken } from '../utils/utils.js';
+import FAVORITE from '../views/FAVORITE.vue';
 const store = useStore();
 
 const mobileMenuOpen = ref(false);
@@ -161,7 +165,9 @@ function closeSession() {
   showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }
-
+async function favorite() {
+   router.push('/favorite');
+}
 async function cart() {
   const canProceed = await validateToken()
   if (!canProceed) return

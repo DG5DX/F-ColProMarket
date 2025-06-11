@@ -47,7 +47,7 @@ const favorites =ref([])
         return showNotification('positive','Producto agregado')
     }
 
-<<<<<<< HEAD
+
     async function dataFavorites(userId) {
         try {
             const response = await getData(`/favorites/list/${userId}`)
@@ -59,10 +59,6 @@ const favorites =ref([])
         }
         
     }
-
-=======
- 
->>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
 
     return{
         token,

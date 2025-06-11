@@ -475,33 +475,15 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useQuasar } from 'quasar';
-
+import { useStore } from '../stores/store';
+import { putData } from '../service/service';
+import { showNotification } from '../utils/utils';
+const store = useStore();
 const $q = useQuasar();
 
 // Datos estáticos del usuario
-const user = ref({
-  _id: "6839b32addd3364c6bc45fa8",
-  name: "elias",
-  email: "elias@gmail.com",
-  password: "$2b$10$apZNdy7xxaVq2v7Q0LlJfO/./MZKpdWMqo8IIJ7aS.8gJZDZKTpnO",
-  lastName: "No especificado",
-  phone: "N/A",
-  shippingAddress: {
-    street: "No especificado",
-    city: "No especificada",
-    state: "No especificado",
-    zipCode: "N/A",
-    country: "Colombia"
-  },
-  dateOfBirth: null,
-  gender: "No especificado",
-  profilePicture: "N/A",
-  role: 1,
-  state: 1,
-  createdAt: "2025-05-30T13:31:22.170+00:00",
-  updatedAt: "2025-05-30T13:31:22.170+00:00",
-  __v: 0
-});
+const user = ref(store.userInformation);
+
 
 // Estado del drawer
 const leftDrawerOpen = ref(true);
@@ -697,7 +679,7 @@ const formatDateForInput = (dateString) => {
   return date.toISOString().split('T')[0];
 };
 
-const savePersonalInfo = () => {
+const savePersonalInfo =async () => {
   // Actualizar los datos del usuario
   user.value.name = editForm.value.name;
   user.value.lastName = editForm.value.lastName || 'No especificado';
@@ -705,18 +687,16 @@ const savePersonalInfo = () => {
   user.value.phone = editForm.value.phone || 'N/A';
   user.value.dateOfBirth = editForm.value.dateOfBirth || null;
   user.value.gender = editForm.value.gender || 'No especificado';
-  
-  // Actualizar la fecha de modificación
   user.value.updatedAt = new Date().toISOString();
   
-  // Mostrar notificación de éxito
+  const response = await putData(`/users/${user.value._id}`,{
+      data:editForm.value
+    })
   $q.notify({
     type: 'positive',
     message: 'Datos personales actualizados correctamente',
     position: 'top'
   });
-  
-  // Cerrar el diálogo
   personalEditDialog.value = false;
 };
 

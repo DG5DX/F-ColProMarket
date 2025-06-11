@@ -1,12 +1,7 @@
-// FILE: main.js
-
 import { createApp } from 'vue'
+import App from './App.vue'
 import {router} from "./routes/routes.js"
 import { Quasar, Notify, Dialog } from 'quasar'
-
-
-
-// Importa tu archivo CSS global con las variables
 import './style.css'
 
 // Import icon libraries
@@ -27,25 +22,41 @@ import  piniaPluginPersistedState  from 'pinia-plugin-persistedstate'
 // Import Quasar css
 import 'quasar/src/css/index.sass'
 
-// Assumes your root component is App.vue
-// and placed in same folder as main.js
-import App from './App.vue'
+//firebase
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth'; 
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBF-Fguz14U12YzrrhiYPKVN89LR6Q1frk",
+    authDomain: "colpromarket.firebaseapp.com",
+    projectId: "colpromarket",
+    storageBucket: "colpromarket.firebasestorage.app",
+    messagingSenderId: "250114194708",
+    appId: "1:250114194708:web:59bfedde2587a73acc5601",
+    measurementId: "G-MW1YV1PEQ3"
+  };
+
+  const firebaseApp = initializeApp(firebaseConfig); 
+const firebaseAuth = getAuth(firebaseApp);
+
 
 const pinia = createPinia()
 
 pinia.use(piniaPluginPersistedState)
 
-const app = createApp(App)  // Aquí usamos 'app' directamente
-
-// Usa pinia y quasar en la instancia de la app
+const app = createApp(App)  
 app.use(pinia)
 app.use(Quasar, {
   plugins: {
     Notify,
     Dialog
-  }, // import Quasar plugins and add here
+  }, 
 })
 
 app.use(router)
+app.provide('firebaseApp', firebaseApp);
+app.provide('firebaseAuth', firebaseAuth);
 
-app.mount('#app') // Monta la app después de haber agregado todas las dependencias
+app.mount('#app') 
+
+export { firebaseAuth };  

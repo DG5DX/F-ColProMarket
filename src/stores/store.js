@@ -5,6 +5,7 @@ import { showNotification, showNotification2 } from "../utils/utils";
 
 export const useStore = defineStore ("store",()=>{
 let userId = ref("");
+let userInformation = ref(false)
 const showLoginDialog = ref(false)
 const showRegisterDialog = ref(false)
 const token = ref("");
@@ -44,10 +45,12 @@ const cart = ref({
         return showNotification('positive','Producto agregado')
     }
 
+ 
 
     return{
         token,
         userId,
+        userInformation,
         showLoginDialog,
         showRegisterDialog,
         showRegister,

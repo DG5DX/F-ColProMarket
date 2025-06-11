@@ -1,3 +1,6 @@
+
+
+
 .profile-page {
   padding: 0;
   background-color: var(--three-color--);
@@ -33,4 +36,140 @@
 .q-item__label {
   color: var(--text-primary);
   font-weight: 500;
+}
+
+
+.movements-viewer-page {
+  background-color: var(--three-color--); 
+  min-height: calc(100vh - var(--header-height, 0px) - var(--footer-height, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page-title {
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.empty-state {
+  background-color: var(--one-color--);
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  max-width: 600px;
+  width: 100%;
+}
+
+.movements-list {
+  max-width: 800px;
+  width: 100%;
+  background-color: transparent; 
+  border: none;
+}
+
+.movement-item {
+  padding: 0; 
+  border-radius: 8px;
+  overflow: hidden; 
+}
+
+.movement-card {
+  background-color: var(--one-color--); 
+  box-shadow: var(--card-shadow); 
+  border-color: var(--border-color); 
+  border-radius: 8px;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+.movement-header {
+  background-color: var(--two-color--); 
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.movement-id {
+  font-family: monospace;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.movement-details p {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+.total-amount {
+  color: var(--fiv-color--);
+}
+
+/* Estilos para el estado del movimiento */
+.status-paid {
+  color: #28a745;
+  font-weight: bold;
+}
+.status-pending {
+  color: #ffc107; 
+  font-weight: bold;
+}
+.status-refunded {
+  color: #dc3545; 
+  font-weight: bold;
+}
+.status-failed {
+  color: #6c757d; 
+  font-weight: bold;
+}
+
+.products-expansion {
+  background-color: var(--one-color--);
+  color: var(--text-primary);
+  .q-item__section--side {
+    color: var(--fiv-color--); 
+  }
+}
+
+.product-list-section {
+  background-color: var(--one-color--); 
+  padding-top: 0; 
+}
+
+.product-item {
+  border-bottom: 1px dashed var(--border-color); 
+  &:last-child {
+    border-bottom: none; 
+  }
+}
+
+.q-item__label.text-weight-bold {
+  color: var(--text-primary);
+}
+
+.q-item__label.caption {
+  color: var(--text-secondary);
+}
+
+.text-positive {
+  color: #28a745; 
+}
+.text-strike {
+  text-decoration: line-through;
+}
+
+
+@media (max-width: 500px){
+  .movement-header {
+    flex-direction: column;
+    align-items: flex-start;
+    .text-subtitle1 {
+      margin-top: 8px;
+    }
+  }
+  .movement-details .col-md-6.text-right {
+    text-align: left;
+    margin-top: 16px;
+  }
 }

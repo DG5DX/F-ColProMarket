@@ -175,35 +175,35 @@
                       <q-item>
                         <q-item-section>
                           <q-item-label caption>Calle</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.street }}</q-item-label>
+                          <q-item-label>{{ user.shippingAddress?.street }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
                       <q-item>
                         <q-item-section>
                           <q-item-label caption>Ciudad</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.city }}</q-item-label>
+                          <q-item-label>{{ user.shippingAddress?.city }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
                       <q-item>
                         <q-item-section>
                           <q-item-label caption>Estado/Provincia</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.state }}</q-item-label>
+                          <q-item-label>{{ user.shippingAddress?.state }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
                       <q-item>
                         <q-item-section>
                           <q-item-label caption>Código Postal</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.zipCode !== 'N/A' ? user.shippingAddress.zipCode : 'No especificado' }}</q-item-label>
+                          <q-item-label>{{ user.shippingAddress?.zipCode !== 'N/A' ? user.shippingAddress?.zipCode : 'No especificado' }}</q-item-label>
                         </q-item-section>
                       </q-item>
 
                       <q-item>
                         <q-item-section>
                           <q-item-label caption>País</q-item-label>
-                          <q-item-label>{{ user.shippingAddress.country }}</q-item-label>
+                          <q-item-label>{{ user.shippingAddress?.country }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -259,9 +259,6 @@
               <q-separator />
               
               <q-card-section>
-<<<<<<< HEAD
-                <!-- Aquí puedes agregar el contenido de los movimientos del usuario -->
-=======
                           <q-page class="q-pa-md movements-viewer-page">
 
     <div v-if="movements.length === 0" class="text-center text-grey-7 q-pa-lg empty-state">
@@ -357,7 +354,6 @@
       </q-item>
     </q-list>
   </q-page>
->>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
                 <div class="text-center q-pa-lg">
                   <q-icon name="receipt" size="xl" color="grey-5" />
                   <div class="text-grey-5 q-mt-md">No hay movimientos registrados</div>
@@ -573,37 +569,21 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-import { useStore } from '../stores/store';
-<<<<<<< HEAD
-import { putData } from '../service/service';
-=======
+import { useStore } from '../stores/store.js';
 import { getData, putData } from '../service/service';
->>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
 import { showNotification } from '../utils/utils';
 const store = useStore();
 const $q = useQuasar();
 
-<<<<<<< HEAD
 // Datos estáticos del usuario
 const user = ref(store.userInformation);
-
-
 // Estado del drawer
 const leftDrawerOpen = ref(true);
 const miniState = ref(true);
 const activeTab = ref('profile');
-=======
 //movimientos 
 const movements = ref([]);
->>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
 
-// Datos estáticos del usuario
-const user = ref(store.userInformation);
-// Estado del drawer
-const leftDrawerOpen = ref(true);
-const miniState = ref(true);
-const activeTab = ref('profile');
-// Datos de Colombia
 const allColombianStates = [
   'Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bolívar', 
   'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca', 
@@ -846,11 +826,6 @@ const changePassword = () => {
   // Lógica para cambiar contraseña
 };
 
-<<<<<<< HEAD
-<style lang="scss" scoped>
-@import url("../style/userProfile.css");
-
-=======
 
 
 //movements
@@ -907,7 +882,6 @@ const getStatusIcon = (status) => {
 <style lang="scss" scoped>
 @import url("../style/userProfile.css");
 
->>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
 .profile-content, .movements-content {
   max-width: 1200px;
   margin: 0 auto;

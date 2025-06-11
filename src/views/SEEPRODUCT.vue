@@ -11,6 +11,7 @@
         dense 
         class="back-btn"
         @click="$router.go(-1)"
+        style="margin-top: 5vh;"
       />
       
       <!-- Contenido principal -->

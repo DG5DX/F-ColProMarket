@@ -11,12 +11,7 @@ import changePassword from "../components/changePassword.vue"
 import AdminSales from "../views/AdminSales.vue"
 import PaymentGateway from "../views/paymentGateway.vue"
 import Search from "../views/Search.vue"
-
 import Favorite from "../views/FAVORITE.vue"
-
-
-import Favorite from "../views/FAVORITE.vue"
-
 import sales from "../views/sales.vue"
 import movements from "../views/movements.vue"
 import {createRouter, createWebHashHistory} from "vue-router"

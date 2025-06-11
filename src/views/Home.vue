@@ -186,6 +186,7 @@
         <div class="input-group">
           <q-input v-model="user.name" label="Nombre" type="text" />
           <q-input v-model="user.email" label="Correo Electronico" type="text" />
+          <q-input v-model="user.phone" label="Telefono" type="tel"></q-input>
           <q-input v-model="user.password" label="Contraseña" type="password" />
           <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
         </div>
@@ -297,6 +298,17 @@ async function registerUser() {
       Notify.create({
         type:'positive',
         message:'¡Cuenta creada con éxito! Inicia sesión para continuar.'
+      });
+
+      await postData("/email/welcome",{
+        to:response.user.email,
+        subject:'!Bienvenido a ColproMarket',
+        templateFile:'welcome.ejs',
+        data:{
+          userName:response.user.name,
+          dashboardLink:"https://backend-proyectofinal-vrso.onrender.com/userProfile",
+          currentYear:2025
+        }
       })
     }
 
@@ -321,14 +333,15 @@ async function login() {
     })
 
     store.save_Token(response.data.token)
-
     if(response.data.user.role === 0){
       router.push('/admin')
       showNotification('positive', `Hola ${response.data.user.name} ¡Bienvenido al panel de administración! Gestiona la tienda y las ventas.`)
     }else{
-    showNotification('postive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
+    store.dataFavorites(store.userId)
+    showNotification('positive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
     }
     user.value = {}
+    await getUserInformation()
   } catch (error) {
     showNotification('negative', 'Inicio de sesion fallido')
     user.value = {}
@@ -339,6 +352,19 @@ async function login() {
     store.showLoginDialog = false
   }
 }
+
+
+async function getUserInformation(){
+  try {
+    const response = await getData(`/users/${store.userId}`)
+    store.userInformation = response.user
+    console.log("informacion de usuario encontrada", store.userInformation);
+  } catch (error) {
+    console.error('error getting user information',error)
+    store.userInformation = false
+  }
+}
+
 
 // Función para cargar productos
 async function products() {

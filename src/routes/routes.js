@@ -11,6 +11,7 @@ import AdminSales from "../views/AdminSales.vue"
 import {createRouter, createWebHashHistory} from "vue-router"
 import PaymentGateway from "../views/paymentGateway.vue"
 import Search from "../views/Search.vue"
+import Favorite from "../views/FAVORITE.vue"
   
 const routes = [
   { path: '/', component: Home },
@@ -23,8 +24,9 @@ const routes = [
   { path: '/gateway', component: PaymentGateway },
   { path: '/search', component: Search },
   { path:'/invoice' , component:invoice},
-  {path:'/userProfile', component:userProfile},
-  {path:'/contact', component: Contact},
+  { path:'/userProfile', component:userProfile},
+  { path:'/contact', component: Contact},
+  { path:'/favorite',component: Favorite}
 ]
   
 export const router = createRouter({

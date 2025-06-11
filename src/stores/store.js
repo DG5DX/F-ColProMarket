@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { jwtDecode } from "jwt-decode";
 import { showNotification, showNotification2 } from "../utils/utils";
+import { getData } from "../service/service";
 
 export const useStore = defineStore ("store",()=>{
 let userId = ref("");
@@ -13,6 +14,7 @@ const cart = ref({
     items:[],
     total:0
 });
+const favorites =ref([])
 
     function save_Token (Token){
         if(token){
@@ -44,6 +46,18 @@ const cart = ref({
         return showNotification('positive','Producto agregado')
     }
 
+    async function dataFavorites(userId) {
+        try {
+            const response = await getData(`/favorites/list/${userId}`)
+            favorites.value = response.data
+            console.log("favoritos", favorites.value)
+        } catch (error) {
+            showNotification("negative","Error al traer favoritos")
+            console.log("error cargando favoritos", error)
+        }
+        
+    }
+
 
     return{
         token,
@@ -51,6 +65,7 @@ const cart = ref({
         showLoginDialog,
         showRegisterDialog,
         showRegister,
+        dataFavorites,
         save_Token,
         addToCart,
         cart

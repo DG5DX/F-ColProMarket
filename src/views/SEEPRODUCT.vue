@@ -46,11 +46,11 @@
           <!-- Acciones secundarias -->
           <div class="secondary-actions">
             <q-btn 
-              flat 
-              icon="favorite_border" 
-              label="Favoritos" 
-              class="action-btn"
-            />
+  @click="addToFavorites(dataProduct._id)" flat 
+  icon="favorite_border" 
+  label="Favoritos" 
+  class="action-btn"
+/>
             <q-btn 
               flat 
               icon="share" 
@@ -279,10 +279,11 @@ import mainBar from '../components/mainBar.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useQuasar, Notify } from 'quasar'
 import { useStore } from '../stores/store.js'
-import { putData, getData } from '../service/service.js'
+import { putData, getData, postData } from '../service/service.js'
 const store = useStore()
 import { useRoute, useRouter } from 'vue-router'
 import { validateToken, scrollToTopInstant } from '../utils/utils.js'
+
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
@@ -293,6 +294,60 @@ const review = ref('')
 const selectedImage = ref('')
 const productQualification = ref(0)
 const productos = ref([]);
+const favorites = ref([]);
+
+
+async function loadFavorites() {
+  try {
+    // Asegúrate de que store.userId contenga el ID del usuario logueado
+    if (store.userId) {
+      const response = await getData(`/favorites/list/${store.userId}`);
+      if (response.success) {
+        favorites.value = response.data;
+        console.log('Favoritos cargados:', favorites.value);
+      } else {
+        console.error('Error al cargar favoritos:', response.message);
+      }
+    } else {
+      console.log('No hay userId disponible para cargar favoritos.');
+      // Opcional: limpiar favoritos si no hay usuario logueado
+      favorites.value = [];
+    }
+  } catch (error) {
+    console.error('Error en loadFavorites:', error);
+    Notify.create({
+      type: 'negative',
+      message: 'Error al cargar tus favoritos'
+    });
+  }
+}
+
+async function addToFavorites(productId) {
+  try {
+    // Verificar si el producto ya está en favoritos
+    const alreadyFavorite = favorites.value.some(fav => fav.productId._id === productId);
+    
+    if (alreadyFavorite) {
+      console.log('El producto ya está en favoritos');
+      return;
+    }
+    
+    // Hacer la petición POST al backend para crear el favorito
+    const response = await postData('/favorites/create', {
+      userId: store.userId,
+      productId: productId
+    });
+    
+    // Si la petición es exitosa, recargar la lista de favoritos
+    if (response.success || response.status === 200 || response.status === 201) {
+      await loadFavorites(); // Función para recargar favoritos
+      console.log(`Producto con ID ${productId} agregado a favoritos.`);
+    }
+  } catch (error) {
+    console.error('Error al agregar a favoritos:', error);
+  }
+}
+
 
 // Función para cargar productos
 async function products() {

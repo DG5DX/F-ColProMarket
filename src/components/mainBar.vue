@@ -154,7 +154,10 @@ function closeSession() {
   store.token = null;
   store.userId = null;
   store.showRegister = true;
-  store.cart = {}
+  store.cart = {
+    items:[],
+    total:0
+}
   showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }

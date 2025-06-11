@@ -117,6 +117,8 @@
             <q-route-tab label="FACTURAS" to="/invoice" exact />
             <q-route-tab label="REBAJAS" to="/sales" exact />
             <q-route-tab label="CONTACTO" to="/contact" exact />
+            <q-route-tab label="MOVIMIENTOS" to="/movements" exact />
+
           </q-tabs>
         </div>
       </q-toolbar>
@@ -152,6 +154,7 @@ function closeSession() {
   store.token = null;
   store.userId = null;
   store.showRegister = true;
+  store.cart = {}
   showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }

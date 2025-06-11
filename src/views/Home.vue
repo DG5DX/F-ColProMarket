@@ -162,6 +162,7 @@
         <div class="input-group">
           <q-input v-model="user.name" label="Nombre" type="text" />
           <q-input v-model="user.email" label="Correo Electronico" type="text" />
+          <q-input v-model="user.phone" label="Telefono" type="tel"></q-input>
           <q-input v-model="user.password" label="Contraseña" type="password" />
           <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
         </div>
@@ -273,6 +274,17 @@ async function registerUser() {
       Notify.create({
         type:'positive',
         message:'¡Cuenta creada con éxito! Inicia sesión para continuar.'
+      });
+
+      await postData("/email/welcome",{
+        to:response.user.email,
+        subject:'!Bienvenido a ColproMarket',
+        templateFile:'welcome.ejs',
+        data:{
+          userName:response.user.name,
+          dashboardLink:"https://backend-proyectofinal-vrso.onrender.com/userProfile",
+          currentYear:2025
+        }
       })
     }
 

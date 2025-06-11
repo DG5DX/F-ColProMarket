@@ -9,6 +9,50 @@
       </q-toolbar>
     </q-header>
 
+    <!-- Drawer lateral -->
+    <q-drawer
+      v-model="leftDrawerOpen"
+      :width="300"
+      :breakpoint="700"
+      bordered
+      class="bg-grey-3"
+      :mini="miniState"
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
+    >
+      <q-scroll-area class="fit">
+        <q-list padding>
+          <q-item 
+            clickable 
+            v-ripple
+            :active="activeTab === 'profile'"
+            @click="activeTab = 'profile'"
+          >
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+            <q-item-section>
+              Perfil
+            </q-item-section>
+          </q-item>
+
+          <q-item 
+            clickable 
+            v-ripple
+            :active="activeTab === 'movements'"
+            @click="activeTab = 'movements'"
+          >
+            <q-item-section avatar>
+              <q-icon name="receipt" />
+            </q-item-section>
+            <q-item-section>
+              Movimientos
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
+
     <!-- Contenido de la página -->
     <q-page-container>
       <q-page class="profile-page">
@@ -44,163 +88,280 @@
           </q-parallax>
         </div>
 
-        <!-- Contenido principal -->
-        <div class="profile-content q-pa-lg">
-          <div class="row q-col-gutter-lg">
-            <!-- Columna izquierda - Información personal -->
-            <div class="col-12 col-md-6">
-              <q-card class="my-card">
-                <q-card-section class="bg-primary text-white flex justify-between items-center">
-                  <div class="text-h6">Información Personal</div>
-                  <q-btn 
-                    icon="edit" 
-                    flat 
-                    round 
-                    dense 
-                    color="white" 
-                    @click="openPersonalEditDialog"
-                    title="Editar información personal"
-                  />
-                </q-card-section>
+        <!-- Contenido principal basado en pestaña activa -->
+        <template v-if="activeTab === 'profile'">
+          <div class="profile-content q-pa-lg">
+            <div class="row q-col-gutter-lg">
+              <!-- Columna izquierda - Información personal -->
+              <div class="col-12 col-md-6">
+                <q-card class="my-card">
+                  <q-card-section class="bg-primary text-white flex justify-between items-center">
+                    <div class="text-h6">Información Personal</div>
+                    <q-btn 
+                      icon="edit" 
+                      flat 
+                      round 
+                      dense 
+                      color="white" 
+                      @click="openPersonalEditDialog"
+                      title="Editar información personal"
+                    />
+                  </q-card-section>
 
-                <q-separator/>
+                  <q-separator/>
 
-                <q-card-section>
-                  <q-list bordered separator>
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Nombre completo</q-item-label>
-                        <q-item-label>{{ fullName }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                  <q-card-section>
+                    <q-list bordered separator>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Nombre completo</q-item-label>
+                          <q-item-label>{{ fullName }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Correo electrónico</q-item-label>
-                        <q-item-label>{{ user.email }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Correo electrónico</q-item-label>
+                          <q-item-label>{{ user.email }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Teléfono</q-item-label>
-                        <q-item-label>{{ user.phone !== 'N/A' ? user.phone : 'No especificado' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Teléfono</q-item-label>
+                          <q-item-label>{{ user.phone !== 'N/A' ? user.phone : 'No especificado' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Fecha de nacimiento</q-item-label>
-                        <q-item-label>{{ user.dateOfBirth ? formatDate(user.dateOfBirth) : 'No especificada' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Fecha de nacimiento</q-item-label>
+                          <q-item-label>{{ user.dateOfBirth ? formatDate(user.dateOfBirth) : 'No especificada' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Género</q-item-label>
-                        <q-item-label>{{ user.gender !== 'No especificado' ? user.gender : 'No especificado' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card-section>
-              </q-card>
-            </div>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Género</q-item-label>
+                          <q-item-label>{{ user.gender !== 'No especificado' ? user.gender : 'No especificado' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card-section>
+                </q-card>
+              </div>
 
-            <!-- Columna derecha - Dirección y detalles de cuenta -->
-            <div class="col-12 col-md-6">
-              <!-- Tarjeta de dirección -->
-              <q-card class="my-card q-mb-md">
-                <q-card-section class="bg-primary text-white flex justify-between items-center">
-                  <div class="text-h6">Dirección de Envío</div>
-                  <q-btn 
-                    icon="edit" 
-                    flat 
-                    round 
-                    dense 
-                    color="white" 
-                    @click="openAddressEditDialog"
-                    title="Editar dirección"
-                  />
-                </q-card-section>
+              <!-- Columna derecha - Dirección y detalles de cuenta -->
+              <div class="col-12 col-md-6">
+                <!-- Tarjeta de dirección -->
+                <q-card class="my-card q-mb-md">
+                  <q-card-section class="bg-primary text-white flex justify-between items-center">
+                    <div class="text-h6">Dirección de Envío</div>
+                    <q-btn 
+                      icon="edit" 
+                      flat 
+                      round 
+                      dense 
+                      color="white" 
+                      @click="openAddressEditDialog"
+                      title="Editar dirección"
+                    />
+                  </q-card-section>
 
-                <q-separator/>
+                  <q-separator/>
 
-                <q-card-section>
-                  <q-list bordered separator>
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Calle</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.street }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                  <q-card-section>
+                    <q-list bordered separator>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Calle</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.street }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Ciudad</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.city }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Ciudad</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.city }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Estado/Provincia</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.state }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Estado/Provincia</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.state }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Código Postal</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.zipCode !== 'N/A' ? user.shippingAddress.zipCode : 'No especificado' }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Código Postal</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.zipCode !== 'N/A' ? user.shippingAddress.zipCode : 'No especificado' }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>País</q-item-label>
-                        <q-item-label>{{ user.shippingAddress.country }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card-section>
-              </q-card>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>País</q-item-label>
+                          <q-item-label>{{ user.shippingAddress.country }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card-section>
+                </q-card>
 
-              <!-- Tarjeta de detalles de cuenta -->
-              <q-card class="my-card">
-                <q-card-section class="bg-primary text-white">
-                  <div class="text-h6">Detalles de la Cuenta</div>
-                </q-card-section>
+                <!-- Tarjeta de detalles de cuenta -->
+                <q-card class="my-card">
+                  <q-card-section class="bg-primary text-white">
+                    <div class="text-h6">Detalles de la Cuenta</div>
+                  </q-card-section>
 
-                <q-separator/>
+                  <q-separator/>
 
-                <q-card-section>
-                  <q-list bordered separator>
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>ID de Usuario</q-item-label>
-                        <q-item-label>{{ user._id }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                  <q-card-section>
+                    <q-list bordered separator>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>ID de Usuario</q-item-label>
+                          <q-item-label>{{ user._id }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Fecha de Creación</q-item-label>
-                        <q-item-label>{{ formatDate(user.createdAt) }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Fecha de Creación</q-item-label>
+                          <q-item-label>{{ formatDate(user.createdAt) }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
 
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label caption>Última Actualización</q-item-label>
-                        <q-item-label>{{ formatDate(user.updatedAt) }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-card-section>
-              </q-card>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label caption>Última Actualización</q-item-label>
+                          <q-item-label>{{ formatDate(user.updatedAt) }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card-section>
+                </q-card>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+
+        <!-- Contenido para movimientos -->
+        <template v-else-if="activeTab === 'movements'">
+          <div class="movements-content q-pa-lg">
+            <q-card>
+              <q-card-section class="bg-primary text-white">
+                <div class="text-h6">Movimientos del Usuario</div>
+              </q-card-section>
+              
+              <q-separator />
+              
+              <q-card-section>
+                          <q-page class="q-pa-md movements-viewer-page">
+
+    <div v-if="movements.length === 0" class="text-center text-grey-7 q-pa-lg empty-state">
+      <q-icon name="info" size="xl" class="q-mb-md" />
+      <p class="text-h6">No hay movimientos registrados.</p>
+      <p>Cuando realices una compra, aparecerá aquí.</p>
+    </div>
+
+    <q-list bordered class="rounded-borders movements-list">
+      <q-item
+        v-for="movement in movements"
+        :key="movement.paypalData ? movement.paypalData.id : movement._id"
+        class="q-mb-md movement-item"
+      >
+        <q-card flat bordered class="full-width movement-card">
+          <q-card-section class="q-pb-none row items-center justify-between movement-header">
+            <div class="text-h6 text-primary">
+              <q-icon name="receipt" class="q-mr-sm" />
+              Movimiento ID:
+              <span class="movement-id">{{ movement.paypalData ? movement.paypalData.id : movement._id }}</span>
+            </div>
+            <div :class="['text-subtitle1', `status-${movement.status}`]">
+              <q-icon :name="getStatusIcon(movement.status)" class="q-mr-xs" />
+              Estado: <span class="status-text">{{ getStatusText(movement.status) }}</span>
+            </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-xs movement-details">
+            <div class="row q-col-gutter-sm">
+              <div class="col-12 col-md-6">
+                <p class="q-mb-xs">
+                  <q-icon name="event" class="q-mr-xs" />
+                  <span class="text-weight-bold">Fecha:</span> {{ formatDate(movement.createdAt) }}
+                </p>
+                <p class="q-mb-xs">
+                  <q-icon name="update" class="q-mr-xs" />
+                  <span class="text-weight-bold">Última Actualización:</span> {{ formatDate(movement.updatedAt) }}
+                </p>
+              </div>
+              <div class="col-12 col-md-6 text-right">
+                <p class="text-h5 text-weight-bold q-mb-xs total-amount">
+                  <q-icon name="payments" class="q-mr-sm" />
+                  Total: {{ formatCurrency(movement.total) }}
+                </p>
+                <p class="text-caption text-grey-6 q-mb-none" v-if="movement.paypalData">
+                  Pago via PayPal ({{ movement.paypalData.intent }})
+                </p>
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="left">
+            <q-expansion-item
+              expand-separator
+              icon="shopping_bag"
+              label="Ver Productos"
+              class="full-width products-expansion"
+            >
+              <q-card-section class="q-pt-none product-list-section">
+                <q-list separator>
+                  <q-item
+                    v-for="(product, index) in movement.products"
+                    :key="index"
+                    class="product-item q-my-sm"
+                  >
+                    <q-item-section avatar>
+                      <q-avatar rounded size="60px">
+                        <img :src="product.images[0].urlImage || 'https://via.placeholder.com/60x60?text=No+Image'" alt="Product Image">
+                      </q-avatar>
+                    </q-item-section>
+
+                    <q-item-section>
+                      <q-item-label class="text-weight-bold">{{ product.name }}</q-item-label>
+                      <q-item-label caption lines="2">{{ product.description }}</q-item-label>
+                      <q-item-label class="text-weight-medium">Cantidad: {{ product.quantity }}</q-item-label>
+                    </q-item-section>
+
+                    <q-item-section side top>
+                      <q-item-label class="text-body1 text-right">{{ formatCurrency(product.total) }}</q-item-label>
+                      <q-item-label caption v-if="product.discountPercentage">
+                        <span class="text-strike text-grey-6">{{ formatCurrency(product.subtotal) }}</span>
+                        <span class="text-positive q-ml-xs">(-{{ product.discountPercentage }}%)</span>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-card-section>
+            </q-expansion-item>
+          </q-card-actions>
+        </q-card>
+      </q-item>
+    </q-list>
+  </q-page>
+                <div class="text-center q-pa-lg">
+                  <q-icon name="receipt" size="xl" color="grey-5" />
+                  <div class="text-grey-5 q-mt-md">No hay movimientos registrados</div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </template>
 
         <!-- Botón flotante solo para cambiar contraseña -->
         <q-page-sticky position="bottom-right" :offset="[18, 18]">
@@ -406,36 +567,23 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-
+import { useStore } from '../stores/store';
+import { getData, putData } from '../service/service';
+import { showNotification } from '../utils/utils';
+const store = useStore();
 const $q = useQuasar();
 
-// Datos estáticos del usuario
-const user = ref({
-  _id: "6839b32addd3364c6bc45fa8",
-  name: "elias",
-  email: "elias@gmail.com",
-  password: "$2b$10$apZNdy7xxaVq2v7Q0LlJfO/./MZKpdWMqo8IIJ7aS.8gJZDZKTpnO",
-  lastName: "No especificado",
-  phone: "N/A",
-  shippingAddress: {
-    street: "No especificado",
-    city: "No especificada",
-    state: "No especificado",
-    zipCode: "N/A",
-    country: "Colombia"
-  },
-  dateOfBirth: null,
-  gender: "No especificado",
-  profilePicture: "N/A",
-  role: 1,
-  state: 1,
-  createdAt: "2025-05-30T13:31:22.170+00:00",
-  updatedAt: "2025-05-30T13:31:22.170+00:00",
-  __v: 0
-});
+//movimientos 
+const movements = ref([]);
 
+// Datos estáticos del usuario
+const user = ref(store.userInformation);
+// Estado del drawer
+const leftDrawerOpen = ref(true);
+const miniState = ref(true);
+const activeTab = ref('profile');
 // Datos de Colombia
 const allColombianStates = [
   'Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bolívar', 
@@ -495,6 +643,12 @@ const editForm = ref({
 const genderOptions = [
   'Masculino', 'Femenino', 'Otro', 'Prefiero no decir'
 ];
+
+onMounted(()=>{
+  dataMovements()
+})
+
+
 
 // Computed properties
 const fullName = computed(() => {
@@ -625,7 +779,7 @@ const formatDateForInput = (dateString) => {
   return date.toISOString().split('T')[0];
 };
 
-const savePersonalInfo = () => {
+const savePersonalInfo =async () => {
   // Actualizar los datos del usuario
   user.value.name = editForm.value.name;
   user.value.lastName = editForm.value.lastName || 'No especificado';
@@ -633,18 +787,16 @@ const savePersonalInfo = () => {
   user.value.phone = editForm.value.phone || 'N/A';
   user.value.dateOfBirth = editForm.value.dateOfBirth || null;
   user.value.gender = editForm.value.gender || 'No especificado';
-  
-  // Actualizar la fecha de modificación
   user.value.updatedAt = new Date().toISOString();
   
-  // Mostrar notificación de éxito
+  const response = await putData(`/users/${user.value._id}`,{
+      data:editForm.value
+    })
   $q.notify({
     type: 'positive',
     message: 'Datos personales actualizados correctamente',
     position: 'top'
   });
-  
-  // Cerrar el diálogo
   personalEditDialog.value = false;
 };
 
@@ -674,43 +826,106 @@ const changePassword = () => {
   console.log("Cambiar contraseña");
   // Lógica para cambiar contraseña
 };
-</script>
 
-<style lang="scss" scoped>
-.profile-page {
-  padding: 0;
-  background-color: var(--three-color--);
-}
 
-.profile-header {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
 
-  .header-overlay {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(2px);
+//movements
+
+
+async function dataMovements(){
+  try {
+    const response = await getData(`/orders/${store.userId}`)
+    movements.value = response.data
+  } catch (error) {
+    showNotification('negative','Error cargando movimientos')
+    console.log('error en movimientos', error);
   }
 }
 
-.profile-content {
+// Datos de ejemplo para los movimientos (simulando tu array de objetos vacío)
+
+const formatCurrency = (amount) => {
+  if (typeof amount !== 'number') {
+    // Intenta convertir si es un string que parezca un número
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount)) return 'N/A';
+    amount = numAmount;
+  }
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP', // Moneda colombiana, ajusta si es necesario
+    minimumFractionDigits: 0, // No mostrar decimales si son 0
+    maximumFractionDigits: 0, // No mostrar decimales si son 0
+  }).format(amount);
+};
+
+const getStatusText = (status) => {
+  switch (status) {
+    case 'paid': return 'Pagado';
+    case 'pending': return 'Pendiente';
+    case 'refunded': return 'Reembolsado';
+    case 'failed': return 'Fallido';
+    default: return 'Desconocido';
+  }
+};
+
+const getStatusIcon = (status) => {
+  switch (status) {
+    case 'paid': return 'check_circle';
+    case 'pending': return 'hourglass_empty';
+    case 'refunded': return 'undo';
+    case 'failed': return 'error';
+    default: return 'help_outline';
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+@import url("../style/userProfile.css");
+
+.profile-content, .movements-content {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
 }
 
-.my-card {
+.q-drawer {
+  background-color: #f5f5f5;
+}
+
+.q-item {
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
+  margin: 4px 8px;
+  
+  &--active {
+    background-color: #e0e0e0;
+    color: #1976d2;
+    font-weight: 500;
+    
+    .q-icon {
+      color: #1976d2;
+    }
+  }
 }
 
-.q-item__label--caption {
-  color: var(--text-secondary);
+.q-page-container {
+  padding-left: 300px;
+  transition: padding-left 0.3s ease;
+  
+  @media (max-width: 700px) {
+    padding-left: 0;
+  }
 }
 
-.q-item__label {
-  color: var(--text-primary);
-  font-weight: 500;
+.q-drawer--mini {
+  width: 60px !important;
+  
+  .q-item__section--avatar {
+    min-width: 0;
+  }
+  
+  .q-item__section--main {
+    display: none;
+  }
 }
 </style>

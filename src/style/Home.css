@@ -259,9 +259,9 @@
     margin-left: 1%;
     padding: 20px 0;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    background: #121212;
-    background: radial-gradient(circle, rgba(18, 18, 18, 0.37) 0%, rgba(18, 18, 18, 0.55) 0%);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
+    background: #6e6e6e00;
+    background: radial-gradient(circle, rgba(18, 18, 18, 0) 0%, rgba(18, 18, 18, 0.116) 0%);
   }
   
   .productos {

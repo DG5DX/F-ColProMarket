@@ -259,7 +259,105 @@
               <q-separator />
               
               <q-card-section>
+<<<<<<< HEAD
                 <!-- Aquí puedes agregar el contenido de los movimientos del usuario -->
+=======
+                          <q-page class="q-pa-md movements-viewer-page">
+
+    <div v-if="movements.length === 0" class="text-center text-grey-7 q-pa-lg empty-state">
+      <q-icon name="info" size="xl" class="q-mb-md" />
+      <p class="text-h6">No hay movimientos registrados.</p>
+      <p>Cuando realices una compra, aparecerá aquí.</p>
+    </div>
+
+    <q-list bordered class="rounded-borders movements-list">
+      <q-item
+        v-for="movement in movements"
+        :key="movement.paypalData ? movement.paypalData.id : movement._id"
+        class="q-mb-md movement-item"
+      >
+        <q-card flat bordered class="full-width movement-card">
+          <q-card-section class="q-pb-none row items-center justify-between movement-header">
+            <div class="text-h6 text-primary">
+              <q-icon name="receipt" class="q-mr-sm" />
+              Movimiento ID:
+              <span class="movement-id">{{ movement.paypalData ? movement.paypalData.id : movement._id }}</span>
+            </div>
+            <div :class="['text-subtitle1', `status-${movement.status}`]">
+              <q-icon :name="getStatusIcon(movement.status)" class="q-mr-xs" />
+              Estado: <span class="status-text">{{ getStatusText(movement.status) }}</span>
+            </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-xs movement-details">
+            <div class="row q-col-gutter-sm">
+              <div class="col-12 col-md-6">
+                <p class="q-mb-xs">
+                  <q-icon name="event" class="q-mr-xs" />
+                  <span class="text-weight-bold">Fecha:</span> {{ formatDate(movement.createdAt) }}
+                </p>
+                <p class="q-mb-xs">
+                  <q-icon name="update" class="q-mr-xs" />
+                  <span class="text-weight-bold">Última Actualización:</span> {{ formatDate(movement.updatedAt) }}
+                </p>
+              </div>
+              <div class="col-12 col-md-6 text-right">
+                <p class="text-h5 text-weight-bold q-mb-xs total-amount">
+                  <q-icon name="payments" class="q-mr-sm" />
+                  Total: {{ formatCurrency(movement.total) }}
+                </p>
+                <p class="text-caption text-grey-6 q-mb-none" v-if="movement.paypalData">
+                  Pago via PayPal ({{ movement.paypalData.intent }})
+                </p>
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="left">
+            <q-expansion-item
+              expand-separator
+              icon="shopping_bag"
+              label="Ver Productos"
+              class="full-width products-expansion"
+            >
+              <q-card-section class="q-pt-none product-list-section">
+                <q-list separator>
+                  <q-item
+                    v-for="(product, index) in movement.products"
+                    :key="index"
+                    class="product-item q-my-sm"
+                  >
+                    <q-item-section avatar>
+                      <q-avatar rounded size="60px">
+                        <img :src="product.images[0].urlImage || 'https://via.placeholder.com/60x60?text=No+Image'" alt="Product Image">
+                      </q-avatar>
+                    </q-item-section>
+
+                    <q-item-section>
+                      <q-item-label class="text-weight-bold">{{ product.name }}</q-item-label>
+                      <q-item-label caption lines="2">{{ product.description }}</q-item-label>
+                      <q-item-label class="text-weight-medium">Cantidad: {{ product.quantity }}</q-item-label>
+                    </q-item-section>
+
+                    <q-item-section side top>
+                      <q-item-label class="text-body1 text-right">{{ formatCurrency(product.total) }}</q-item-label>
+                      <q-item-label caption v-if="product.discountPercentage">
+                        <span class="text-strike text-grey-6">{{ formatCurrency(product.subtotal) }}</span>
+                        <span class="text-positive q-ml-xs">(-{{ product.discountPercentage }}%)</span>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-card-section>
+            </q-expansion-item>
+          </q-card-actions>
+        </q-card>
+      </q-item>
+    </q-list>
+  </q-page>
+>>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
                 <div class="text-center q-pa-lg">
                   <q-icon name="receipt" size="xl" color="grey-5" />
                   <div class="text-grey-5 q-mt-md">No hay movimientos registrados</div>
@@ -473,14 +571,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useStore } from '../stores/store';
+<<<<<<< HEAD
 import { putData } from '../service/service';
+=======
+import { getData, putData } from '../service/service';
+>>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
 import { showNotification } from '../utils/utils';
 const store = useStore();
 const $q = useQuasar();
 
+<<<<<<< HEAD
 // Datos estáticos del usuario
 const user = ref(store.userInformation);
 
@@ -489,7 +592,17 @@ const user = ref(store.userInformation);
 const leftDrawerOpen = ref(true);
 const miniState = ref(true);
 const activeTab = ref('profile');
+=======
+//movimientos 
+const movements = ref([]);
+>>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
 
+// Datos estáticos del usuario
+const user = ref(store.userInformation);
+// Estado del drawer
+const leftDrawerOpen = ref(true);
+const miniState = ref(true);
+const activeTab = ref('profile');
 // Datos de Colombia
 const allColombianStates = [
   'Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bolívar', 
@@ -549,6 +662,12 @@ const editForm = ref({
 const genderOptions = [
   'Masculino', 'Femenino', 'Otro', 'Prefiero no decir'
 ];
+
+onMounted(()=>{
+  dataMovements()
+})
+
+
 
 // Computed properties
 const fullName = computed(() => {
@@ -726,11 +845,69 @@ const changePassword = () => {
   console.log("Cambiar contraseña");
   // Lógica para cambiar contraseña
 };
+
+<<<<<<< HEAD
+<style lang="scss" scoped>
+@import url("../style/userProfile.css");
+
+=======
+
+
+//movements
+
+
+async function dataMovements(){
+  try {
+    const response = await getData(`/orders/${store.userId}`)
+    movements.value = response.data
+  } catch (error) {
+    showNotification('negative','Error cargando movimientos')
+    console.log('error en movimientos', error);
+  }
+}
+
+// Datos de ejemplo para los movimientos (simulando tu array de objetos vacío)
+
+const formatCurrency = (amount) => {
+  if (typeof amount !== 'number') {
+    // Intenta convertir si es un string que parezca un número
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount)) return 'N/A';
+    amount = numAmount;
+  }
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP', // Moneda colombiana, ajusta si es necesario
+    minimumFractionDigits: 0, // No mostrar decimales si son 0
+    maximumFractionDigits: 0, // No mostrar decimales si son 0
+  }).format(amount);
+};
+
+const getStatusText = (status) => {
+  switch (status) {
+    case 'paid': return 'Pagado';
+    case 'pending': return 'Pendiente';
+    case 'refunded': return 'Reembolsado';
+    case 'failed': return 'Fallido';
+    default: return 'Desconocido';
+  }
+};
+
+const getStatusIcon = (status) => {
+  switch (status) {
+    case 'paid': return 'check_circle';
+    case 'pending': return 'hourglass_empty';
+    case 'refunded': return 'undo';
+    case 'failed': return 'error';
+    default: return 'help_outline';
+  }
+};
 </script>
 
 <style lang="scss" scoped>
 @import url("../style/userProfile.css");
 
+>>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
 .profile-content, .movements-content {
   max-width: 1200px;
   margin: 0 auto;

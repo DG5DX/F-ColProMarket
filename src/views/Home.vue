@@ -337,7 +337,10 @@ async function login() {
       router.push('/admin')
       showNotification('positive', `Hola ${response.data.user.name} ¡Bienvenido al panel de administración! Gestiona la tienda y las ventas.`)
     }else{
+<<<<<<< HEAD
     store.dataFavorites("68498575ef2b465bde886ea6")
+=======
+>>>>>>> c042dd3f9d7efe3c764363ade644f64570d5a6b2
     showNotification('positive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
     }
     user.value = {}

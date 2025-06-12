@@ -55,30 +55,34 @@
           </div>
         </q-card>
 
-        <!-- Filtros de Búsqueda -->
-        <q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md"
-          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px">
-          <div class="text-h6 text-weight-bold q-mb-md">
-            🔍 Filtros Avanzados
-          </div>
+<!-- Filtros de Búsqueda -->
+<q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md"
+  style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px">
+  <div class="text-h6 text-weight-bold q-mb-md">
+    🔍 Filtros Avanzados
+  </div>
 
-          <div class="row q-gutter-md items-center" style="display: flex; align-items: center">
-            <q-select filled dense :options="categories" option-label="name" label="Filtrar por categoría" clearable
-              class="col" style="min-width: 200px" />
+  <div class="row q-gutter-md items-center" style="display: flex; align-items: center">
+    <q-select filled dense v-model="selectedCategory" :options="categories" option-label="name" 
+      label="Filtrar por categoría" clearable class="col" style="min-width: 200px" />
 
-            <q-input filled dense label="Precio mínimo" type="number" class="col" style="min-width: 150px" />
+    <q-input filled dense v-model="minPrice" label="Precio mínimo" type="number" class="col" 
+      style="min-width: 150px" />
 
-            <q-input filled dense label="Precio máximo" type="number" class="col" style="min-width: 150px" />
+    <q-input filled dense v-model="maxPrice" label="Precio máximo" type="number" class="col" 
+      style="min-width: 150px" />
 
-            <q-select filled dense label="Filtrar por stock" class="col" style="min-width: 200px"
-              :options="['En stock', 'Sin stock']" />
+    <q-select filled dense v-model="stockFilter" label="Filtrar por stock" class="col" 
+      style="min-width: 200px" :options="['En stock', 'Sin stock']" clearable />
 
-            <div class="row q-gutter-sm" style="margin-top: 0%">
-              <q-btn label="Aplicar Filtros" color="primary" dense class="q-ml-sm" style="height: 40px" />
-              <q-btn label="Limpiar Filtros" color="negative" outline dense style="height: 40px" />
-            </div>
-          </div>
-        </q-card>
+    <div class="row q-gutter-sm" style="margin-top: 0%">
+      <q-btn label="Aplicar Filtros" color="primary" dense class="q-ml-sm" style="height: 40px" 
+        @click="applyFilters" />
+      <q-btn label="Limpiar Filtros" color="negative" outline dense style="height: 40px" 
+        @click="clearFilters" />
+    </div>
+  </div>
+</q-card>
 
         <q-card> </q-card>
         <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; min-height: 600px">
@@ -98,7 +102,7 @@
           </div>
 
 
-          <q-table :rows="dataProducts.data || []" :columns="columns" row-key="nombre" flat bordered wrap-cells
+          <q-table :rows="appliedFilters ? filteredProducts : (dataProducts.data || [])"  :columns="columns" row-key="nombre" flat bordered wrap-cells
             class="bg-white my-sticky-table" :filter="search" style="max-height: 400px" separator="cell">
             <template v-slot:body-cell-imagen="props">
               <q-td :props="props" class="q-table--cell-center">
@@ -273,7 +277,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, toRaw } from "vue";
+import { ref, onMounted, computed, toRaw } from "vue";
 import { Notify } from "quasar";
 import { getData, postData, putData } from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
@@ -301,6 +305,60 @@ const dataProducts = ref([]);
 const acceptReturns = ['Si', 'No']
 const productSelect = ref({});
 const productEdit = ref({});
+
+// Filtros
+const minPrice = ref(null);
+const maxPrice = ref(null);
+const stockFilter = ref(null);
+const appliedFilters = ref(false);
+
+// Función para aplicar los filtros
+const applyFilters = () => {
+  appliedFilters.value = true;
+  getAllProducts(); // Vuelve a cargar los productos con los filtros aplicados
+};
+
+// Función para limpiar los filtros
+const clearFilters = () => {
+  selectedCategory.value = null;
+  minPrice.value = null;
+  maxPrice.value = null;
+  stockFilter.value = null;
+  appliedFilters.value = false;
+  getAllProducts(); // Vuelve a cargar los productos sin filtros
+};
+
+// Función para filtrar los productos localmente (opcional)
+const filteredProducts = computed(() => {
+  if (!appliedFilters.value) return dataProducts.value.data || [];
+  
+  return (dataProducts.value.data || []).filter(product => {
+    // Filtro por categoría
+    if (selectedCategory.value && product.categoryId?._id !== selectedCategory.value._id) {
+      return false;
+    }
+    
+    // Filtro por precio mínimo
+    if (minPrice.value && product.price < minPrice.value) {
+      return false;
+    }
+    
+    // Filtro por precio máximo
+    if (maxPrice.value && product.price > maxPrice.value) {
+      return false;
+    }
+    
+    // Filtro por stock
+    if (stockFilter.value === 'En stock' && product.stock <= 0) {
+      return false;
+    }
+    if (stockFilter.value === 'Sin stock' && product.stock > 0) {
+      return false;
+    }
+    
+    return true;
+  });
+});
 
 onMounted(() => {
   getAllCategories();
@@ -360,13 +418,36 @@ const saveProduct = async () => {
 
 async function getAllProducts() {
   try {
-    const response = await getData("/product");
+    let url = "/product";
+    const params = [];
+    
+    if (appliedFilters.value) {
+      if (selectedCategory.value) {
+        params.push(`category=${selectedCategory.value._id}`);
+      }
+      if (minPrice.value) {
+        params.push(`minPrice=${minPrice.value}`);
+      }
+      if (maxPrice.value) {
+        params.push(`maxPrice=${maxPrice.value}`);
+      }
+      if (stockFilter.value === 'En stock') {
+        params.push(`minStock=1`);
+      } else if (stockFilter.value === 'Sin stock') {
+        params.push(`maxStock=0`);
+      }
+      
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
+      }
+    }
+    
+    const response = await getData(url);
     if (response.success) {
       dataProducts.value = response;
     }
-    console.log("productos en admin", toRaw(dataProducts.value));
   } catch (error) {
-    console.error("Error al traer datos de productos", dataProducts.value);
+    console.error("Error al traer datos de productos", error);
   }
 }
 

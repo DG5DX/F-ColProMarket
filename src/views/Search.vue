@@ -428,13 +428,13 @@ function toggleLeftDrawer() {
 async function cart() {
   const canProceed = await validateToken()
   if (!canProceed) return
-  window.location.href = 'http://localhost:5173/#/cart'
+  window.location.href = '/cart'
 }
 
 async function userProfile() {
   const canProceed = await validateToken()
   if (!canProceed) return
-  window.location.href = 'http://localhost:5173/#/user-profile'
+  window.location.href = '/user-profile'
 }
 
 function formatPrice(price) {

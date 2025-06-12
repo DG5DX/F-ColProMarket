@@ -8,13 +8,27 @@
   margin: 0 auto;
 }
 
-.order-summary-card, .payment-methods-card {
+.data-user {
+  margin-left: 20%;
+  width: 60%;
+  border-radius: 12px;
+  margin-top: 4%;
+}
+
+.payment-methods-card {
+  margin-top: 4%;
+}
+
+.order-summary-card,
+.payment-methods-card {
+  margin-left: 20%;
+  width: 60%;
   border-radius: 12px;
 }
 
 .order-totals {
-  border-top: 1px solid rgba(0,0,0,0.1);
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 10px 0;
 }
 
@@ -52,7 +66,7 @@
   .checkout-page {
     padding: 10px;
   }
-  
+
   .checkout-header .q-stepper {
     display: none;
   }

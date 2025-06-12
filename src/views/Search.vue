@@ -1,68 +1,112 @@
 <template>
   <q-layout style="min-height: 100vh;">
     <!-- Header mejorado -->
-    <q-header elevated class="header-gradient">
-      <q-toolbar class="q-py-sm">
-        <!-- Logo y marca -->
-        <div class="row items-center no-wrap">
-          <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" class="q-mr-sm" />
-          <q-avatar size="42px" class="q-mr-sm" @click="router.push('/')">
-            <img src="../assets/MiniLogo.jpeg">
-          </q-avatar>
-          <q-toolbar-title class="brand-title text-weight-bold">
-            ColProductMarket
-          </q-toolbar-title>
-        </div>
+<q-header elevated class="header-gradient">
+  <q-toolbar class="q-py-sm">
+    <!-- Menú y logo - siempre visibles -->
+    <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" class="q-mr-sm" />
+    <q-avatar size="42px" class="q-mr-sm" @click="router.push('/')">
+      <img src="../assets/MiniLogo.jpeg">
+    </q-avatar>
 
-        <!-- Barra de búsqueda destacada -->
-        <div class="search-container q-mx-lg">
-          <q-input v-model="parameter" dense standout="" color="black" bg-color="white"
-            placeholder="Buscar productos electrónicos..." class="search-input"
-            @update:model-value="searchProducts(parameter)" input-class="text-black" @keyup.enter="productsSearch()">
-            <template v-slot:prepend>
-              <q-icon name="search" color="primary" />
-            </template>
-            <template v-slot:append>
-              <q-icon v-if="searchQuery" name="close" @click="searchQuery = 'category'" class="cursor-pointer" />
-            </template>
-          </q-input>
-        </div>
+    <!-- Nombre de la marca con truncado -->
+    <q-toolbar-title class="brand-title text-weight-bold text-ellipsis">
+      ColProductMarket
+    </q-toolbar-title>
 
-        <div class="full-actions">
-          <template v-if="!store.userId">
-            <q-btn flat label="Ingresar" @click="store.showLoginDialog = true"
-              :class="['action-btn', { 'ingresar-animado': !store.showRegister }]" />
-            <q-btn v-if="store.showRegister" flat label="Registro" @click="store.showRegisterDialog = true"
-              class="action-btn" />
-          </template>
-          <template v-else>
-            <q-btn flat label="Cerrar Sesión" @click="closeSession()" class="action-btn" />
-          </template>
-          <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-            <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
-              {{ store.cart.items.length }}
-            </q-badge>
-          </q-btn>
-        </div>
-        <q-btn flat round icon="person" class="action-btn" @click="userProfile()" />
-        <div class="compact-actions">
-          <q-btn flat round icon="logout" class="action-btn" v-if="store.userId" @click="closeSession()" />
-        </div>
-      </q-toolbar>
+    <!-- Barra de búsqueda con prioridad -->
+    <div class="search-container row items-center" style="flex-grow: 1; max-width: 600px; min-width: 150px;">
+      <q-input 
+        v-model="parameter" 
+        dense 
+        standout 
+        color="black" 
+        bg-color="white"
+        placeholder="Buscar productos electrónicos..." 
+        class="full-width"
+        @update:model-value="searchProducts(parameter)" 
+        input-class="text-black" 
+        @keyup.enter="productsSearch()"
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" color="primary" />
+        </template>
+        <template v-slot:append>
+          <q-icon v-if="searchQuery" name="close" @click="searchQuery = 'category'" class="cursor-pointer" />
+        </template>
+      </q-input>
+    </div>
 
-      <!-- Categorías con efecto hover -->
-      <q-toolbar class="categories-toolbar" :class="{ 'mobile-menu-open': mobileMenuOpen }">
-        <div class="categories-container">
-          <q-tabs align="left" class="categories-tabs" :breakpoint="0">
-            <q-route-tab label="PRODUCTOS" to="/" exact />
-            <q-route-tab label="FACTURAS" to="/invoice" exact />
-            <q-route-tab label="REBAJAS" to="/" exact />
-            <q-route-tab label="PERFIL" to="/userProfile" exact />
-            <q-route-tab label="CONTACTO" to="/Contact" exact />
-          </q-tabs>
-        </div>
-      </q-toolbar>
-    </q-header>
+    <!-- Acciones de usuario - al lado de la barra de búsqueda -->
+    <div class="user-actions row no-wrap items-center q-ml-md">
+      <template v-if="!store.userId">
+        <q-btn 
+          flat 
+          label="Ingresar" 
+          @click="store.showLoginDialog = true"
+          class="action-btn gt-sm"
+          :class="{ 'ingresar-animado': !store.showRegister }" 
+        />
+        <q-btn 
+          v-if="store.showRegister" 
+          flat 
+          label="Registro" 
+          @click="store.showRegisterDialog = true"
+          class="action-btn gt-sm" 
+        />
+        <q-btn 
+          flat 
+          round 
+          icon="person" 
+          @click="store.showLoginDialog = true"
+          class="action-btn lt-md" 
+        />
+      </template>
+      
+      <template v-else>
+        <q-btn flat round icon="person" class="action-btn">
+          <q-menu>
+            <div class="user-profile-menu q-pa-md">
+              <div class="text-h6 text-center q-mt-sm">{{ store.userInformation.name || 'Usuario' }}</div>
+              <div class="column items-center q-mb-md">
+                <q-avatar size="70px" class="q-mb-sm">
+                  <img :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
+                </q-avatar>
+                <div class="text-caption text-grey-7 text-center q-mb-md">
+                  {{ store.userInformation.email || 'test@gmail.com' }}
+                </div>
+              </div>
+              <q-btn flat label="Administrar cuenta" class="full-width" icon="manage_accounts"
+                style="color: #1976D2;" @click="router.push('/userProfile')" />
+              <q-separator class="q-my-sm" />
+              <q-btn flat label="Cerrar Sesión" icon="logout" class="full-width" style="color: #C10015;"
+                @click="closeSession" />
+            </div>
+          </q-menu>
+        </q-btn>
+      </template>
+      
+      <q-btn flat round icon="shopping_cart" class="cart-btn q-ml-sm" @click="cart()">
+        <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
+          {{ store.cart.items.length }}
+        </q-badge>
+      </q-btn>
+    </div>
+  </q-toolbar>
+
+  <!-- Categorías -->
+  <q-toolbar class="categories-toolbar" :class="{ 'mobile-menu-open': mobileMenuOpen }">
+    <div class="categories-container">
+      <q-tabs align="left" class="categories-tabs" :breakpoint="0">
+        <q-route-tab label="PRODUCTOS" to="/" exact />
+        <q-route-tab label="FACTURAS" to="/invoice" exact />
+        <q-route-tab label="REBAJAS" to="/" exact />
+        <q-route-tab label="CONTACTO" to="/Contact" exact />
+        <q-route-tab label="MOVIMIENTOS" to="/movements" exact />
+      </q-tabs>
+    </div>
+  </q-toolbar>
+</q-header>
 
     <!-- Drawer mejorado -->
     <q-drawer v-model="leftDrawerOpen" side="left" bordered :width="280" class="drawer-menu">
@@ -512,6 +556,10 @@ function closeSession() {
   store.token = null;
   store.userId = null;
   store.showRegister = true;
+  store.cart = {
+    items:[],
+    total:0
+  }
   showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }
@@ -526,4 +574,169 @@ onMounted(() => {
 
 <style scoped>
 @import url("../style/Search.css");
+
+/* Estilos para el perfil de usuario */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.full-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.compact-actions {
+  display: none;
+  gap: 8px;
+}
+
+.action-btn {
+  color: white;
+  font-weight: 500;
+  padding: 6px 10px;
+}
+
+.cart-btn {
+  position: relative;
+  color: white;
+}
+
+.user-profile-menu {
+  min-width: 250px;
+}
+
+.user-profile-menu .q-avatar {
+  margin-bottom: 10px;
+}
+
+@keyframes pulse-ingresar {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+}
+
+.ingresar-animado {
+  animation: pulse-ingresar 2s infinite ease-in-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .full-actions {
+    display: none;
+  }
+  
+  .compact-actions {
+    display: flex;
+  }
+  
+  .search-container {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-title {
+    font-size: 1rem;
+  }
+  
+  .search-container {
+    flex-grow: 1;
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+}
+
+/* Estilos para el header */
+.header-gradient {
+  background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+}
+
+/* Nombre de la marca con truncado */
+.brand-title {
+  font-size: 1.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; /* Ajusta según necesidad */
+  margin-right: 12px;
+}
+
+/* Barra de búsqueda responsive */
+.search-container {
+  transition: all 0.3s ease;
+  margin: 0 12px;
+}
+
+/* Acciones de usuario */
+.user-actions {
+  flex-shrink: 0;
+}
+
+.action-btn {
+  color: white;
+  font-weight: 500;
+  padding: 6px 10px;
+}
+
+.cart-btn {
+  position: relative;
+  color: white;
+}
+
+/* Animación para el botón de ingresar */
+@keyframes pulse-ingresar {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 255, 255, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 255, 255, 0.7); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 255, 255, 0.4); }
+}
+
+.ingresar-animado {
+  animation: pulse-ingresar 2s infinite ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .brand-title {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .brand-title {
+    max-width: 100px;
+    font-size: 1.1rem;
+  }
+  
+  .search-container {
+    margin: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-title {
+    max-width: 80px;
+    font-size: 1rem;
+  }
+  
+  .search-container {
+    margin: 0 4px;
+    min-width: 100px;
+  }
+  
+  .user-actions {
+    margin-left: 4px;
+  }
+}
 </style>

@@ -479,7 +479,7 @@
 
                 <div class="q-mt-lg flex justify-end">
                   <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
-                  <q-btn label="Guardar" type="submit" color="primary" />
+                  <q-btn label="Guardar" type="submit" color="primary" @keyup.enter="savePersonalInfo"/>
                 </div>
               </q-form>
             </q-card-section>
@@ -566,7 +566,7 @@
 
                 <div class="q-mt-lg flex justify-end">
                   <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
-                  <q-btn label="Guardar" type="submit" color="primary" />
+                  <q-btn label="Guardar" type="submit" color="primary" @keyup.enter="saveAddressInfo"/>
                 </div>
               </q-form>
             </q-card-section>
@@ -822,7 +822,9 @@ const allColombianCities = [
   // Caldas
   'Manizales', 'La Dorada', 'Chinchiná',
   // Valle del Cauca
-  'Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago'
+  'Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago',
+  // Santander
+  'San Gil'
 ];
 
 const colombianStates = ref([...allColombianStates]);

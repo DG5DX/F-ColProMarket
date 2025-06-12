@@ -823,9 +823,9 @@ const allColombianCities = [
   'Manizales', 'La Dorada', 'Chinchiná',
   // Valle del Cauca
   'Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago',
-  // Santander
-  'San Gil'
-];
+  //Santander
+  'Bucaramanga', 'San gil'
+
 
 const colombianStates = ref([...allColombianStates]);
 const filteredCities = ref([...allColombianCities]);
@@ -858,6 +858,7 @@ const genderOptions = [
 
 onMounted(()=>{
   dataMovements()
+  editForm.value = store.userInformation;
 })
 
 // Computed properties
@@ -1010,17 +1011,18 @@ const savePersonalInfo =async () => {
   personalEditDialog.value = false;
 };
 
-const saveAddressInfo = () => {
-  // Actualizar la dirección del usuario
-  user.value.shippingAddress.street = editForm.value.shippingAddress.street || 'No especificado';
+const saveAddressInfo = async () => {
+ try {
+   user.value.shippingAddress.street = editForm.value.shippingAddress.street || 'No especificado';
   user.value.shippingAddress.city = editForm.value.shippingAddress.city || 'No especificada';
   user.value.shippingAddress.state = editForm.value.shippingAddress.state || 'No especificado';
   user.value.shippingAddress.zipCode = editForm.value.shippingAddress.zipCode || 'N/A';
   user.value.shippingAddress.country = 'Colombia';
-  
-  // Actualizar la fecha de modificación
   user.value.updatedAt = new Date().toISOString();
-  
+
+    const response = await putData(`/users/${user.value._id}`,{
+      data:editForm.value
+    })
   // Mostrar notificación de éxito
   $q.notify({
     type: 'positive',
@@ -1028,8 +1030,11 @@ const saveAddressInfo = () => {
     position: 'top'
   });
   
-  // Cerrar el diálogo
   addressEditDialog.value = false;
+ } catch (error) {
+  showNotification('negative','Lo sentimos ha ocurrido un error')
+  console.log('[saveAddressInfo]',error);
+ }
 };
 
 //movements

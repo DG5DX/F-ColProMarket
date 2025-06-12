@@ -1,19 +1,11 @@
 <template>
   <q-layout>
     <mainBar @open-register-dialog="registerDialog = true" @open-logIn-dialog="loginDialog = true" />
-    
+
     <q-page-container class="product-page-container">
       <!-- Botón de regreso -->
-      <q-btn 
-        icon="arrow_back" 
-        flat 
-        round 
-        dense 
-        class="back-btn"
-        @click="$router.go(-1)"
-        style="margin-top: 5vh;"
-      />
-      
+      <q-btn icon="arrow_back" flat round dense class="back-btn" @click="$router.go(-1)" style="margin-top: 5vh;" />
+
       <!-- Contenido principal -->
       <div class="product-container">
         <!-- Sección izquierda - Galería y reseñas -->
@@ -22,85 +14,49 @@
           <q-card class="gallery-card">
             <div class="gallery-container">
               <!-- Imagen principal -->
-              <q-img
-                :src="selectedImage || (dataProduct.images && dataProduct.images[0]?.urlImage)"
-                :ratio="1"
-                class="main-image"
-                spinner-color="primary"
-              />
-              
+              <q-img :src="selectedImage || (dataProduct.images && dataProduct.images[0]?.urlImage)" :ratio="1"
+                class="main-image" spinner-color="primary" />
+
               <!-- Miniaturas -->
               <div class="thumbnails">
-                <q-img
-                  v-for="(image, index) in dataProduct.images"
-                  :key="index"
-                  :src="image.urlImage"
-                  :ratio="1"
-                  class="thumbnail"
-                  :class="{ 'thumbnail-active': selectedImage === image.urlImage }"
-                  @click="selectImage(index)"
-                />
+                <q-img v-for="(image, index) in dataProduct.images" :key="index" :src="image.urlImage" :ratio="1"
+                  class="thumbnail" :class="{ 'thumbnail-active': selectedImage === image.urlImage }"
+                  @click="selectImage(index)" />
               </div>
             </div>
           </q-card>
-          
+
           <!-- Acciones secundarias -->
           <div class="secondary-actions">
-            <q-btn 
-  @click="addToFavorites(dataProduct._id)" flat 
-  icon="favorite_border" 
-  label="Favoritos" 
-  class="action-btn"
-/>
-            <q-btn 
-              flat 
-              icon="share" 
-              label="Compartir" 
-              class="action-btn"
-            />
+            <q-btn flat @click="colorButton()" :color="buttonColor"  icon="favorite_border" label="Favoritos" class="action-btn" />
+            <q-btn flat icon="share" label="Compartir" class="action-btn" />
           </div>
-          
+
           <!-- Reseñas -->
           <q-card class="reviews-card">
             <q-card-section>
               <div class="text-h6">Reseñas ({{ dataProduct.reviews?.length || 0 }})</div>
-              
+
               <!-- Promedio de calificaciones -->
               <div class="rating-summary">
                 <div class="average-rating">
                   <span class="rating-value">{{ dataProduct.averageRating?.toFixed(1) || 0 }}</span>
-                  <q-rating
-                    v-model="dataProduct.averageRating"
-                    size="1.5em"
-                    color="orange"
-                    icon="star_border"
-                    icon-selected="star"
-                    readonly
-                  />
+                  <q-rating v-model="dataProduct.averageRating" size="1.5em" color="orange" icon="star_border"
+                    icon-selected="star" readonly />
                 </div>
               </div>
-              
+
               <!-- Lista de reseñas -->
               <div class="reviews-list">
-                <div 
-                  v-for="(review, index) in dataProduct.reviews" 
-                  :key="index"
-                  class="review-item"
-                >
+                <div v-for="(review, index) in dataProduct.reviews" :key="index" class="review-item">
                   <div class="review-header">
                     <q-avatar color="primary" text-color="white">
                       {{ review.userId?.name?.charAt(0) || 'U' }}
                     </q-avatar>
                     <div class="review-user">
                       <div class="user-name">{{ review.userId?.name || 'Usuario' }}</div>
-                      <q-rating
-                        v-model="review.stars"
-                        size="1em"
-                        color="orange"
-                        icon="star_border"
-                        icon-selected="star"
-                        readonly
-                      />
+                      <q-rating v-model="review.stars" size="1em" color="orange" icon="star_border" icon-selected="star"
+                        readonly />
                     </div>
                     <div class="review-date">
                       {{ formatDate(review.createdAt) }}
@@ -111,40 +67,24 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- Formulario para nueva reseña -->
               <div class="new-review">
                 <div class="text-subtitle1 q-mb-sm">Deja tu reseña</div>
                 <div class="rating-input">
                   <span class="q-mr-sm">Calificación:</span>
-                  <q-rating
-                    v-model="productQualification"
-                    size="2em"
-                    color="orange"
-                    icon="star_border"
-                    icon-selected="star"
-                  />
+                  <q-rating v-model="productQualification" size="2em" color="orange" icon="star_border"
+                    icon-selected="star" />
                 </div>
-                <q-input
-                  v-model="review"
-                  outlined
-                  type="textarea"
-                  placeholder="Escribe tu reseña..."
-                  class="q-mt-md"
-                  rows="3"
-                />
-                <q-btn
-                  label="Enviar reseña"
-                  color="primary"
-                  class="q-mt-md"
-                  @click="addReview(dataProduct._id)"
-                  :disable="!review || productQualification === 0"
-                />
+                <q-input v-model="review" outlined type="textarea" placeholder="Escribe tu reseña..." class="q-mt-md"
+                  rows="3" />
+                <q-btn label="Enviar reseña" color="primary" class="q-mt-md" @click="addReview(dataProduct._id)"
+                  :disable="!review || productQualification === 0" />
               </div>
             </q-card-section>
           </q-card>
         </div>
-        
+
         <!-- Sección derecha - Información del producto -->
         <div class="right-section">
           <q-card class="info-card">
@@ -154,119 +94,94 @@
                 <div class="text-h4 product-name">{{ dataProduct.name }}</div>
                 <div class="text-subtitle1 brand" v-if="dataProduct.brand">{{ dataProduct.brand }}</div>
               </div>
-              
+
               <!-- Precio -->
               <div class="price-section">
-                <div class="text-h4 price">{{dataProduct.price }}</div>
+                <div class="text-h4 price">{{ dataProduct.price }}</div>
                 <div class="text-caption price-note">Precio incluye IVA</div>
               </div>
-              
+
               <!-- Disponibilidad -->
               <div class="availability" :class="isProductAvailable">
                 <q-icon :name="dataProduct.stock > 0 ? 'check_circle' : 'cancel'" />
                 <span v-if="dataProduct.stock > 0">Disponible ({{ dataProduct.stock }} en stock)</span>
                 <span v-else>Agotado</span>
               </div>
-              
+
               <!-- Entrega -->
               <div class="delivery-info">
                 <q-icon name="local_shipping" size="sm" />
                 <span>Envío <strong>GRATIS</strong> en compras superiores a $100.000</span>
               </div>
-              
+
               <!-- Devoluciones -->
               <div class="returns-info">
-                <q-icon 
-                  :name="dataProduct.acceptReturns === 'si' ? 'assignment_return' : 'block'" 
-                  size="sm" 
-                  :color="dataProduct.acceptReturns === 'si' ? 'positive' : 'negative'"
-                />
+                <q-icon :name="dataProduct.acceptReturns === 'si' ? 'assignment_return' : 'block'" size="sm"
+                  :color="dataProduct.acceptReturns === 'si' ? 'positive' : 'negative'" />
                 <span>
                   {{ dataProduct.acceptReturns === 'si' ? 'Devoluciones aceptadas' : 'No se aceptan devoluciones' }}
                 </span>
               </div>
-              
+
               <!-- Botones de acción -->
               <div class="action-buttons">
-                <q-btn
-                  label="Agregar al carrito"
-                  color="primary"
-                  icon="shopping_cart"
-                  class="full-width q-mb-sm"
-                  :disable="dataProduct.stock <= 0"
-                  @click="addToTheCart(dataProduct)"
-                />
-                
+                <q-btn label="Agregar al carrito" icon="shopping_cart" class="full-width q-mb-sm" @click="store.addToCart(dataProduct)"
+                  :disable="dataProduct.stock <= 0" />
+
               </div>
-              
+
               <!-- Notificaciones -->
               <div class="notification-preference">
                 <q-checkbox v-model="notifyMe" label="Recibir notificaciones sobre este producto" />
               </div>
             </q-card-section>
           </q-card>
-          
+
           <!-- Descripción del producto -->
           <q-card class="description-card">
             <q-card-section>
               <div class="text-h6">Descripción</div>
               <div class="product-description">
-                {{ dataProduct.description || 'No hay descripción disponible.' }}
+                <p>Marca: {{ dataProduct.brand || 'Generico' }} </p>
+                <p>Descripcion: {{  dataProduct.description || 'No hay descripción disponible.' }}</p>
+                <q-card-section v-if="dataProduct.details" v-for="element of getProductKeys(dataProduct.details)">
+                  <p>{{ element }} : {{ dataProduct.details[element] }}</p>
+                </q-card-section>
+                
               </div>
             </q-card-section>
           </q-card>
         </div>
       </div>
-      
+
       <!-- Productos relacionados -->
       <div class="related-products">
         <div class="text-h4 related-title">Productos similares</div>
-        
+
         <div class="products-grid">
-          <q-card
-            v-for="(producto, index) in productos"
-            :key="index"
-            class="product-card"
-            @click="verDetalleProducto(producto) ; scrollToTopInstant()"
-          >
-            <q-img
-              :src="producto.images[0]?.urlImage"
-              :ratio="1"
-              class="product-image"
-              spinner-color="primary"
-            >
+          <q-card v-for="(producto, index) in productos" :key="index" class="product-card"
+            @click="verDetalleProducto(producto); scrollToTopInstant()">
+            <q-img :src="producto.images[0]?.urlImage" :ratio="1" class="product-image" spinner-color="primary">
               <template v-slot:loading>
                 <q-spinner color="primary" />
               </template>
             </q-img>
-            
+
             <q-card-section>
               <div class="product-title">{{ producto.name }}</div>
               <div class="product-brand" v-if="producto.brand">{{ producto.brand }}</div>
-              
+
               <div class="product-rating">
-                <q-rating
-                  v-model="producto.averageRating"
-                  size="1em"
-                  color="orange"
-                  icon="star_border"
-                  icon-selected="star"
-                  readonly
-                />
+                <q-rating v-model="producto.averageRating" size="1em" color="orange" icon="star_border"
+                  icon-selected="star" readonly />
                 <span class="rating-value">{{ producto.averageRating?.toFixed(1) || 0 }}</span>
               </div>
-              
+
               <div class="product-price">{{ producto.price }}</div>
             </q-card-section>
-            
+
             <q-card-actions class="product-actions">
-              <q-btn
-                flat
-                color="primary"
-                icon="shopping_cart"
-                label="Agregar"
-                @click.stop="addToTheCart(producto)"
-              />
+              <q-btn flat color="primary" icon="shopping_cart" label="Agregar" @click.stop="store.addToCart(producto)" />
             </q-card-actions>
           </q-card>
         </div>
@@ -327,18 +242,18 @@ async function addToFavorites(productId) {
   try {
     // Verificar si el producto ya está en favoritos
     const alreadyFavorite = favorites.value.some(fav => fav.productId._id === productId);
-    
+
     if (alreadyFavorite) {
       console.log('El producto ya está en favoritos');
       return;
     }
-    
+
     // Hacer la petición POST al backend para crear el favorito
     const response = await postData('/favorites/create', {
       userId: store.userId,
       productId: productId
     });
-    
+
     // Si la petición es exitosa, recargar la lista de favoritos
     if (response.success || response.status === 200 || response.status === 201) {
       await loadFavorites(); // Función para recargar favoritos
@@ -347,6 +262,13 @@ async function addToFavorites(productId) {
   } catch (error) {
     console.error('Error al agregar a favoritos:', error);
   }
+}
+
+
+function getProductKeys(product){
+
+  console.log("objeto para claves", dataProduct.value.details);
+  return Object.keys(product)
 }
 
 
@@ -385,7 +307,7 @@ async function loadProductById(productId) {
         return;
       }
     }
-    
+
     // Si no está en el array, cárgalo desde la API
     const response = await getData(`/product/${productId}`);
     dataProduct.value = response.data;
@@ -426,29 +348,24 @@ async function initializeProduct() {
     await loadProductById(productId);
     return;
   }
-  
+
   // Si no hay ID, verificar si hay data (método anterior)
   const productData = route.query.data;
   if (productData) {
     obtainDataProduct();
     return;
   }
-  
+
   console.log("No se encontró ID ni data en la query");
 }
+const buttonColor = ref('primary');
 
-// Función para agregar al carrito
-const addToTheCart =async (producto) => {
-  const canProceed = await validateToken()
-  if(!canProceed) return
-
-  store.addToCart(producto)
-  Notify.create({
-    type: "positive",
-    message: "Producto agregado al carrito"
-  })
-  console.log('Agregado al carrito:', producto.name);
+async function colorButton() {
+  await addToFavorites(dataProduct.value._id);
+  buttonColor.value = 'red';
 }
+// Función para agregar al carrito
+
 
 const verDetalleProducto = (producto) => {
   router.push({
@@ -466,7 +383,7 @@ watch(
       loadProductById(newId);
       return;
     }
-    
+
     // Si cambió la data (método anterior)
     if (newData && newData !== oldData) {
       obtainDataProduct();
@@ -484,20 +401,20 @@ const selectImage = (index) => {
   selectedImage.value = dataProduct.value.images[index].urlImage
 }
 
-async function addReview(id){
+async function addReview(id) {
   try {
     const canProceed = await validateToken()
-    if(!canProceed) return ;
-    const response = await putData(`/product/reviews/${id}`,{
-      userId:store.userId,
-      stars:productQualification.value,
-      message:review.value
+    if (!canProceed) return;
+    const response = await putData(`/product/reviews/${id}`, {
+      userId: store.userId,
+      stars: productQualification.value,
+      message: review.value
     })
 
-    if(response){
+    if (response) {
       Notify.create({
-        type:'positive',
-        message:'Reseña guardada'
+        type: 'positive',
+        message: 'Reseña guardada'
       })
       dataProduct.value.reviews = response.product.reviews
       // Limpiar el formulario después de enviar
@@ -507,8 +424,8 @@ async function addReview(id){
   } catch (error) {
     console.log(error);
     Notify.create({
-      type:'negative',
-      message:'Error al crear reseña'
+      type: 'negative',
+      message: 'Error al crear reseña'
     })
   }
 }

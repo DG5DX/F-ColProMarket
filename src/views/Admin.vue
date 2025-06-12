@@ -131,6 +131,7 @@
         <q-card-section>
           <q-input v-model="dataProduct.name" label="Nombre del Producto" />
           <q-input v-model="dataProduct.description" label="Descripción" type="textarea" />
+          <q-input v-model="dataProduct.brand" label="Marca" type="textarea" />
           <q-input v-model="dataProduct.price" label="Precio" type="number" />
           <q-select filled dense v-model="dataProduct.category" :options="categories" option-label="name" map-options
             label="Seleccionar Categoria" clearable class="col" @clear="selectedCategory = null" />

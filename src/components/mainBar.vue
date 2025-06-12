@@ -133,7 +133,6 @@
             <q-route-tab label="FACTURAS" to="/invoice" exact />
             <q-route-tab label="REBAJAS" to="/sales" exact />
             <q-route-tab label="CONTACTO" to="/contact" exact />
-            <q-route-tab label="MOVIMIENTOS" to="/movements" exact />
 
           </q-tabs>
         </div>

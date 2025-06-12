@@ -48,7 +48,7 @@
                                         <!-- Columna de Imagen -->
                                         <div class="product-image-col">
                                             <q-img @click="sendProduct(product)"
-                                                :src="product.images[0].urlImage || '/api/placeholder/300/200'"
+                                                :src="product?.images[0].urlImage || '/api/placeholder/300/200'"
                                                 :ratio="1" class="product-image" spinner-color="var(--seven-color--)">
                                                 <q-badge v-if="product.discount" floating color="negative"
                                                     class="discount-badge">

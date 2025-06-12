@@ -23,7 +23,7 @@
               <q-card-section>
                 <div class="text-h6">Usuarios Activos</div>
                 <q-icon name="check_circle" size="md" class="metric-icon" />
-                <q-label class="text-h2">{{ dataUsers.active || 0 }}</q-label>
+                <q-label class="text-h2">{{ dataUsers.activeUsers || 0 }}</q-label>
               </q-card-section>
             </q-card>
 
@@ -32,7 +32,7 @@
               <q-card-section>
                 <div class="text-h6">Usuarios Inactivos</div>
                 <q-icon name="pause_circle" size="md" class="metric-icon" />
-                <q-label class="text-h2">{{ dataUsers.inactive || 0 }}</q-label>
+                <q-label class="text-h2">{{ dataUsers.inactiveUsers || 0 }}</q-label>
               </q-card-section>
             </q-card>
 
@@ -41,7 +41,7 @@
               <q-card-section>
                 <div class="text-h6">Administradores</div>
                 <q-icon name="admin_panel_settings" size="md" class="metric-icon" />
-                <q-label class="text-h2">{{ dataUsers.admins || 0 }}</q-label>
+                <q-label class="text-h2">{{ dataUsers.administrators || 0 }}</q-label>
               </q-card-section>
             </q-card>
           </div>
@@ -138,7 +138,7 @@
           </div>
 
           <q-table
-            :rows="dataUsers.data || []"
+            :rows="dataUsers.users || []"
             :columns="columns"
             row-key="id"
             flat
@@ -159,8 +159,8 @@
 
             <template v-slot:body-cell-estado="props">
               <q-td :props="props" class="q-table--cell-center">
-                <q-badge :color="props.row.active ? 'positive' : 'negative'">
-                  {{ props.row.active ? 'Activo' : 'Inactivo' }}
+                <q-badge :color="props.row.state ? 'positive' : 'negative'">
+                  {{ props.row.state ? 'Activo' : 'Inactivo' }}
                 </q-badge>
               </q-td>
             </template>
@@ -191,7 +191,7 @@
         <q-card-section class="q-gutter-md">
           <div class="flex flex-center">
             <q-avatar size="120px">
-              <q-img :src="selectedUser.avatar || 'default-avatar.png'" class="rounded-borders" />
+              <q-img src="/src/assets/userImage.avif" class="rounded-borders" />
             </q-avatar>
           </div>
           <div>
@@ -200,8 +200,8 @@
             <div><strong>Teléfono:</strong> {{ selectedUser.phone || 'No registrado' }}</div>
             <div><strong>Rol:</strong> {{ selectedUser.role === 'admin' ? 'Administrador' : 'Cliente' }}</div>
             <div><strong>Estado:</strong> 
-              <q-badge :color="selectedUser.active ? 'positive' : 'negative'">
-                {{ selectedUser.active ? 'Activo' : 'Inactivo' }}
+              <q-badge :color="selectedUser.state ? 'positive' : 'negative'">
+                {{ selectedUser.state ? 'Activo' : 'Inactivo' }}
               </q-badge>
             </div>
             <div><strong>Registrado el:</strong> {{ formatDate(selectedUser.createdAt) }}</div>
@@ -217,9 +217,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { Notify } from "quasar";
 import { getData, putData} from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
+import { showNotification } from "../utils/utils.js";
 
 const search = ref("");
 const roles = [
@@ -231,17 +231,17 @@ const roles = [
 const detailDialog = ref(false);
 
 // Datos
-const dataUsers = ref([]);
+const dataUsers = ref({});
 const selectedUser = ref({});
+
+
 
 // Columnas de la tabla
 const columns = [
   { name: "name", label: "Nombre", field: "name", align: "left", sortable: true },
   { name: "email", label: "Correo", field: "email", align: "left" },
-  { name: "role", label: "Rol", field: "role", align: "center", 
-    format: (val) => val === 'admin' ? 'Administrador' : 'Cliente' 
-  },
-  { name: "estado", label: "Estado", field: "active", align: "center" },
+  { name: "role", label: "Rol", field:(user) => user.role === 0 ? 'Administrador' : 'Cliente' , align: "center"},
+  { name: "estado", label: "Estado", field:(user)=> user.state === 1 ? 'Activo' :'Inactivo'  , align: "center" },
   { name: "createdAt", label: "Fecha Registro", field: "createdAt", align: "center", 
     format: (val) => formatDate(val) 
   },
@@ -249,11 +249,23 @@ const columns = [
 ];
 
 onMounted(() => {
-  getAllUsers();
+  GetDataUsers();
+  getAllCategories();
 });
 
-//Get usuarios
-async function getAllUsers() {
+  async function GetDataUsers(){
+  try {
+    const response = await getData("/users");
+    dataUsers.value = response;
+  } catch (error) {
+    showNotification('negative','Error cargando informacion de usuarios');
+    console.log("[dataUsers]",error);
+  }
+}
+
+
+
+async function getAllCategories() {
   try {
     const response = await getData("/categories");
     if (response.data.length > 0) {

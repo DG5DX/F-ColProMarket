@@ -65,11 +65,14 @@
                 </q-menu>
               </q-btn>
             </template>
+            <q-btn flat   class="full-width" icon="favorite"
+                    style="box-shadow: 0%;" @click="router.push('/favorite')" />
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
-                {{ store.cart.items.length }}
-              </q-badge>
+  <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
+    {{ store.cart.items.length }}
+  </q-badge>
             </q-btn>
+            
           </div>
 
           <!-- Versión compacta -->
@@ -89,6 +92,7 @@
                   </div>
                   <q-btn flat label="Administrar cuenta" class="full-width" icon="manage_accounts"
                     style="color: #1976D2;" @click="router.push('/userProfile')" />
+                    
 
                   <q-separator class="q-my-sm" />
 
@@ -171,7 +175,7 @@ async function favorite() {
 async function cart() {
   const canProceed = await validateToken()
   if (!canProceed) return
-  router.push('/cart');
+  router.push('/cart'); 
 }
 </script>
 

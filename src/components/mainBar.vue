@@ -14,22 +14,31 @@
         </div>
 
         <!-- Búsqueda - se adapta según el espacio -->
-        <div class="search-section">
-          <q-input 
-            v-model="searchQuery"
-            dense
-            standout
-            bg-color="white"
-            placeholder="Buscar..."
-            class="search-input"
-            input-class="text-black"
-            @keyup.enter="productsSearch()"
-          >
-            <template v-slot:prepend>
-              <q-icon name="search" class="cursor-pointer" />
-            </template>
-          </q-input>
-        </div>
+          <div class="search-section">
+            <q-input 
+              v-model="searchQuery"
+              dense
+              standout
+              bg-color="white"
+              placeholder="Buscar..."
+              class="search-input"
+              input-class="text-black"
+              @keyup.enter="productsSearch()"
+            >
+              <template v-slot:prepend>
+              </template>
+              <template v-slot:append>
+                <q-btn 
+                  flat 
+                  round 
+                  dense 
+                  icon="search" 
+                  @click="productsSearch()"
+                  class="search-btn"
+                />
+              </template>
+            </q-input>
+          </div>
 
         <!-- Acciones de usuario - se adaptan dinámicamente -->
         <div class="user-actions">
@@ -150,11 +159,14 @@ function toggleMobileMenu() {
 }
 
 function productsSearch() {
-  if (searchQuery.value.trim()) {
+  const query = searchQuery.value.trim();
+  if (query) {
     router.push({
       path: "/search",
-      query: { data: searchQuery.value }
+      query: { data: query }
     });
+  } else {
+    showNotification('warning', 'Por favor ingresa un término de búsqueda');
   }
 }
 

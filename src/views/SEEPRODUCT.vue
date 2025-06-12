@@ -211,7 +211,12 @@
             <q-card-section>
               <div class="text-h6">Descripción</div>
               <div class="product-description">
-                {{ dataProduct.description || 'No hay descripción disponible.' }}
+                <p>Marca: {{ dataProduct.brand || 'Generico' }} </p>
+                <p>Descripcion: {{  dataProduct.description || 'No hay descripción disponible.' }}</p>
+                <q-card-section v-if="dataProduct.details" v-for="element of getProductKeys(dataProduct.details)">
+                  <p>{{ element }} : {{ dataProduct.details[element] }}</p>
+                </q-card-section>
+                
               </div>
             </q-card-section>
           </q-card>
@@ -347,6 +352,13 @@ async function addToFavorites(productId) {
   } catch (error) {
     console.error('Error al agregar a favoritos:', error);
   }
+}
+
+
+function getProductKeys(product){
+
+  console.log("objeto para claves", dataProduct.value.details);
+  return Object.keys(product)
 }
 
 

@@ -33,43 +33,67 @@
     </q-carousel>
   </div>
   <div class="productos-wrapper">
-  <div class="productos row q-gutter-xl justify-start q-pa-xl">
-    <div 
-      v-for="(producto, index) in productos"
-      :key="index"
-      class="my-card card"
-      @click="verDetalleProducto(producto)"
-    >
-      <div class="card-img">
-        <div class="img">
-          <q-img
-            :src="producto.images[0].urlImage"
-            :alt="producto.name"
-            fit="cover"
-          >
-            <template v-slot:loading>
-              <q-spinner color="primary" />
-            </template>
-          </q-img>
+    <!-- Skeleton Loader -->
+    <div v-if="productos.length === 0" class="productos row q-gutter-xl justify-start q-pa-xl">
+      <div 
+        v-for="n in 8" 
+        :key="'skeleton-'+n"
+        class="my-card card skeleton-card"
+      >
+        <div class="card-img skeleton">
+          <div class="img skeleton"></div>
+        </div>
+        <div class="card-title skeleton"></div>
+        <div class="card-subtitle skeleton"></div>
+        <hr class="card-divider">
+        <div class="card-footer">
+          <div class="card-price skeleton"></div>
+          <button class="card-btn skeleton"></button>
         </div>
       </div>
-      <div class="card-title">{{ producto.name }}</div>
-      <div class="card-subtitle">{{ producto.description }}</div>
-      <hr class="card-divider">
-      <div class="card-footer">
-        <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
-        <button class="card-btn" @click.stop="addToTheCart(producto)">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
-            <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-            <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-            <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
-          </svg>
-        </button>
+    </div>
+
+    <!-- Productos reales -->
+    <div 
+      v-else
+      class="productos row q-gutter-xl justify-start q-pa-xl"
+    >
+      <div 
+        v-for="(producto, index) in productos"
+        :key="index"
+        class="my-card card"
+        @click="verDetalleProducto(producto)"
+      >
+        <div class="card-img">
+          <div class="img">
+            <q-img
+              :src="producto.images[0].urlImage"
+              :alt="producto.name"
+              fit="cover"
+            >
+              <template v-slot:loading>
+                <q-spinner color="primary" />
+              </template>
+            </q-img>
+          </div>
+        </div>
+        <div class="card-title">{{ producto.name }}</div>
+        <div class="card-subtitle">{{ producto.description }}</div>
+        <hr class="card-divider">
+        <div class="card-footer">
+          <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
+          <button class="card-btn" @click.stop="addToTheCart(producto)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
+              <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+              <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+              <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
       </div>
     </div>
     
@@ -83,12 +107,12 @@
       <div class="col-12 col-sm-6 col-md-3">
         <div class="footer-section animated-item animated-delay-1">
           <h3>Sobre Nosotros</h3>
-          <p>ColproMarket es tu destino online para encontrar los mejores productos colombianos con la mejor calidad y precio.</p>
+          <p>ColProductMarket es tu destino online para encontrar los mejores productos colombianos con la mejor calidad y precio.</p>
           <div class="social-icons">
-            <a href="#" class="social-icon facebook"><q-icon name="fa-brands fa-facebook" /></a>
-            <a href="#" class="social-icon twitter"><q-icon name="fa-brands fa-x-twitter" /></a>
-            <a href="#" class="social-icon instagram"><q-icon name="fa-brands fa-instagram" /></a>
-            <a href="#" class="social-icon youtube"><q-icon name="fa-brands fa-youtube" /></a>
+            <a href="https://facebook.com" target="_blank" class="social-icon facebook"><q-icon name="fa-brands fa-facebook" /></a>
+            <a href="https://twitter.com" target="_blank" class="social-icon twitter"><q-icon name="fa-brands fa-x-twitter" /></a>
+            <a href="https://instagram.com" target="_blank" class="social-icon instagram"><q-icon name="fa-brands fa-instagram" /></a>
+            <a href="https://youtube.com" target="_blank" class="social-icon youtube"><q-icon name="fa-brands fa-youtube" /></a>
           </div>
         </div>
       </div>
@@ -111,7 +135,7 @@
           <h3>Contacto</h3>
           <div class="footer-contact-item">
             <i class="q-icon material-icons">email</i>
-            <span>colpromarket@gmail.com</span>
+            <span>colproductmarket@gmail.com</span>
           </div>
           <div class="footer-contact-item">
             <i class="q-icon material-icons">phone</i>
@@ -138,7 +162,7 @@
 
     <!-- Sección Copyright -->
     <div class="copyright-section">
-      <p>&copy; 2025 ColproMarket. Todos los derechos reservados.</p>
+      <p>&copy; 2025 ColProductMarket. Todos los derechos reservados.</p>
       <div class="payment-methods">
         <q-icon name="fa-brands fa-cc-visa" size="24px" />
         <q-icon name="fa-brands fa-cc-mastercard" size="24px" />
@@ -160,12 +184,13 @@
     <q-card-section class="q-pt-none">
       <form class="form q-gutter-md">
         <div class="input-group">
-          <q-input v-model="user.name" label="Nombre" type="text" />
-          <q-input v-model="user.email" label="Correo Electronico" type="text" />
-          <q-input v-model="user.password" label="Contraseña" type="password" />
-          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" />
+          <q-input v-model="user.name" label="Nombre" type="text":rules="[val => !!val || 'El nombre es obligatorio']"/>
+          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El correo es obligatorio', val => /.+@.+\..+/.test(val) || 'Debe ser un correo válido']"/>
+          <q-input v-model="user.phone" label="Telefono" type="tel" :rules="[val => !!val || 'El teléfono es obligatorio', val => /^[0-9]{10,15}$/.test(val) || 'Teléfono no válido (10-15 dígitos)']" @keydown="onlyNumbers"/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules/>
+          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" :rules="[val => !!val || 'Confirma tu contraseña', val => val === user.password || 'Las contraseñas no coinciden']" lazy-rules/>
         </div>
-        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser()" />
+        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser()" :disable="!isRegisterFormValid"/>
         
         <!-- Enlace para cambiar a login -->
         <div class="text-center q-mt-md">
@@ -190,10 +215,10 @@
     <q-card-section class="q-pt-none">
       <form class="form q-gutter-md">
         <div class="input-group">
-          <q-input v-model="user.email" label="Correo Electronico" type="text" />
-          <q-input v-model="user.password" label="Contraseña" type="password" />
+          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El email es requerido', val => /.+@.+\..+/.test(val) || 'Email no válido']" lazy-rules/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']"lazy-rules/>
         </div>
-        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" />
+        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" :disable="!isLoginFormValid"/>
         
         <div>
         <!-- Cambiar contraseña-->
@@ -220,7 +245,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, toRaw } from 'vue'
+import { onMounted, computed, ref, toRaw } from 'vue'
 import { showNotification, validateToken, scrollToTopInstant } from '../utils/utils.js'
 import mainBar from '../components/mainBar.vue';
 import { getData, postData } from '../service/service'
@@ -249,10 +274,47 @@ const imagenesCarrusel = ref([
     alt: "Phantom HD"
   },
   {
-    src: new URL('../assets/Bryan.jpeg', import.meta.url).href,
+    src: "https://img.fcbayern.com/image/upload/f_auto,q_auto,w_1280/eCommerce/produkte/51116",
     alt: "Product Image"
   }
 ]);
+
+const onlyNumbers = (e) => {
+  // Permitir: teclas de control, números y teclado numérico
+  if (
+    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key) ||
+    (e.key >= '0' && e.key <= '9') ||
+    (e.key >= 'NumPad0' && e.key <= 'NumPad9')
+  ) {
+    return; // Permitir la entrada
+  }
+  e.preventDefault(); // Bloquear otros caracteres
+};
+
+// Validación para el formulario de login
+const isLoginFormValid = computed(() => {
+  return (
+    user.value.email && 
+    user.value.password && 
+    /.+@.+\..+/.test(user.value.email) && 
+    user.value.password.length >= 6
+  );
+});
+
+// Validación para el formulario de registro (ahora incluye teléfono)
+const isRegisterFormValid = computed(() => {
+  return (
+    user.value.name &&
+    user.value.email && 
+    user.value.phone &&
+    user.value.password && 
+    user.value.ConfirmPassword && 
+    /.+@.+\..+/.test(user.value.email) &&
+    /^[0-9]{10,15}$/.test(user.value.phone) &&
+    user.value.password.length >= 6 &&
+    user.value.password === user.value.ConfirmPassword
+  );
+});
 
 // Función para registrar usuario
 async function registerUser() {
@@ -273,6 +335,17 @@ async function registerUser() {
       Notify.create({
         type:'positive',
         message:'¡Cuenta creada con éxito! Inicia sesión para continuar.'
+      });
+
+      await postData("/email/welcome",{
+        to:response.user.email,
+        subject:'!Bienvenido a ColproMarket',
+        templateFile:'welcome.ejs',
+        data:{
+          userName:response.user.name,
+          dashboardLink:"https://backend-proyectofinal-vrso.onrender.com/userProfile",
+          currentYear:2025
+        }
       })
     }
 
@@ -297,14 +370,14 @@ async function login() {
     })
 
     store.save_Token(response.data.token)
-
     if(response.data.user.role === 0){
       router.push('/admin')
       showNotification('positive', `Hola ${response.data.user.name} ¡Bienvenido al panel de administración! Gestiona la tienda y las ventas.`)
     }else{
-    showNotification('postive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
+    showNotification('positive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
     }
     user.value = {}
+    await getUserInformation()
   } catch (error) {
     showNotification('negative', 'Inicio de sesion fallido')
     user.value = {}
@@ -315,6 +388,19 @@ async function login() {
     store.showLoginDialog = false
   }
 }
+
+
+async function getUserInformation(){
+  try {
+    const response = await getData(`/users/${store.userId}`)
+    store.userInformation = response.user
+    console.log("informacion de usuario encontrada", store.userInformation);
+  } catch (error) {
+    console.error('error getting user information',error)
+    store.userInformation = false
+  }
+}
+
 
 // Función para cargar productos
 async function products() {

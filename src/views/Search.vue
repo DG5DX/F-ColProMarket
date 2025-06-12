@@ -498,7 +498,7 @@ async function selectCategory(categoryId) {
     console.log("productos filtrados por categoria", response.data);
   } catch (error) {
     searchError.value = true
-    console.log("error al filtrar priductos por categoria", error);
+    console.log("error al filtrar productos por categoria", error);
     products.value = []
   }
 }

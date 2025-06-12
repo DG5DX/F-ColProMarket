@@ -46,12 +46,13 @@
                                     :style="{ borderLeft: `4px solid ${index % 2 === 0 ? 'var(--four-color--)' : 'var(--six-color--)'}` }">
                                     <div class="product-card-content">
                                         <!-- Columna de Imagen -->
-                                        <div  class="product-image-col">
-                                            <q-img @click="sendProduct(product)"  :src="product.images[0].urlImage || '/api/placeholder/300/200'"
+                                        <div class="product-image-col">
+                                            <q-img @click="sendProduct(product)"
+                                                :src="product?.images[0].urlImage || '/api/placeholder/300/200'"
                                                 :ratio="1" class="product-image" spinner-color="var(--seven-color--)">
                                                 <q-badge v-if="product.discount" floating color="negative"
                                                     class="discount-badge">
-                                                    -{{ product.discount }}%
+                                                    -{{ product.discountPercentage }}%
                                                 </q-badge>
                                             </q-img>
                                         </div>
@@ -77,12 +78,11 @@
                                                 </div>
 
                                                 <div class="product-price">
-                                                    <span class="current-price">
-                                                        {{ formatPrice(calculateTotalProduct(product.price,
-                                                            product.quantity, index)) }}
+                                                    <span v-if="product.offer" class="original-price">
+                                                        {{ product.price }}
                                                     </span>
-                                                    <span v-if="product.originalPrice" class="original-price">
-                                                        {{ formatPrice(product.originalPrice * product.quantity) }}
+                                                    <span class="current-price">
+                                                        {{ calculateTotalProduct(product, index) }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -91,9 +91,9 @@
                                         <!-- Columna de Controles -->
                                         <div class="product-controls-col">
                                             <div class="product-controls">
-                                                <q-input v-model="product.quantity" label="Cantidad" dense outlined
-                                                    class="quantity-select"
-                                                    @update:model-value="calculateTotalProduct(product.price, product.quantity, index)"
+                                                <q-input type="number" v-model="product.quantity" label="Cantidad" dense
+                                                    outlined class="quantity-select"
+                                                    @update:model-value="calculateTotalProduct(product, index)"
                                                     :style="{ borderColor: 'var(--four-color--)' }" />
 
                                                 <div class="product-actions">
@@ -143,11 +143,10 @@
                                             <q-img :src="product.images[0].urlImage || '/api/placeholder/300/200'"
                                                 :ratio="1" width="60px" spinner-color="var(--seven-color--)" />
                                         </div>
-                                        <div class="product-summary-info">
-                                            <div class="product-summary-name">{{ product.name }}</div>
-                                            <div class="product-summary-meta">
-                                                <span>{{ product.quantity }} x {{ formatPrice(product.price) }}</span>
-                                            </div>
+                                        <div class="product-price">
+                                            <span class="current-price">
+                                                {{ calculateTotalProduct(product, index) }}
+                                            </span>
                                         </div>
                                     </div>
 
@@ -162,7 +161,7 @@
                                 <div class="totals-container">
                                     <div class="total-row">
                                         <span>Subtotal ({{ getTotalItems() }} artículos)</span>
-                                        <span>{{ calculateTotalCart() }}</span>
+                                        <span>{{ formatNum(store.cart.subtotal) || 0 }}</span>
                                     </div>
                                     <div class="total-row">
                                         <span>Envío</span>
@@ -170,7 +169,7 @@
                                     </div>
                                     <div class="total-row">
                                         <span>Descuentos</span>
-                                        <span>{{ formatPrice(calculateDiscounts()) }}</span>
+                                        <span>{{ formatPrice(store.cart.discount || 0) }}</span>
                                     </div>
                                     <q-separator class="summary-separator" />
                                     <div class="total-row grand-total">
@@ -201,7 +200,7 @@
                             </q-card-section>
                         </q-card>
 
-  
+
                     </div>
                 </div>
             </q-page>
@@ -215,7 +214,7 @@ import { ref, toRaw } from 'vue'
 import { useStore } from '../stores/store'
 import { Notify, Dialog } from 'quasar';
 import { router } from '../routes/routes.js';
-import { reloadPage } from '../utils/utils.js';
+import { formatNum, reloadPage } from '../utils/utils.js';
 
 const store = useStore()
 const cart = ref(store.cart.items)
@@ -228,40 +227,57 @@ const formatPrice = (price) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price)
 }
 
-// Función para obtener el total de items
+// Función para obtener el total de items en el carrito
 const getTotalItems = () => {
     const countProducts = cart.value.reduce((sum, item) => {
         return sum + Number(item.quantity);
     }, 0);
-
     console.log("count", countProducts);
     return countProducts;
 };
 
 // Función para calcular el total del carrito
 const calculateTotalCart = () => {
-    const subtotal = cart.value.reduce((sum, item) => sum + item.total, 0)
-    store.cart.total = subtotal
-    return formatPrice(subtotal)
+    const subtotal = cart.value.reduce((sum, item) => sum + item.subtotal, 0)
+    const total = cart.value.reduce((sum, item) => sum + item.total, 0)
+    const discount = cart.value.reduce((sum, item) => sum + item.discount, 0)
+    store.cart.subtotal = subtotal
+    store.cart.total = total
+    store.cart.discount = discount
 }
 
 // Calcular total por producto
-const calculateTotalProduct = (price, quantity, index) => {
-    const validQuantity = quantity > 0 ? quantity : 1
-    const total = price * validQuantity
-    cart.value[index].total = total
-    return total
-}
+const calculateTotalProduct = (item, index) => {
+    const product = toRaw(item);
+    console.log("producto en funcion de calcular ", product);
+
+    let total;
+    let netPrice;
+    let discount = 0;
+
+    const validQuantity = product.quantity > 0 ? product.quantity : 1;
+
+    if (!product.offer) {
+        total = product.price * validQuantity;
+        netPrice = total;
+        discount = 0;
+    } else {
+        total = product.price * validQuantity;
+        netPrice = product.offerPrice * validQuantity;
+        discount = total - netPrice;
+    }
+
+    cart.value[index].subtotal = total
+    cart.value[index].total = netPrice;
+    cart.value[index].discount = discount;
+
+    console.log("precio neto", netPrice);
+    calculateTotalCart()
+    return formatPrice(netPrice);
+};
 
 // Calcular descuentos
-const calculateDiscounts = () => {
-    return cart.value.reduce((sum, item) => {
-        if (item.originalPrice) {
-            return sum + ((item.originalPrice - item.price) * item.quantity)
-        }
-        return sum
-    }, 0)
-}
+
 
 // Calcular total con descuentos
 const calculateGrandTotal = () => {
@@ -270,23 +286,7 @@ const calculateGrandTotal = () => {
     return subtotal - discount
 }
 
-// Aplicar cupón
-const applyCoupon = () => {
-    if (couponCode.value === 'PRIMERACOMPRA') {
-        appliedCoupon.value = { code: couponCode.value, discount: 10 }
-        Notify.create({
-            type: "positive",
-            message: "¡Cupón aplicado correctamente!",
-            position: 'top-right'
-        })
-    } else {
-        Notify.create({
-            type: "negative",
-            message: "Cupón no válido",
-            position: 'top-right'
-        })
-    }
-}
+
 
 // Eliminar producto del carrito
 const removeFromCart = (index) => {
@@ -326,10 +326,10 @@ const addToWishlist = (product) => {
     })
 }
 
-function sendProduct (product){
-      router.push({
-    path:"/seeproduct", query:{data:JSON.stringify(product)}
-  });
+function sendProduct(product) {
+    router.push({
+        path: "/seeproduct", query: { data: JSON.stringify(product) }
+    });
 }
 
 

@@ -45,12 +45,12 @@
               <q-btn flat round icon="person" class="action-btn">
                 <q-menu>
                   <div class="user-profile-menu q-pa-md">
-                    <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
+                    <div class="text-h6 text-center q-mt-sm">{{ store.userInformation.name || 'Usuario' }}</div>
                     <div class="column items-center q-mb-md">
                       <q-avatar size="70px" class="q-mb-sm">
                         <img :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
                       </q-avatar>
-                      <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.email || 'test@gmail.com' }}
+                      <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.userInformation.email || 'test@gmail.com' }}
                       </div>
                     </div>
 
@@ -65,11 +65,14 @@
                 </q-menu>
               </q-btn>
             </template>
+            <q-btn flat   class="full-width" icon="favorite"
+                    style="box-shadow: 0%;" @click="router.push('/favorite')" />
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
-                {{ store.cart.items.length }}
-              </q-badge>
+  <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
+    {{ store.cart.items.length }}
+  </q-badge>
             </q-btn>
+            
           </div>
 
           <!-- Versión compacta -->
@@ -79,7 +82,7 @@
             <q-btn flat round icon="person" class="action-btn" v-else>
               <q-menu>
                 <div class="user-profile-menu q-pa-md">
-                  <div class="text-h6 text-center q-mt-sm">{{ store.name || 'Usuario' }}</div>
+                  <div class="text-h6 text-center q-mt-sm">{{ store.userInformation.name || 'Usuario' }}</div>
                   <div class="column items-center q-mb-md">
                     <q-avatar size="70px" class="q-mb-sm">
                       <img :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
@@ -89,6 +92,7 @@
                   </div>
                   <q-btn flat label="Administrar cuenta" class="full-width" icon="manage_accounts"
                     style="color: #1976D2;" @click="router.push('/userProfile')" />
+                    
 
                   <q-separator class="q-my-sm" />
 
@@ -97,6 +101,9 @@
                 </div>
               </q-menu>
             </q-btn>
+
+
+
             <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
               <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
                 {{ store.cart.items.length }}
@@ -115,8 +122,10 @@
           <q-tabs align="left" class="categories-tabs" :breakpoint="0">
             <q-route-tab label="PRODUCTOS" to="/" exact />
             <q-route-tab label="FACTURAS" to="/invoice" exact />
-            <q-route-tab label="REBAJAS" to="/" exact />
+            <q-route-tab label="REBAJAS" to="/sales" exact />
             <q-route-tab label="CONTACTO" to="/contact" exact />
+            <q-route-tab label="MOVIMIENTOS" to="/movements" exact />
+
           </q-tabs>
         </div>
       </q-toolbar>
@@ -130,6 +139,7 @@ import { router } from '../routes/routes';
 
 import { useStore } from '../stores/store.js';
 import { showNotification, validateToken } from '../utils/utils.js';
+import FAVORITE from '../views/FAVORITE.vue';
 const store = useStore();
 
 const mobileMenuOpen = ref(false);
@@ -152,14 +162,20 @@ function closeSession() {
   store.token = null;
   store.userId = null;
   store.showRegister = true;
+  store.cart = {
+    items:[],
+    total:0
+}
   showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }
-
+async function favorite() {
+   router.push('/favorite');
+}
 async function cart() {
   const canProceed = await validateToken()
   if (!canProceed) return
-  router.push('/cart');
+  router.push('/cart'); 
 }
 </script>
 

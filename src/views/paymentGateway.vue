@@ -216,12 +216,12 @@
                 <div class="order-totals q-mt-lg">
                   <div class="row items-center q-py-sm">
                     <div class="col text-grey-7">Subtotal:</div>
-                    <div class="col text-right">{{ formatPrice(cartDetails.total) }}</div>
+                    <div class="col text-right">{{ formatPrice(cartDetails.subtotal) }}</div>
                   </div>
 
                   <div class="row items-center q-py-sm">
                     <div class="col text-grey-7">Descuento:</div>
-                    <div class="col text-right text-negative">-{{ formatPrice(10000) }}</div>
+                    <div class="col text-right text-negative">-{{ formatPrice(cartDetails.discount) }}</div>
                   </div>
 
                   <q-separator class="q-my-sm" />
@@ -229,7 +229,7 @@
                   <div class="row items-center q-py-sm">
                     <div class="col text-h6">Total:</div>
                     <div class="col text-right text-h6 text-primary">
-                      {{ formatPrice(cartDetails.total - 10000) }}
+                      {{ formatPrice(cartDetails.total) }}
                     </div>
                   </div>
                 </div>
@@ -556,7 +556,7 @@ async function updatePayment(id, status) {
 async function convertCurrency() {
   try {  //por el momento el descuento es estatico luego cuando se complete la logica de ofertas ay que arreglarlo
     const response = await postData(`/orders/convertCurrency`, {
-      discount: 10000,
+      discount:cartDetails.value.discount,
       items: toRaw(cartDetails.value.items)
     })
     paymentValues.value = response.data

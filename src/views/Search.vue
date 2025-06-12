@@ -434,7 +434,7 @@ async function cart() {
 async function userProfile() {
   const canProceed = await validateToken()
   if (!canProceed) return
-  window.location.href = 'http://localhost:5173/#/user-profile'
+  window.location.href = 'http://localhost:5173/#/userProfile'
 }
 
 function formatPrice(price) {

@@ -705,8 +705,10 @@
     </q-card-section>
 
     <q-card-actions align="right" class="bg-grey-2">
+      <q-btn label="Descargar" :loading="loadingDownloadInvoice" icon="print" color="primary" @click="downloadInvoice(selectedMovement)" />
       <q-btn label="Imprimir" icon="print" color="primary" @click="printInvoice" />
       <q-btn label="Cerrar" color="primary" flat v-close-popup />
+
     </q-card-actions>
   </q-card>
 </q-dialog>
@@ -717,13 +719,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useQuasar } from 'quasar';
+import { Loading, useQuasar } from 'quasar';
 import { useStore } from '../stores/store.js';
-import { getData, putData } from '../service/service';
+import { DownloadInvoicePdf, getData, postData, putData } from '../service/service';
 import { showNotification } from '../utils/utils';
 const store = useStore();
 const $q = useQuasar();
 
+const loadingDownloadInvoice = ref(false);  //estoy añadiendo loading a la funcion de descarga de pdf
 const invoiceDialog = ref(false);
 const selectedMovement = ref(null);
 
@@ -783,7 +786,7 @@ const getStatusColor = (status) => {
   }
 }; 
 
-// Datos estáticos del usuario
+// Datos del usuario
 const user = ref(store.userInformation);
 // Estado del drawer
 const leftDrawerOpen = ref(true);
@@ -1035,6 +1038,67 @@ async function dataMovements(){
   } catch (error) {
     showNotification('negative','Error cargando movimientos')
     console.log('error en movimientos', error);
+  }
+}
+
+async function downloadInvoice(dataInvoice){
+  try {
+    console.log("datos de factura", dataInvoice);
+    loadingDownloadInvoice.value = true
+    const response = await DownloadInvoicePdf('/invoice',{
+      data:dataInvoice
+    })
+
+    const blob = response.data;
+    console.log("Blob recibido:");
+    console.log("Tipo (MIME Type):", blob.type);
+    console.log("Tamaño (en bytes):", blob.size);
+    let filename = `factura-ColproMarket-${dataInvoice._id ? dataInvoice._id.substring(0, 8) : 'anon'}.pdf`; // Nombre por defecto más robusto
+    const contentDisposition = response.headers['content-disposition'];
+
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+      if (filenameMatch && filenameMatch[1]) {
+        filename = filenameMatch[1];
+      }
+    }
+
+    const url = window.URL.createObjectURL(blob); 
+    const a = document.createElement('a');     
+    a.style.display = 'none';
+    a.href = url;                             
+    a.download = filename;                      
+    document.body.appendChild(a);
+    a.click();                                   
+    document.body.removeChild(a);                
+    window.URL.revokeObjectURL(url);             
+
+    showNotification('positive', 'Factura descargada con éxito.');
+    console.log('Factura descargada con éxito!');
+
+  } catch (error) {
+    console.error('Error al descargar la factura:', error); 
+    
+    if (error.response && error.response.data instanceof Blob) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        try {
+          const errorJson = JSON.parse(reader.result);
+          showNotification('negative', errorJson.message || 'Error desconocido del servidor.');
+          console.error('Mensaje de error del servidor:', errorJson);
+        } catch (parseError) {
+          showNotification('negative', 'Ocurrió un error inesperado al procesar la respuesta del servidor.');
+          console.error('Error al parsear el mensaje de error del servidor:', parseError);
+        }
+      };
+      reader.readAsText(error.response.data); 
+    } else if (error.request) {
+      showNotification('negative', 'No se pudo conectar con el servidor. Revisa tu conexión a internet.');
+    } else {
+      showNotification('negative', 'Ocurrió un error al intentar generar la factura.');
+    }
+  } finally{
+    loadingDownloadInvoice.value = false;
   }
 }
 

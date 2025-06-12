@@ -22,6 +22,8 @@ export async function postData(url, data,){
     }
 }
 
+
+
 export async function putData(url, data) {
     try {
         console.log("data", toRaw(data));
@@ -30,5 +32,16 @@ export async function putData(url, data) {
     } catch (error) {
         console.error('error en la peticion PUT', error);
         throw error;    
+    }
+}
+
+export async function DownloadInvoicePdf(url, data,){
+    try {
+        console.log("data", toRaw(data));
+        const response = await client.post(url, data);
+        return response;
+    } catch (error){
+        console.error('Error en la peticion POST', error);
+        throw error;
     }
 }

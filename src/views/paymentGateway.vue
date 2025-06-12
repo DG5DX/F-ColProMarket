@@ -14,160 +14,26 @@
           <q-stepper v-model="step" header-nav flat bordered inactive-color="white" active-color="yellow"
             done-color="green" class="no-box-shadow bg-transparent text-white">
             <q-step :name="1" title="Informacion personal" icon="shopping_cart" :done="step > 1" />
-            <q-step :name="2" title="informacion producto" icon="person" :done="step > 2" :disable="step < 2" />
-            <q-step :name="3" title="Pago" icon="credit_card" :done="step > 3" :disable="step < 3" />
+            <q-step :name="2" title="informacion producto" icon="person" :done="step > 2" :disable="step < 1" />
+            <q-step :name="3" title="Pago" icon="credit_card" :done="step > 3" :disable="step < 2" />
             <q-step :name="4" title="Confirmación" icon="check_circle" />
           </q-stepper>
         </q-toolbar>
       </q-header>
 
- <div v-if="step === 1">
-  <q-page class="checkout-page">
-    <q-card>
-      <q-card-section>
-        <!-- Dirección de Envío -->
-        <q-card class="my-card q-mb-md">
-          <q-card-section class="bg-primary text-white flex justify-between items-center">
-            <div class="text-h6">Dirección de Envío</div>
-            <q-btn 
-              icon="edit" 
-              flat 
-              round 
-              dense 
-              color="white" 
-              @click="openAddressEditDialog"
-              title="Editar dirección"
-            />
-          </q-card-section>
-
-          <q-separator/>
-
-          <q-card-section>
-            <q-list bordered separator>
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>Calle</q-item-label>
-                  <q-item-label>{{ user.shippingAddress.street }}</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>Ciudad</q-item-label>
-                  <q-item-label>{{ user.shippingAddress.city }}</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>Estado/Provincia</q-item-label>
-                  <q-item-label>{{ user.shippingAddress.state }}</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>Código Postal</q-item-label>
-                  <q-item-label>{{ user.shippingAddress.zipCode !== 'N/A' ? user.shippingAddress.zipCode : 'No especificado' }}</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>País</q-item-label>
-                  <q-item-label>{{ user.shippingAddress.country }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-        </q-card>
-
-        <!-- Diálogo para editar dirección -->
-        <q-dialog v-model="addressEditDialog" persistent>
-          <q-card style="min-width: 70vw;">
-            <q-toolbar class="bg-primary text-white">
-              <q-toolbar-title>Editar Dirección de Envío</q-toolbar-title>
-              <q-btn flat round dense icon="close" v-close-popup />
-            </q-toolbar>
-
+      <div v-if="step === 1">
+        <q-page class="checkout-page">
+          <q-card>
             <q-card-section>
-              <q-form @submit="saveAddressInfo">
-                <div class="row q-col-gutter-md">
-                  <div class="col-12">
-                    <q-input
-                      v-model="editForm.shippingAddress.street"
-                      label="Calle y número"
-                      outlined
-                      lazy-rules
-                      :rules="[
-                        val => !!val || 'La calle es requerida',
-                        val => val.length >= 5 || 'Mínimo 5 caracteres'
-                      ]"
-                    />
-                  </div>
-
-                  <div class="col-12 col-sm-6">
-                    <q-select
-                      v-model="editForm.shippingAddress.state"
-                      :options="colombianStates"
-                      label="Departamento"
-                      outlined
-                      use-input
-                      @filter="filterStates"
-                      lazy-rules
-                      :rules="[val => !!val || 'El departamento es requerido']"
-                    />
-                  </div>
-
-                  <div class="col-12 col-sm-6">
-                    <q-select
-                      v-model="editForm.shippingAddress.city"
-                      :options="filteredCities"
-                      label="Ciudad"
-                      outlined
-                      use-input
-                      @filter="filterCities"
-                      lazy-rules
-                      :rules="[val => !!val || 'La ciudad es requerida']"
-                    />
-                  </div>
-
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="editForm.shippingAddress.zipCode"
-                      label="Código Postal"
-                      outlined
-                      mask="######"
-                      unmasked-value
-                      :rules="[
-                        val => !!val || 'El código postal es requerido',
-                        val => val.length === 6 || 'Deben ser 6 dígitos'
-                      ]"
-                    />
-                  </div>
-
-                  <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="editForm.shippingAddress.country"
-                      label="País"
-                      outlined
-                      readonly
-                    />
-                  </div>
-                </div>
-
-                <div class="q-mt-lg flex justify-end">
-                  <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
-                  <q-btn label="Guardar" type="submit" color="primary" />
-                </div>
-              </q-form>
+              <!-- Dirección de Envío -->
+              <q-card class="my-card q-mb-md">
+                <q-card-section class="bg-primary text-white flex justify-between items-center">
+                </q-card-section>
+              </q-card>
             </q-card-section>
           </q-card>
-        </q-dialog>
-      </q-card-section>
-    </q-card>
-  </q-page>
-</div>
+        </q-page>
+      </div>
 
       <div v-else-if="step === 2">
         <!-- Detalles pago -->
@@ -434,100 +300,6 @@ const renderPayPalButton = () => {
     }
   }).render(paypalRef.value)
 }
-
-// Datos de Colombia
-const allColombianStates = [
-  'Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bolívar', 
-  'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca', 
-  'Cesar', 'Chocó', 'Córdoba', 'Cundinamarca', 'Guainía', 
-  'Guaviare', 'Huila', 'La Guajira', 'Magdalena', 'Meta', 
-  'Nariño', 'Norte de Santander', 'Putumayo', 'Quindío', 
-  'Risaralda', 'San Andrés y Providencia', 'Santander', 'Sucre', 
-  'Tolima', 'Valle del Cauca', 'Vaupés', 'Vichada'
-];
-
-const allColombianCities = [
-  // Ciudades principales por departamento
-  // Amazonas
-  'Leticia', 'Puerto Nariño',
-  // Antioquia
-  'Medellín', 'Bello', 'Itagüí', 'Envigado', 'Rionegro',
-  // Atlántico
-  'Barranquilla', 'Soledad', 'Malambo', 'Sabanalarga',
-  // Bogotá (especial)
-  'Bogotá D.C.',
-  // Bolívar
-  'Cartagena', 'Magangué', 'Turbaco',
-  // Boyacá
-  'Tunja', 'Duitama', 'Sogamoso',
-  // Caldas
-  'Manizales', 'La Dorada', 'Chinchiná',
-  // Valle del Cauca
-  'Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago'
-];
-
-// En tu setup() o data()
-const addressEditDialog = ref(false);
-const colombianStates = ref(allColombianStates); // Asegúrate de tener definido allColombianStates
-const filteredCities = ref([]);
-
-// Métodos necesarios
-const openAddressEditDialog = () => {
-  editForm.value.shippingAddress = {
-    street: user.value.shippingAddress.street !== 'No especificado' ? user.value.shippingAddress.street : '',
-    city: user.value.shippingAddress.city !== 'No especificada' ? user.value.shippingAddress.city : '',
-    state: user.value.shippingAddress.state !== 'No especificado' ? user.value.shippingAddress.state : '',
-    zipCode: user.value.shippingAddress.zipCode !== 'N/A' ? user.value.shippingAddress.zipCode : '',
-    country: 'Colombia'
-  };
-  addressEditDialog.value = true;
-};
-
-const saveAddressInfo = () => {
-  user.value.shippingAddress.street = editForm.value.shippingAddress.street || 'No especificado';
-  user.value.shippingAddress.city = editForm.value.shippingAddress.city || 'No especificada';
-  user.value.shippingAddress.state = editForm.value.shippingAddress.state || 'No especificado';
-  user.value.shippingAddress.zipCode = editForm.value.shippingAddress.zipCode || 'N/A';
-  user.value.shippingAddress.country = 'Colombia';
-  
-  user.value.updatedAt = new Date().toISOString();
-  
-  $q.notify({
-    type: 'positive',
-    message: 'Dirección actualizada correctamente',
-    position: 'top'
-  });
-  
-  addressEditDialog.value = false;
-};
-
-// Filtros para departamentos y ciudades
-const filterStates = (val, update) => {
-  update(() => {
-    const needle = val.toLowerCase();
-    colombianStates.value = allColombianStates.filter(
-      v => v.toLowerCase().indexOf(needle) > -1
-    );
-  });
-};
-
-const filterCities = (val, update) => {
-  update(() => {
-    const needle = val.toLowerCase();
-    if (editForm.value.shippingAddress.state) {
-      filteredCities.value = allColombianCities.filter(
-        v => v.toLowerCase().indexOf(needle) > -1
-      );
-    } else {
-      filteredCities.value = allColombianCities.filter(
-        v => v.toLowerCase().indexOf(needle) > -1
-      );
-    }
-  });
-};
-
-
-
 async function savePendingPayment() {
   try {
     const response = await postData("/orders", {
@@ -540,8 +312,6 @@ async function savePendingPayment() {
     console.log("[Linea 203] Error en pagos", error);
   }
 }
-
-
 async function updatePayment(id, status) {
   try {
     paymentDetails.value.status = status
@@ -552,11 +322,10 @@ async function updatePayment(id, status) {
     return console.log('[linea 218] error actualizando pago pendiente', error);
   }
 }
-
 async function convertCurrency() {
   try {  //por el momento el descuento es estatico luego cuando se complete la logica de ofertas ay que arreglarlo
     const response = await postData(`/orders/convertCurrency`, {
-      discount:cartDetails.value.discount,
+      discount: cartDetails.value.discount,
       items: toRaw(cartDetails.value.items)
     })
     paymentValues.value = response.data

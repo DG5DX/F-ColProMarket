@@ -374,16 +374,16 @@
         </template>
 
         <!-- Botón flotante para mostrar/ocultar el drawer en pantallas pequeñas -->
-        <q-page-sticky position="bottom-right" :offset="[18, 18]">
-          <q-btn
-            color="primary"
-            :icon="leftDrawerOpen ? 'close' : 'menu'"
-            round
-            @click="leftDrawerOpen = !leftDrawerOpen"
-            title="Mostrar/Ocultar menú"
-            v-if="$q.screen.lt.md"
-          />
-        </q-page-sticky>
+<q-page-sticky position="bottom-right" :offset="[18, 18]">
+  <q-btn
+    color="primary"
+    :icon="leftDrawerOpen ? 'close' : 'menu'"
+    round
+    @click="leftDrawerOpen = !leftDrawerOpen"
+    title="Mostrar/Ocultar menú"
+    v-if="$q.screen.width < 700"
+  />
+</q-page-sticky>
 
         <!-- Diálogo de edición de datos personales -->
         <q-dialog v-model="personalEditDialog" persistent>
@@ -479,7 +479,7 @@
 
                 <div class="q-mt-lg flex justify-end">
                   <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
-                  <q-btn label="Guardar" type="submit" color="primary" />
+                  <q-btn label="Guardar" type="submit" color="primary" @keyup.enter="savePersonalInfo"/>
                 </div>
               </q-form>
             </q-card-section>
@@ -566,7 +566,7 @@
 
                 <div class="q-mt-lg flex justify-end">
                   <q-btn label="Cancelar" color="negative" flat v-close-popup class="q-mr-sm" />
-                  <q-btn label="Guardar" type="submit" color="primary" />
+                  <q-btn label="Guardar" type="submit" color="primary" @keyup.enter="saveAddressInfo"/>
                 </div>
               </q-form>
             </q-card-section>
@@ -705,7 +705,7 @@
     </q-card-section>
 
     <q-card-actions align="right" class="bg-grey-2">
-      <q-btn label="Descargar" :loading="loadingDownloadInvoice" icon="print" color="primary" @click="downloadInvoice(selectedMovement)" />
+      <q-btn label="Descargar" :loading="loadingDownloadInvoice" icon="download" color="negative" @click="downloadInvoice(selectedMovement)" />
       <q-btn label="Imprimir" icon="print" color="primary" @click="printInvoice" />
       <q-btn label="Cerrar" color="primary" flat v-close-popup />
 
@@ -825,7 +825,7 @@ const allColombianCities = [
   'Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago',
   //Santander
   'Bucaramanga', 'San gil'
-];
+
 
 const colombianStates = ref([...allColombianStates]);
 const filteredCities = ref([...allColombianCities]);

@@ -63,6 +63,7 @@
             <q-select
               filled
               dense
+              v-model="statusFilter"
               :options="['Activos', 'Inactivos', 'Administradores', 'Clientes']"
               label="Filtrar por estado"
               clearable
@@ -73,6 +74,7 @@
             <q-input
               filled
               dense
+              v-model="dateFrom"
               label="Fecha desde"
               type="date"
               class="col"
@@ -82,6 +84,7 @@
             <q-input
               filled
               dense
+              v-model="dateTo"
               label="Fecha hasta"
               type="date"
               class="col"
@@ -91,6 +94,7 @@
             <q-select
               filled
               dense
+              v-model="sortBy"
               label="Ordenar por"
               class="col"
               style="min-width: 200px"
@@ -104,6 +108,7 @@
                 dense
                 class="q-ml-sm"
                 style="height: 40px"
+                @click="applyFilters"
               />
               <q-btn
                 label="Limpiar Filtros"
@@ -111,6 +116,7 @@
                 outline
                 dense
                 style="height: 40px"
+                @click="clearFilters"
               />
             </div>
           </div>
@@ -179,7 +185,7 @@
                 />
 
                 <q-btn v-if="props.row.state === 1" 
-                  icon="check_circle" 
+                  :icon="props.row.state ? 'close' : 'check'"
                   flat dense 
                   title="Desactivar usuario"
                   color="negative" 
@@ -338,7 +344,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { getData, putData} from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
 import { showNotification } from "../utils/utils.js";
@@ -348,6 +354,88 @@ const roles = [
   { label: 'Administrador', value: 'admin' },
   { label: 'Cliente', value: 'client' }
 ];
+
+// Filtros
+const statusFilter = ref(null);
+const dateFrom = ref(null);
+const dateTo = ref(null);
+const sortBy = ref(null);
+const appliedFilters = ref(false);
+
+// Función para aplicar los filtros
+const applyFilters = () => {
+  appliedFilters.value = true;
+  GetDataUsers(); // Vuelve a cargar los usuarios con los filtros aplicados
+};
+
+// Función para limpiar los filtros
+const clearFilters = () => {
+  statusFilter.value = null;
+  dateFrom.value = null;
+  dateTo.value = null;
+  sortBy.value = null;
+  appliedFilters.value = false;
+  GetDataUsers(); // Vuelve a cargar los usuarios sin filtros
+};
+
+// Función para filtrar los usuarios localmente (opcional)
+const filteredUsers = computed(() => {
+  if (!appliedFilters.value) return dataUsers.value.users || [];
+  
+  return (dataUsers.value.users || []).filter(user => {
+    // Filtro por estado
+    if (statusFilter.value === 'Activos' && !user.state) {
+      return false;
+    }
+    if (statusFilter.value === 'Inactivos' && user.state) {
+      return false;
+    }
+    if (statusFilter.value === 'Administradores' && user.role !== 0) {
+      return false;
+    }
+    if (statusFilter.value === 'Clientes' && user.role !== 1) {
+      return false;
+    }
+    
+    // Filtro por fecha
+    if (dateFrom.value) {
+      const userDate = new Date(user.createdAt);
+      const fromDate = new Date(dateFrom.value);
+      if (userDate < fromDate) {
+        return false;
+      }
+    }
+    
+    if (dateTo.value) {
+      const userDate = new Date(user.createdAt);
+      const toDate = new Date(dateTo.value);
+      if (userDate > toDate) {
+        return false;
+      }
+    }
+    
+    return true;
+  }).sort((a, b) => {
+    // Ordenar los resultados
+    if (!sortBy.value) return 0;
+    
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    
+    switch (sortBy.value) {
+      case 'Más recientes':
+        return dateB - dateA;
+      case 'Más antiguos':
+        return dateA - dateB;
+      case 'Nombre (A-Z)':
+        return a.name.localeCompare(b.name);
+      case 'Nombre (Z-A)':
+        return b.name.localeCompare(a.name);
+      default:
+        return 0;
+    }
+  });
+});
 
 // Diálogos
 const detailDialog = ref(false);
@@ -403,10 +491,57 @@ onMounted(() => {
 /*   getAllCategories(); */
 });
 
-  async function GetDataUsers(){
+async function GetDataUsers() {
   try {
-    const response = await getData("/users");
+    let url = "/users";
+    const params = [];
+    
+    if (appliedFilters.value) {
+      if (statusFilter.value === 'Activos') {
+        params.push(`state=1`);
+      } else if (statusFilter.value === 'Inactivos') {
+        params.push(`state=0`);
+      } else if (statusFilter.value === 'Administradores') {
+        params.push(`role=0`);
+      } else if (statusFilter.value === 'Clientes') {
+        params.push(`role=1`);
+      }
+      
+      if (dateFrom.value) {
+        params.push(`dateFrom=${dateFrom.value}`);
+      }
+      if (dateTo.value) {
+        params.push(`dateTo=${dateTo.value}`);
+      }
+      
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
+      }
+    }
+    
+    const response = await getData(url);
     dataUsers.value = response;
+    
+    // Aplicar ordenamiento local si es necesario
+    if (appliedFilters.value && sortBy.value) {
+      dataUsers.value.users = dataUsers.value.users.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        
+        switch (sortBy.value) {
+          case 'Más recientes':
+            return dateB - dateA;
+          case 'Más antiguos':
+            return dateA - dateB;
+          case 'Nombre (A-Z)':
+            return a.name.localeCompare(b.name);
+          case 'Nombre (Z-A)':
+            return b.name.localeCompare(a.name);
+          default:
+            return 0;
+        }
+      });
+    }
   } catch (error) {
     showNotification('negative','Error cargando informacion de usuarios');
     console.log("[dataUsers]",error);

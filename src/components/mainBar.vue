@@ -122,7 +122,6 @@
         <div class="categories-container">
           <q-tabs align="left" class="categories-tabs" :breakpoint="0">
             <q-route-tab label="PRODUCTOS" to="/" exact />
-            <q-route-tab label="FACTURAS" to="/invoice" exact />
             <q-route-tab label="REBAJAS" to="/sales" exact />
             <q-route-tab label="CONTACTO" to="/contact" exact />
 

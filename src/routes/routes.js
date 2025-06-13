@@ -6,7 +6,6 @@ import AdminCategory from "../views/AdminCategory.vue"
 import AdminUsers from "../views/AdminUsers.vue"
 import AdminInventory from "../views/AdminInventory.vue"
 import userProfile from "../views/userProfile.vue"
-import invoice from "../components/invoice.vue"
 import Contact from "../views/Contact.vue"
 import changePassword from "../components/changePassword.vue"
 import AdminSales from "../views/AdminSales.vue"
@@ -28,7 +27,6 @@ const routes = [
   { path: '/gateway', component: PaymentGateway },
   { path: '/search', component: Search },
   { path: '/sales', component: sales },
-  { path:'/invoice' , component:invoice},
   { path:'/contact', component: Contact},
   { path:'/favorite',component: Favorite},
   {path:'/userProfile', component:userProfile},

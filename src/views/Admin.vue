@@ -464,21 +464,77 @@
 
     <!-- Diálogo Editar -->
     <q-dialog v-model="editDialog" persistent>
-      <q-card style="min-width: 400px" @keyup.enter="updateProduct">
-        <q-card-section class="text-h6 text-warning">Editar Producto</q-card-section>
-        <q-separator />
-        <q-card-section class="q-gutter-md">
-          <q-input v-model="productEdit.name" label="Nombre del Producto" />
-          <q-input v-model="productEdit.description" label="Descripción" type="textarea" />
-          <q-input v-model="productEdit.price" label="Precio" type="number" />
-          <q-input v-model="productEdit.images" label="URL de Imagen" disable />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn flat label="Guardar Cambios" color="primary" :loading="loadingEditButton" @click="updateProduct" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+  <q-card class="edit-product-card">
+    <q-card-section class="edit-product-header">
+      <div class="header-content">
+        <q-icon name="edit" size="24px" class="header-icon" />
+        <span class="header-title">Editar Producto</span>
+      </div>
+    </q-card-section>
+    
+    <q-separator class="custom-separator" />
+    
+    <q-card-section class="edit-product-form" @keyup.enter="updateProduct">
+      <div class="form-container">
+        <q-input 
+          v-model="productEdit.name" 
+          label="Nombre del Producto"
+          class="custom-input"
+          outlined
+          :rules="[val => !!val || 'El nombre es requerido']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="inventory" />
+          </template>
+        </q-input>
+        
+        <q-input 
+          v-model="productEdit.description" 
+          label="Descripción" 
+          type="textarea"
+          class="custom-input"
+          outlined
+          rows="3"
+          counter
+          maxlength="500"
+        >
+          <template v-slot:prepend>
+            <q-icon name="description" />
+          </template>
+        </q-input>
+        
+        <q-input 
+          v-model="productEdit.price" 
+          label="Precio" 
+          type="number"
+          class="custom-input"
+          outlined
+          prefix="$"
+          :rules="[val => val > 0 || 'El precio debe ser mayor a 0']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="attach_money" />
+          </template>
+        </q-input>
+      </div>
+    </q-card-section>
+    
+    <q-card-actions class="edit-product-actions">
+      <q-btn 
+        flat 
+        label="Cancelar" 
+        class="cancel-btn"
+        v-close-popup 
+      />
+      <q-btn 
+        label="Guardar Cambios" 
+        class="save-btn"
+        :loading="loadingEditButton" 
+        @click="updateProduct"
+      />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
   </q-layout>
 </template>
 

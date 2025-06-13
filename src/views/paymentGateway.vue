@@ -227,7 +227,9 @@
               <div class="text-h5 q-mb-md">¡Tu pedido ha sido procesado con éxito!</div>
               <p class="text-grey-7">Recibirás una confirmación por correo electrónico con los detalles de tu compra.
               </p>
-              <q-btn color="primary" label="Volver a la tienda" @click="router.push('/')" class="q-mt-lg" />
+              <q-btn style="margin-left: 2%;" color="primary" label="Volver a la tienda" @click="router.push('/')" class="q-mt-lg" />
+              <q-btn color="primary" label="Ir a movimientos" @click="router.push('/userProfile')" class="q-mt-lg" />
+
             </div>
             <q-stepper-navigation>
               <q-btn flat @click="step = 3" color="primary" label="Atrás" class="q-ml-sm" />

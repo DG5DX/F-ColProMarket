@@ -15,7 +15,7 @@
                 <div class="text-h6">Ventas Totales</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="paid" size="md" class="metric-icon" />
-                <q-label class="text-h2">{{ salesData.totalSales || 0 }}</q-label>
+                <q-label class="text-h2">{{ salesData.count || 0 }}</q-label>
               </q-card-section>
             </q-card>
 
@@ -25,7 +25,7 @@
                 <div class="text-h6">Ingresos Totales</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="attach_money" size="md" class="metric-icon" />
-                <q-label class="text-h2">${{ salesData.totalRevenue || 0 }}</q-label>
+                <q-label class="text-h2">${{ formatNum(salesData.totalIncome) || 0 }}</q-label>
               </q-card-section>
             </q-card>
 
@@ -35,19 +35,19 @@
                 <div class="text-h6">Ventas Hoy</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="today" size="md" class="metric-icon" />
-                <q-label class="text-h2">{{ salesData.todaySales || 0 }}</q-label>
+                <q-label class="text-h2">{{ salesData.salesToday || 0 }}</q-label>
               </q-card-section>
             </q-card>
 
             <!-- Clientes Nuevos -->
-            <q-card class="col metric-card bg-purple-1">
+    <!--         <q-card class="col metric-card bg-purple-1">
               <q-card-section>
                 <div class="text-h6">Clientes Nuevos</div>
                 <div class="text-h4 text-weight-bold"></div>
                 <q-icon name="person_add" size="md" class="metric-icon" />
                 <q-label class="text-h2">{{ salesData.newCustomers || 0 }}</q-label>
               </q-card-section>
-            </q-card>
+            </q-card> -->
           </div>
         </q-card>
 
@@ -198,8 +198,8 @@
 
             <template v-slot:body-cell-estado="props">
               <q-td :props="props" class="q-table--cell-center">
-                <q-badge :color="getStatusColor(props.row.estado)">
-                  {{ props.row.estado }}
+                <q-badge :color="getStatusColor(props.row.state)">
+                  {{ props.row.state }}
                 </q-badge>
               </q-td>
             </template>
@@ -207,8 +207,6 @@
             <template v-slot:body-cell-acciones="props">
               <q-td :props="props" class="q-table--cell-center">
                 <q-btn icon="print" flat dense color="grey" @click="printInvoice(props.row)" />
-                <q-btn icon="edit" flat dense color="warning" @click="editSale(props.row)" class="q-ml-sm" />
-                <q-btn icon="cancel" flat dense color="negative" @click="cancelSale(props.row)" class="q-ml-sm" />
               </q-td>
             </template>
           </q-table>
@@ -219,28 +217,23 @@
     <!-- Diálogo Detalles de Venta -->
     <q-dialog v-model="saleDetailDialog" persistent>
       <q-card class="q-pa-md" style="min-width: 500px; max-width: 700px">
-        <q-card-section class="text-h6 text-primary">Detalle de Venta #{{ selectedSale.id }}</q-card-section>
+        <q-card-section class="text-h6 text-primary">Detalle de Venta #{{ selectedSale._id }}</q-card-section>
         <q-separator />
         
         <q-card-section>
           <div class="row q-mb-sm">
-            <div class="col-6"><strong>Fecha:</strong> {{ selectedSale.fecha }}</div>
-            <div class="col-6"><strong>Estado:</strong> 
-              <q-badge :color="getStatusColor(selectedSale.estado)">
-                {{ selectedSale.estado }}
-              </q-badge>
-            </div>
+            <div class="col-6"><strong>Fecha:</strong> {{ formatISODateToSpanish(selectedSale.createdAt) }}</div>
           </div>
           
           <div class="row q-mb-sm">
-            <div class="col-6"><strong>Cliente:</strong> {{ selectedSale.cliente }}</div>
-            <div class="col-6"><strong>Método de Pago:</strong> {{ selectedSale.metodoPago }}</div>
+            <div class="col-6"><strong>Cliente:</strong> {{ selectedSale?.userId?.name }}</div>
+            <div class="col-6"><strong>Método de Pago:</strong>Paypal</div>
           </div>
           
           <div class="q-mt-md">
             <strong>Productos:</strong>
             <q-table
-              :rows="selectedSale.productos"
+              :rows="selectedSale.products"
               :columns="productColumns"
               row-key="id"
               flat
@@ -252,10 +245,10 @@
           </div>
           
           <div class="text-right q-mt-md">
-            <div><strong>Subtotal:</strong> ${{ selectedSale.subtotal }}</div>
-            <div><strong>Descuentos:</strong> ${{ selectedSale.descuentos || 0 }}</div>
-            <div><strong>IVA:</strong> ${{ selectedSale.iva }}</div>
-            <div class="text-h6"><strong>Total:</strong> ${{ selectedSale.total }}</div>
+            <!-- <div><strong>Subtotal:</strong> ${{ selectedSale.subtotal }}</div> -->
+            <!-- <div><strong>Descuentos:</strong> ${{ selectedSale.descuentos || 0 }}</div> -->
+            <div><strong>IVA:</strong> {{ selectedSale?.iva || 'No aplica' }}</div>
+            <div class="text-h6"><strong>Total:</strong> ${{ formatNum(selectedSale.total) }}</div>
           </div>
         </q-card-section>
         
@@ -269,30 +262,30 @@
     <!-- Diálogo Editar Venta -->
     <q-dialog v-model="editSaleDialog" persistent>
       <q-card style="min-width: 500px">
-        <q-card-section class="text-h6 text-warning">Editar Venta #{{ saleToEdit.id }}</q-card-section>
+        <q-card-section class="text-h6 text-warning">Editar Venta #{{ saleToEdit._id }}</q-card-section>
         <q-separator />
         
         <q-card-section class="q-gutter-md">
           <q-select
             filled
-            v-model="saleToEdit.estado"
+            v-model="saleToEdit.state"
             :options="['Completada', 'Pendiente', 'Cancelada']"
             label="Estado"
           />
           
-          <q-select
+<!--           <q-select
             filled
             v-model="saleToEdit.metodoPago"
             :options="['Efectivo', 'Tarjeta', 'Transferencia', 'Otro']"
             label="Método de Pago"
-          />
+          /> -->
           
-          <q-input
+  <!--         <q-input
             filled
             v-model="saleToEdit.notas"
             label="Notas adicionales"
             type="textarea"
-          />
+          /> -->
         </q-card-section>
         
         <q-card-actions align="right">
@@ -309,14 +302,10 @@ import { ref, onMounted } from "vue";
 import { Notify } from "quasar";
 import { getData, postData } from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
+import { formatISODateToSpanish, formatNum, showNotification } from "../utils/utils.js";
 
 const search = ref("");
 const salesData = ref({
-  totalSales: 1250,
-  totalRevenue: 58420.50,
-  todaySales: 24,
-  newCustomers: 8,
-  data: []
 });
 
 const filters = ref({
@@ -326,34 +315,27 @@ const filters = ref({
   customer: null
 });
 
-const customers = ref([
-  { id: 1, name: "Juan Pérez" },
-  { id: 2, name: "María García" },
-  { id: 3, name: "Empresa XYZ" }
-]);
 
 const selectedPeriod = ref("Este mes");
 const periodOptions = ["Hoy", "Esta semana", "Este mes", "Este año", "Personalizado"];
 
 // Columnas de la tabla de ventas
 const salesColumns = [
-  { name: "id", label: "ID", field: "id", align: "center" },
-  { name: "fecha", label: "Fecha", field: "fecha", align: "center" },
-  { name: "cliente", label: "Cliente", field: "cliente", align: "center" },
-  { name: "productos", label: "Productos", field: row => row.productos.length, align: "center" },
-  { name: "total", label: "Total", field: "total", align: "center", format: val => `$${val}` },
-  { name: "metodoPago", label: "Método Pago", field: "metodoPago", align: "center" },
-  { name: "estado", label: "Estado", field: "estado", align: "center" },
+  { name: "fecha", label: "Fecha", field:(sale)=>formatISODateToSpanish(sale.createdAt), align: "center" },
+  { name: "cliente", label: "Cliente", field: (sale)=> sale.userId?.name || 'User', align: "center" },
+  { name: "productos", label: "Productos", field: row => row.products.length, align: "center" },
+  { name: "total", label: "Total", field: (sale)=> formatNum(sale.total), align: "center", format: val => `$${val}` },
+  { name: "metodoPago", label: "Método Pago", field: (sale)=> 'Paypal', align: "center" },
   { name: "detalles", label: "Detalles", align: "center" },
   { name: "acciones", label: "Acciones", align: "center" }
 ];
 
 // Columnas para los productos en el detalle
 const productColumns = [
-  { name: "nombre", label: "Producto", field: "nombre", align: "left" },
-  { name: "cantidad", label: "Cantidad", field: "cantidad", align: "center" },
-  { name: "precio", label: "Precio Unit.", field: "precio", align: "right", format: val => `$${val}` },
-  { name: "subtotal", label: "Subtotal", field: row => row.cantidad * row.precio, align: "right", format: val => `$${val}` }
+  { name: "nombre", label: "Producto", field: "name", align: "left" },
+  { name: "cantidad", label: "Cantidad", field: "quantity", align: "center" },
+  { name: "precio", label: "Precio Unit.", field: (product)=> formatNum(product.price), align: "right", format: val => `$${val}` },
+  { name: "subtotal", label: "Subtotal", field: row => formatNum(row.quantity * row.price), align: "right", format: val => `$${val}` }
 ];
 
 // Diálogos
@@ -366,42 +348,16 @@ onMounted(() => {
   loadSalesData();
 });
 
-function loadSalesData() {
-  // Datos de ejemplo - en tu caso harías una llamada API
-  salesData.value.data = [
-    {
-      id: "V-1001",
-      fecha: "2023-05-15",
-      cliente: "Juan Pérez",
-      productos: [
-        { id: 1, nombre: "Laptop HP", cantidad: 1, precio: 1200 },
-        { id: 2, nombre: "Mouse inalámbrico", cantidad: 2, precio: 25 }
-      ],
-      subtotal: 1250,
-      descuentos: 50,
-      iva: 200,
-      total: 1400,
-      metodoPago: "Tarjeta",
-      estado: "Completada",
-      notas: ""
-    },
-    {
-      id: "V-1002",
-      fecha: "2023-05-16",
-      cliente: "María García",
-      productos: [
-        { id: 3, nombre: "Teclado mecánico", cantidad: 1, precio: 80 },
-        { id: 4, nombre: "Monitor 24\"", cantidad: 1, precio: 180 }
-      ],
-      subtotal: 260,
-      descuentos: 0,
-      iva: 41.6,
-      total: 301.6,
-      metodoPago: "Transferencia",
-      estado: "Pendiente",
-      notas: "Entrega programada para viernes"
-    }
-  ];
+//salesData
+async function loadSalesData() {
+  try {
+    const response = await getData("/orders");
+    salesData.value = response;
+    return showNotification('positive','Datos de ventas cargados')
+  } catch (error) {
+    console.log("[loadSalesData]", error);
+    return showNotification('negative','Error cargando datos de ventas')
+  }
 }
 
 function getStatusColor(status) {

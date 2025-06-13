@@ -81,3 +81,19 @@ export function formatNum(value) {
   return formatter.format(value);
 }
 
+export function formatISODateToSpanish(dateString) {
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    console.error("Error: Cadena de fecha inválida proporcionada:", dateString);
+    return "Fecha inválida";
+  }
+
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  };
+
+  return new Intl.DateTimeFormat('es-ES', options).format(date);
+}

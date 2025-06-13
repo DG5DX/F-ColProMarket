@@ -174,6 +174,8 @@ import { useQuasar } from 'quasar'
 import mainBar from '../components/mainBar.vue'
 import { getData } from '../service/service'
 import { showNotification } from '../utils/utils'
+import { useStore } from '../stores/store'
+const store = useStore();
 
 const $q = useQuasar()
 
@@ -275,6 +277,9 @@ const clearFilters = () => {
 }
 
 const addToCart = (product) => {
+    
+    store.addToCart(product)
+
     $q.notify({
         color: 'positive',
         message: `${product.name} agregado al carrito`,

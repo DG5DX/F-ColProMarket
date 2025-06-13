@@ -2,14 +2,15 @@
   <q-layout>
     <q-page-container>
       <q-page class="custom-page">
-              <q-btn 
-        icon="arrow_back" 
-        flat 
-        round 
-        dense 
-        class="back-btn"
-        @click="$router.go(-1)"
-      />
+        <q-btn
+          icon="arrow_back"
+          flat
+          round
+          dense
+          class="back-btn"
+          @click="$router.go(-1)"
+        />
+
         <div class="row q-col-gutter-md">
           <!-- Sección principal -->
           <div class="col-12">
@@ -66,7 +67,7 @@
               </q-card-section>
             </q-card>
 
-            <!-- Equipo -->
+            <!-- Nuestro equipo -->
             <q-card class="content-card q-mt-md">
               <q-card-section>
                 <div class="section-title">Nuestro equipo</div>
@@ -74,16 +75,21 @@
                   <div class="team-member" v-for="member in team" :key="member.id">
                     <q-card class="member-card">
                       <div class="member-avatar-container">
-                        <q-img :src="member.avatar" class="member-avatar" />
+                        <q-img
+                          :src="member.avatar"
+                          class="member-avatar"
+                          @click="openImage(member.avatar)"
+                          style="cursor: pointer;"
+                        />
                       </div>
 
                       <q-card-section class="member-info">
                         <div class="member-name">{{ member.name }}</div>
                         <div class="member-position">{{ member.position }}</div>
                         <div class="member-skills">
-                          <q-chip 
-                            v-for="(skill, i) in member.skills" 
-                            :key="i" 
+                          <q-chip
+                            v-for="(skill, i) in member.skills"
+                            :key="i"
                             class="skill-chip"
                             dense
                           >
@@ -103,7 +109,6 @@
             <q-card class="sidebar-card">
               <q-card-section>
                 <div class="section-title">Contacto</div>
-                
                 <div class="contact-list">
                   <div class="contact-item">
                     <q-icon name="email" class="contact-icon" />
@@ -112,7 +117,6 @@
                       <div class="contact-value">colproductmarket@gmail.com</div>
                     </div>
                   </div>
-
                   <div class="contact-item">
                     <q-icon name="phone" class="contact-icon" />
                     <div class="contact-content">
@@ -120,7 +124,6 @@
                       <div class="contact-value">+57 123 456 789</div>
                     </div>
                   </div>
-
                   <div class="contact-item">
                     <q-icon name="location_on" class="contact-icon" />
                     <div class="contact-content">
@@ -128,7 +131,6 @@
                       <div class="contact-value">Av. Digital 123, Santander</div>
                     </div>
                   </div>
-
                   <div class="contact-item">
                     <q-icon name="schedule" class="contact-icon" />
                     <div class="contact-content">
@@ -142,52 +144,19 @@
               <q-card-section class="social-section">
                 <div class="social-title">Síguenos</div>
                 <div class="social-buttons">
-                  <q-btn 
-                    round 
-                    class="social-btn facebook" 
-                    icon="fa-brands fa-facebook-f" 
-                    type="a"
-                    href="https://facebook.com" 
-                    target="_blank"
-                  />
-                  <q-btn 
-                    round 
-                    class="social-btn twitter" 
-                    icon="fa-brands fa-twitter" 
-                    type="a"
-                    href="https://twitter.com" 
-                    target="_blank"
-                  />
-                  <q-btn 
-                    round 
-                    class="social-btn instagram" 
-                    icon="fa-brands fa-instagram" 
-                    type="a"
-                    href="https://instagram.com" 
-                    target="_blank"
-                  />
-                  <q-btn 
-                    round 
-                    class="social-btn linkedin" 
-                    icon="fa-brands fa-linkedin-in" 
-                    type="a"
-                    href="https://linkedin.com" 
-                    target="_blank"
-                  />
+                  <q-btn round class="social-btn facebook" icon="fa-brands fa-facebook-f" type="a" href="https://facebook.com" target="_blank" />
+                  <q-btn round class="social-btn twitter" icon="fa-brands fa-twitter" type="a" href="https://twitter.com" target="_blank" />
+                  <q-btn round class="social-btn instagram" icon="fa-brands fa-instagram" type="a" href="https://instagram.com" target="_blank" />
+                  <q-btn round class="social-btn linkedin" icon="fa-brands fa-linkedin-in" type="a" href="https://linkedin.com" target="_blank" />
                 </div>
               </q-card-section>
             </q-card>
 
-            <!-- Proyectos recientes -->
             <q-card class="sidebar-card q-mt-md">
               <q-card-section>
                 <div class="section-title">Proyectos recientes</div>
                 <div class="projects-timeline">
-                  <div 
-                    class="project-item"
-                    v-for="project in projects" 
-                    :key="project.id"
-                  >
+                  <div class="project-item" v-for="project in projects" :key="project.id">
                     <div class="project-icon-container">
                       <q-icon :name="project.icon" class="project-icon" />
                     </div>
@@ -202,23 +171,28 @@
             </q-card>
           </div>
         </div>
+
+        <!-- Imagen ampliada tipo WhatsApp -->
+        <q-dialog v-model="showDialog" persistent class="fullscreen-dialog">
+          <div class="dialog-backdrop" @click="showDialog = false">
+            <q-img :src="selectedImage" class="dialog-image" />
+          </div>
+        </q-dialog>
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-// Estadísticas del equipo
 const stats = ref([
   { icon: 'store', label: 'Proyectos completados', value: '150+' },
   { icon: 'emoji_people', label: 'Clientes satisfechos', value: '85+' },
   { icon: 'code', label: 'Líneas de código', value: '1M+' },
   { icon: 'public', label: 'Países de operación', value: '12' }
-]);
+])
 
-// Miembros del equipo
 const team = ref([
   {
     id: 1,
@@ -247,10 +221,9 @@ const team = ref([
     position: 'Desarrollador Frontend',
     skills: ['Vue', 'Quasar', 'JavaScript'],
     avatar: new URL('../assets/Jhaider.jpeg', import.meta.url).href
-  },
-]);
+  }
+])
 
-// Proyectos recientes
 const projects = ref([
   {
     id: 1,
@@ -273,9 +246,41 @@ const projects = ref([
     description: 'Solución completa de e-commerce para una cadena de electrónica.',
     icon: 'computer'
   }
-]);
+])
+
+const showDialog = ref(false)
+const selectedImage = ref(null)
+
+function openImage(imageUrl) {
+  selectedImage.value = imageUrl
+  showDialog.value = true
+}
 </script>
 
 <style scoped>
 @import url("../style/Contact.css");
+
+.fullscreen-dialog .q-dialog__inner--minimized {
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-backdrop {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-image {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease;
+}
 </style>

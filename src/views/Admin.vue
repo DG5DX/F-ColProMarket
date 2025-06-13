@@ -369,21 +369,77 @@
 
     <!-- Diálogo Editar -->
     <q-dialog v-model="editDialog" persistent>
-      <q-card style="min-width: 400px" @keyup.enter="updateProduct">
-        <q-card-section class="text-h6 text-warning">Editar Producto</q-card-section>
-        <q-separator />
-        <q-card-section class="q-gutter-md">
-          <q-input v-model="productEdit.name" label="Nombre del Producto" />
-          <q-input v-model="productEdit.description" label="Descripción" type="textarea" />
-          <q-input v-model="productEdit.price" label="Precio" type="number" />
-          <q-input v-model="productEdit.images" label="URL de Imagen" disable />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="secondary" v-close-popup />
-          <q-btn flat label="Guardar Cambios" color="primary" :loading="loadingEditButton" @click="updateProduct" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+  <q-card class="edit-product-card">
+    <q-card-section class="edit-product-header">
+      <div class="header-content">
+        <q-icon name="edit" size="24px" class="header-icon" />
+        <span class="header-title">Editar Producto</span>
+      </div>
+    </q-card-section>
+    
+    <q-separator class="custom-separator" />
+    
+    <q-card-section class="edit-product-form" @keyup.enter="updateProduct">
+      <div class="form-container">
+        <q-input 
+          v-model="productEdit.name" 
+          label="Nombre del Producto"
+          class="custom-input"
+          outlined
+          :rules="[val => !!val || 'El nombre es requerido']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="inventory" />
+          </template>
+        </q-input>
+        
+        <q-input 
+          v-model="productEdit.description" 
+          label="Descripción" 
+          type="textarea"
+          class="custom-input"
+          outlined
+          rows="3"
+          counter
+          maxlength="500"
+        >
+          <template v-slot:prepend>
+            <q-icon name="description" />
+          </template>
+        </q-input>
+        
+        <q-input 
+          v-model="productEdit.price" 
+          label="Precio" 
+          type="number"
+          class="custom-input"
+          outlined
+          prefix="$"
+          :rules="[val => val > 0 || 'El precio debe ser mayor a 0']"
+        >
+          <template v-slot:prepend>
+            <q-icon name="attach_money" />
+          </template>
+        </q-input>
+      </div>
+    </q-card-section>
+    
+    <q-card-actions class="edit-product-actions">
+      <q-btn 
+        flat 
+        label="Cancelar" 
+        class="cancel-btn"
+        v-close-popup 
+      />
+      <q-btn 
+        label="Guardar Cambios" 
+        class="save-btn"
+        :loading="loadingEditButton" 
+        @click="updateProduct"
+      />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
   </q-layout>
 </template>
 
@@ -759,5 +815,180 @@ function deleteProduct(producto) {
 .scroll::-webkit-scrollbar-thumb {
   background-color: #1976D2;
   border-radius: 10px;
+}
+
+
+
+.edit-product-card {
+  min-width: 450px;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, var(--one-color--) 0%, var(--two-color--) 100%);
+  border: 1px solid var(--three-color--);
+}
+
+.edit-product-header {
+  background: var(--five-color--);
+  color: white;
+  padding: 20px 24px;
+  border-radius: 12px 12px 0 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  color: white;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+.custom-separator {
+  background: linear-gradient(90deg, var(--three-color--) 0%, var(--four-color--) 50%, var(--three-color--) 100%);
+  height: 2px;
+}
+
+.edit-product-form {
+  padding: 24px;
+  background: transparent;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.custom-input {
+  transition: all 0.3s ease;
+}
+
+.custom-input .q-field__control {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.custom-input .q-field__control:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-input .q-field--focused .q-field__control {
+  background: white;
+  border-color: var(--fiv-color--);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.custom-input .q-field__label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.custom-input .q-icon {
+  color: var(--cambio--);
+}
+
+.disabled-input .q-field__control {
+  background: rgba(200, 200, 200, 0.3) !important;
+  opacity: 0.7;
+}
+
+.edit-product-actions {
+  padding: 16px 24px 24px;
+  gap: 12px;
+  justify-content: flex-end;
+  background: transparent;
+}
+
+.cancel-btn {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.save-btn {
+  background: var(--five-color--);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.save-btn:hover:not(.q-btn--loading) {
+  background: var(--fiv-color--);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4);
+}
+
+.save-btn.q-btn--loading {
+  background: var(--fiv-color--);
+}
+
+/* Animaciones adicionales */
+.edit-product-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsividad */
+@media (max-width: 600px) {
+  .edit-product-card {
+    min-width: 90vw;
+    max-width: 95vw;
+    margin: 10px;
+  }
+  
+  .edit-product-form {
+    padding: 16px;
+  }
+  
+  .edit-product-header {
+    padding: 16px 20px;
+  }
+  
+  .edit-product-actions {
+    padding: 12px 16px 16px;
+    flex-direction: column-reverse;
+  }
+  
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
+    margin: 4px 0;
+  }
 }
 </style>

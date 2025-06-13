@@ -81,7 +81,7 @@
         <div class="card-subtitle">{{ producto.description }}</div>
         <hr class="card-divider">
         <div class="card-footer">
-          <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
+          <div class="card-price"><span>$</span> {{ formatNum(producto.price) }}</div>
           <button class="card-btn" @click.stop="addToTheCart(producto)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
@@ -246,7 +246,7 @@
 
 <script setup>
 import { onMounted, computed, ref, toRaw } from 'vue'
-import { showNotification, validateToken, scrollToTopInstant } from '../utils/utils.js'
+import { showNotification, validateToken, scrollToTopInstant, formatNum } from '../utils/utils.js'
 import mainBar from '../components/mainBar.vue';
 import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';

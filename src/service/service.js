@@ -26,7 +26,6 @@ export async function postData(url, data,){
 
 export async function putData(url, data) {
     try {
-        console.log("data", toRaw(data));
         const response = await client.put(url,data);
         return response.data;
     } catch (error) {

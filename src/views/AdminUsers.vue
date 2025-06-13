@@ -168,12 +168,22 @@
             <template v-slot:body-cell-acciones="props">
               <q-td :props="props" class="q-table--cell-center">
                 <q-btn icon="visibility" flat dense color="primary" @click="seeDetail(props.row)" />
-                <q-btn icon="edit" flat dense color="warning" @click="editarUsuario(props.row)" class="q-ml-sm" />
-                <q-btn 
-                  icon="delete" 
+                <q-btn icon="edit" flat dense color="warning" @click="dialogVisible = true ; editedUser = props.row" class="q-ml-sm" />
+                <q-btn v-if="props.row.state === 0" 
+                  icon="check_circle" 
                   flat dense 
+                  title="Activar usuario"
+                  color="positive" 
+                  @click="changeUserStatus(props.row._id)" 
+                  class="q-ml-sm" 
+                />
+
+                <q-btn v-if="props.row.state === 1" 
+                  icon="check_circle" 
+                  flat dense 
+                  title="Desactivar usuario"
                   color="negative" 
-                  @click="toggleUserStatus(props.row)" 
+                  @click="changeUserStatus(props.row._id)" 
                   class="q-ml-sm" 
                 />
               </q-td>
@@ -212,6 +222,118 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+
+    <!--Dialogo para editar usuario-->
+    
+
+    <q-dialog v-model="dialogVisible" >
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Editar Información de Usuario</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form @submit="saveChanges">
+            <q-input
+              v-model="editedUser.name"
+              label="Nombre"
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-input
+              v-model="editedUser.lastName"
+              label="Apellido"
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-input
+              v-model="editedUser.email"
+              label="Email"
+              type="email"
+              class="q-mb-md"
+              filled
+              dense
+              disable
+              hint="El email no puede ser modificado directamente aquí."
+            />
+            <q-input
+              v-model="editedUser.phone"
+              label="Telefono"
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-input
+              v-model="editedUser.dateOfBirth"
+              label="Fecha de Nacimiento"
+              type="date"
+              stack-label
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-select
+              v-model="editedUser.gender"
+              :options="genderOptions"
+              label="Género"
+              class="q-mb-md"
+              filled
+              dense
+            />
+
+            <q-separator class="q-my-md" />
+
+            <div class="text-subtitle1 q-mb-sm">Dirección de Envío</div>
+            <q-input
+              v-model="editedUser.shippingAddress.street"
+              label="Calle y Número"
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-input
+              v-model="editedUser.shippingAddress.city"
+              label="Ciudad"
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-input
+              v-model="editedUser.shippingAddress.state"
+              label="Departamento/Estado"
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-input
+              v-model="editedUser.shippingAddress.zipCode"
+              label="Código Postal"
+              class="q-mb-md"
+              filled
+              dense
+            />
+            <q-input
+              v-model="editedUser.shippingAddress.country"
+              label="País"
+              class="q-mb-md"
+              filled
+              dense
+            />
+
+            <q-card-actions align="right" class="q-mt-md">
+              <q-btn flat label="Cancelar" color="negative" v-close-popup />
+              <q-btn label="Guardar Cambios" @click="editUser()" color="primary" type="submit" />
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+
+
   </q-layout>
 </template>
 
@@ -234,6 +356,34 @@ const detailDialog = ref(false);
 const dataUsers = ref({});
 const selectedUser = ref({});
 
+//editar
+const editedUser = ref({
+  shippingAddress:{}
+});
+const dialogVisible = ref(false);
+
+async function changeUserStatus(userId){
+  try {
+    const response = await putData(`/users/state/${userId}`)
+    GetDataUsers()
+    showNotification('positive','El estado del usuario ha sido actualizado')
+  } catch (error) {
+    showNotification('negative','Error al editar usuario')
+    console.log("[changeUserStatus]", error);
+  }
+}
+
+async function editUser(){
+  try {
+    const response = await putData(`/users/${editedUser.value._id}`,{
+      data:editedUser.value
+    })
+    return showNotification('positive','Usuario editado');
+  } catch (error) {
+    showNotification('negative','Error al editar usuario')
+    console.log("[editUser]", error);
+  }
+}
 
 
 // Columnas de la tabla
@@ -250,7 +400,7 @@ const columns = [
 
 onMounted(() => {
   GetDataUsers();
-  getAllCategories();
+/*   getAllCategories(); */
 });
 
   async function GetDataUsers(){
@@ -265,7 +415,7 @@ onMounted(() => {
 
 
 
-async function getAllCategories() {
+/* async function getAllCategories() {
   try {
     const response = await getData("/categories");
     if (response.data.length > 0) {
@@ -277,7 +427,7 @@ async function getAllCategories() {
   } catch (error) {
     console.error(error);
   }
-}
+} */
 
 function formatDate(dateString) {
   if (!dateString) return '';

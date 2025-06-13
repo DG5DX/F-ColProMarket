@@ -194,6 +194,7 @@ import { putData, getData, postData } from '../service/service.js'
 const store = useStore()
 import { useRoute, useRouter } from 'vue-router'
 import { validateToken, scrollToTopInstant } from '../utils/utils.js'
+import { normalizePath } from 'vite'
 
 const $q = useQuasar()
 const route = useRoute()
@@ -351,6 +352,7 @@ const buttonColor = ref('primary');
 async function colorButton() {
   await addToFavorites(dataProduct.value._id);
   buttonColor.value = 'red';
+  Notify.create({ type: 'positive', message: 'favorito agregado con exito' })
 }
 // Función para agregar al carrito
 

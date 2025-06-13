@@ -363,6 +363,7 @@ const buttonColor = ref('primary');
 async function colorButton() {
   await addToFavorites(dataProduct.value._id);
   buttonColor.value = 'red';
+  Notify.create({ type: 'positive', message: 'favorito agregado con exito' })
 }
 // Función para agregar al carrito
 

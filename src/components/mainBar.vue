@@ -14,31 +14,16 @@
         </div>
 
         <!-- Búsqueda - se adapta según el espacio -->
-          <div class="search-section">
-            <q-input 
-              v-model="searchQuery"
-              dense
-              standout
-              bg-color="white"
-              placeholder="Buscar..."
-              class="search-input"
-              input-class="text-black"
-              @keyup.enter="productsSearch()"
-            >
-              <template v-slot:prepend>
-              </template>
-              <template v-slot:append>
-                <q-btn 
-                  flat 
-                  round 
-                  dense 
-                  icon="search" 
-                  @click="productsSearch()"
-                  class="search-btn"
-                />
-              </template>
-            </q-input>
-          </div>
+        <div class="search-section">
+          <q-input v-model="searchQuery" dense standout bg-color="white" placeholder="Buscar..." class="search-input"
+            input-class="text-black" @keyup.enter="productsSearch()">
+            <template v-slot:prepend>
+            </template>
+            <template v-slot:append>
+              <q-btn flat round dense icon="search" @click="productsSearch()" class="search-btn" />
+            </template>
+          </q-input>
+        </div>
 
         <!-- Acciones de usuario - se adaptan dinámicamente -->
         <div class="user-actions">
@@ -57,9 +42,11 @@
                     <div class="text-h6 text-center q-mt-sm">{{ store.userInformation.name || 'Usuario' }}</div>
                     <div class="column items-center q-mb-md">
                       <q-avatar size="70px" class="q-mb-sm">
-                        <img :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
+                        <img
+                          :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
                       </q-avatar>
-                      <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.userInformation.email || 'test@gmail.com' }}
+                      <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.userInformation.email ||
+                        'test@gmail.com' }}
                       </div>
                     </div>
 
@@ -74,14 +61,18 @@
                 </q-menu>
               </q-btn>
             </template>
-            <q-btn flat   class="full-width" icon="favorite"
-                    style="box-shadow: 0%;" @click="goToFavorites()" />
-            <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
-  <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
-    {{ store.cart.items.length }}
-  </q-badge>
+            <q-btn flat class="full-width" icon="favorite" style="box-shadow: 0%;" @click="goToFavorites()">
+              <q-badge v-if="store.dataFavorites?.length > 0" color="red" floating rounded>
+                {{ store.dataFavorites.length }}
+              </q-badge>
             </q-btn>
-            
+
+            <q-btn flat round icon="shopping_cart" class="cart-btn" @click="cart()">
+              <q-badge v-if="store.cart.items?.length > 0" color="red" floating rounded>
+                {{ store.cart.items.length }}
+              </q-badge>
+            </q-btn>
+
           </div>
 
           <!-- Versión compacta -->
@@ -94,14 +85,15 @@
                   <div class="text-h6 text-center q-mt-sm">{{ store.userInformation.name || 'Usuario' }}</div>
                   <div class="column items-center q-mb-md">
                     <q-avatar size="70px" class="q-mb-sm">
-                      <img :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
+                      <img
+                        :src="store.profilePicture || 'https://ostermancron.com/wp-content/uploads/2016/02/blank-profile-picture-973460_640.png'">
                     </q-avatar>
                     <div class="text-caption text-grey-7 text-center q-mb-md">{{ store.email || 'test@gmail.com' }}
                     </div>
                   </div>
                   <q-btn flat label="Administrar cuenta" class="full-width" icon="manage_accounts"
                     style="color: #1976D2;" @click="router.push('/userProfile')" />
-                    
+
 
                   <q-separator class="q-my-sm" />
 
@@ -141,14 +133,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { router } from '../routes/routes';
-
 import { useStore } from '../stores/store.js';
 import { showNotification, validateToken } from '../utils/utils.js';
-import FAVORITE from '../views/FAVORITE.vue';
-const store = useStore();
+import { ref, computed } from 'vue';
 
+const store = useStore();
 const mobileMenuOpen = ref(false);
 const searchQuery = ref('');
 
@@ -156,7 +146,7 @@ function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value;
 }
 
-async function goToFavorites(){
+async function goToFavorites() {
   const canProceed = await validateToken()
   if (!canProceed) return
   router.push('/favorite')
@@ -179,19 +169,19 @@ function closeSession() {
   store.userId = null;
   store.showRegister = true;
   store.cart = {
-    items:[],
-    total:0
-}
+    items: [],
+    total: 0
+  }
   showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }
 async function favorite() {
-   router.push('/favorite');
+  router.push('/favorite');
 }
 async function cart() {
   const canProceed = await validateToken()
   if (!canProceed) return
-  router.push('/cart'); 
+  router.push('/cart');
 }
 </script>
 

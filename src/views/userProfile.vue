@@ -6,6 +6,16 @@
       <q-toolbar>
         <q-btn flat round dense icon="arrow_back" @click="$router.go(-1)" />
         <q-toolbar-title>Perfil de Usuario</q-toolbar-title>
+
+        <!-- Alerta de validación -->
+        <q-badge 
+          v-if="showValidationAlert && (hasMissingPersonalFields || hasMissingAddressFields)"
+          color="orange" 
+          floating
+          class="q-ml-md"
+        >
+          ¡Faltan datos!
+        </q-badge>
       </q-toolbar>
     </q-header>
 
@@ -108,6 +118,7 @@
                       color="white" 
                       @click="openPersonalEditDialog"
                       title="Editar información personal"
+                      :class="{ 'pulse-button': hasMissingPersonalFields }"
                     />
                   </q-card-section>
 
@@ -168,8 +179,64 @@
                       color="white" 
                       @click="openAddressEditDialog"
                       title="Editar dirección"
+                      :class="{ 'pulse-button': hasMissingAddressFields }"
                     />
                   </q-card-section>
+
+<!-- Diálogo de alerta mejorado -->
+<q-dialog v-model="showValidationAlert" persistent>
+  <q-card class="validation-card">
+    <q-card-section class="bg-warning text-white row items-center">
+      <q-icon name="warning" size="md" class="q-mr-sm" />
+      <span class="text-h6">Información incompleta</span>
+    </q-card-section>
+
+    <q-separator color="warning" />
+
+    <q-card-section class="scroll" style="max-height: 60vh">
+      <div class="text-subtitle1 q-mb-md">Por favor completa la siguiente información para mejorar tu experiencia:</div>
+
+      <template v-if="hasMissingPersonalFields">
+        <div class="text-weight-bold q-mb-sm">Información personal faltante:</div>
+        <q-list dense bordered separator class="rounded-borders q-mb-md">
+          <q-item v-for="field in missingPersonalFields" :key="'personal-'+field" class="text-negative">
+            <q-item-section avatar>
+              <q-icon name="close" color="negative" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ field }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </template>
+
+      <template v-if="hasMissingAddressFields">
+        <div class="text-weight-bold q-mb-sm">Dirección faltante:</div>
+        <q-list dense bordered separator class="rounded-borders">
+          <q-item v-for="field in missingAddressFields" :key="'address-'+field" class="text-negative">
+            <q-item-section avatar>
+              <q-icon name="close" color="negative" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ field }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </template>
+    </q-card-section>
+
+    <q-separator />
+
+    <q-card-actions align="right" class="q-pa-md">
+      <q-btn 
+        label="Entendido" 
+        color="primary" 
+        v-close-popup 
+        flat
+      />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
 
                   <q-separator/>
 
@@ -381,7 +448,7 @@
             round
             @click="leftDrawerOpen = !leftDrawerOpen"
             title="Mostrar/Ocultar menú"
-            v-if="$q.screen.lt.md"
+            v-if="$q.screen.width < 700"
           />
         </q-page-sticky>
 
@@ -718,7 +785,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { Loading, useQuasar } from 'quasar';
 import { useStore } from '../stores/store.js';
 import { DownloadInvoicePdf, getData, postData, putData } from '../service/service';
@@ -726,10 +793,18 @@ import { showNotification } from '../utils/utils';
 const store = useStore();
 const $q = useQuasar();
 
+// Nuevas variables para controlar la validación
+const missingPersonalFields = ref([]);
+const missingAddressFields = ref([]);
+const showValidationAlert = ref(false);
+
+// Computed para verificar campos faltantes
+const hasMissingPersonalFields = computed(() => missingPersonalFields.value.length > 0);
+const hasMissingAddressFields = computed(() => missingAddressFields.value.length > 0);
+
 const loadingDownloadInvoice = ref(false);  //estoy añadiendo loading a la funcion de descarga de pdf
 const invoiceDialog = ref(false);
 const selectedMovement = ref(null);
-
 // Imprimir factura 
 const printInvoice = () => {
   window.print();
@@ -822,7 +897,9 @@ const allColombianCities = [
   // Caldas
   'Manizales', 'La Dorada', 'Chinchiná',
   // Valle del Cauca
-  'Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago'
+  'Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago',
+  //Santander
+  'Bucaramanga', 'San gil'
 ];
 
 const colombianStates = ref([...allColombianStates]);
@@ -856,6 +933,7 @@ const genderOptions = [
 
 onMounted(()=>{
   dataMovements()
+  editForm.value = store.userInformation;
 })
 
 // Computed properties
@@ -987,6 +1065,69 @@ const formatDateForInput = (dateString) => {
   return date.toISOString().split('T')[0];
 };
 
+// Función para verificar campos vacíos
+const checkEmptyFields = () => {
+  // Verificar campos personales
+  const personalFieldsToCheck = [
+    { key: 'name', value: user.value.name, label: 'Nombre' },
+    { key: 'email', value: user.value.email, label: 'Correo electrónico' },
+    { key: 'phone', value: user.value.phone, label: 'Teléfono' },
+    { key: 'dateOfBirth', value: user.value.dateOfBirth, label: 'Fecha de nacimiento' },
+    { key: 'gender', value: user.value.gender, label: 'Género' }
+  ];
+  
+  missingPersonalFields.value = personalFieldsToCheck
+    .filter(field => !field.value || field.value === 'N/A' || field.value === 'No especificado')
+    .map(field => field.label);
+
+  // Verificar campos de dirección
+  const addressFieldsToCheck = [
+    { key: 'street', value: user.value.shippingAddress?.street, label: 'Calle' },
+    { key: 'city', value: user.value.shippingAddress?.city, label: 'Ciudad' },
+    { key: 'state', value: user.value.shippingAddress?.state, label: 'Departamento' },
+    { key: 'zipCode', value: user.value.shippingAddress?.zipCode, label: 'Código postal' }
+  ];
+  
+  missingAddressFields.value = addressFieldsToCheck
+    .filter(field => !field.value || field.value === 'N/A' || field.value === 'No especificado')
+    .map(field => field.label);
+
+  // Mostrar alerta si hay campos faltantes
+  if (missingPersonalFields.value.length > 0 || missingAddressFields.value.length > 0) {
+    showValidationAlert.value = true;
+    
+    // Mostrar notificación
+    $q.notify({
+      type: 'warning',
+      message: 'Por favor completa tu información personal y/o dirección',
+      position: 'top',
+      timeout: 5000,
+      actions: [{ icon: 'close', color: 'white' }]
+    });
+  }
+};
+
+// Watcher para cuando cambia la información del usuario
+watch(() => user.value, () => {
+  checkEmptyFields();
+}, { deep: true, immediate: true });
+
+// Watcher para cuando los datos estan llenos
+// En el script setup, agregué este watcher:
+watch([hasMissingPersonalFields, hasMissingAddressFields], ([hasPersonal, hasAddress]) => {
+  if (!hasPersonal && !hasAddress) {
+    $q.notify({
+      type: 'positive',
+      message: '¡Todos tus datos están completos!',
+      position: 'top',
+      timeout: 5000,
+      icon: 'check_circle',
+      progress: true,
+      actions: [{ icon: 'close', color: 'white' }]
+    });
+  }
+}, { immediate: true });
+
 const savePersonalInfo =async () => {
   // Actualizar los datos del usuario
   user.value.name = editForm.value.name;
@@ -1006,19 +1147,21 @@ const savePersonalInfo =async () => {
     position: 'top'
   });
   personalEditDialog.value = false;
+  checkEmptyFields();
 };
 
-const saveAddressInfo = () => {
-  // Actualizar la dirección del usuario
-  user.value.shippingAddress.street = editForm.value.shippingAddress.street || 'No especificado';
+const saveAddressInfo = async () => {
+ try {
+   user.value.shippingAddress.street = editForm.value.shippingAddress.street || 'No especificado';
   user.value.shippingAddress.city = editForm.value.shippingAddress.city || 'No especificada';
   user.value.shippingAddress.state = editForm.value.shippingAddress.state || 'No especificado';
   user.value.shippingAddress.zipCode = editForm.value.shippingAddress.zipCode || 'N/A';
   user.value.shippingAddress.country = 'Colombia';
-  
-  // Actualizar la fecha de modificación
   user.value.updatedAt = new Date().toISOString();
-  
+
+    const response = await putData(`/users/${user.value._id}`,{
+      data:editForm.value
+    })
   // Mostrar notificación de éxito
   $q.notify({
     type: 'positive',
@@ -1026,8 +1169,13 @@ const saveAddressInfo = () => {
     position: 'top'
   });
   
-  // Cerrar el diálogo
   addressEditDialog.value = false;
+ } catch (error) {
+  showNotification('negative','Lo sentimos ha ocurrido un error')
+  console.log('[saveAddressInfo]',error);
+ }
+   checkEmptyFields();
+
 };
 
 //movements
@@ -1384,6 +1532,66 @@ const getStatusIcon = (status) => {
     .text-right {
       text-align: left !important;
       margin-top: 12px;
+    }
+  }
+}
+/* Estilo para el botón que parpadea cuando hay campos faltantes */
+.pulse-button {
+  animation: pulse 2s infinite;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 12px;
+    height: 12px;
+    background-color: orange;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 165, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 165, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 165, 0, 0);
+  }
+}
+
+/* Estilo para resaltar las secciones con campos faltantes */
+.missing-data-section {
+  border-left: 4px solid orange;
+  padding-left: 8px;
+  background-color: rgba(255, 165, 0, 0.1);
+}
+/* Estilos adicionales para el diálogo de validación */
+.validation-card {
+  min-width: 400px;
+  max-width: 90vw;
+  border-radius: 12px;
+  overflow: hidden;
+  
+  .q-card__section--scroll {
+    padding: 20px;
+  }
+  
+  .text-negative {
+    color: $negative;
+    font-weight: 500;
+  }
+  
+  @media (max-width: 600px) {
+    min-width: 90vw;
+    
+    .q-card__section--scroll {
+      padding: 16px;
     }
   }
 }

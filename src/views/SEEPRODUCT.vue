@@ -97,7 +97,7 @@
 
               <!-- Precio -->
               <div class="price-section">
-                <div class="text-h4 price">{{ dataProduct.price }}</div>
+                <div class="text-h4 price">{{ formatNum(dataProduct.price) }}</div>
                 <div class="text-caption price-note">Precio incluye IVA</div>
               </div>
 
@@ -142,7 +142,12 @@
             <q-card-section>
               <div class="text-h6">Descripción</div>
               <div class="product-description">
-                {{ dataProduct.description || 'No hay descripción disponible.' }}
+                <p>Marca: {{ dataProduct.brand || 'Generico' }} </p>
+                <p>Descripcion: {{  dataProduct.description || 'No hay descripción disponible.' }}</p>
+                <q-card-section v-if="dataProduct.details" v-for="element of getProductKeys(dataProduct.details)">
+                  <p>{{ element }} : {{ dataProduct.details[element] }}</p>
+                </q-card-section>
+                
               </div>
             </q-card-section>
           </q-card>
@@ -172,7 +177,7 @@
                 <span class="rating-value">{{ producto.averageRating?.toFixed(1) || 0 }}</span>
               </div>
 
-              <div class="product-price">{{ producto.price }}</div>
+              <div class="product-price">{{ formatNum(producto.price) }}</div>
             </q-card-section>
 
             <q-card-actions class="product-actions">
@@ -193,8 +198,7 @@ import { useStore } from '../stores/store.js'
 import { putData, getData, postData } from '../service/service.js'
 const store = useStore()
 import { useRoute, useRouter } from 'vue-router'
-import { validateToken, scrollToTopInstant } from '../utils/utils.js'
-import { normalizePath } from 'vite'
+import { validateToken, scrollToTopInstant, formatNum } from '../utils/utils.js'
 
 const $q = useQuasar()
 const route = useRoute()
@@ -258,6 +262,13 @@ async function addToFavorites(productId) {
   } catch (error) {
     console.error('Error al agregar a favoritos:', error);
   }
+}
+
+
+function getProductKeys(product){
+
+  console.log("objeto para claves", dataProduct.value.details);
+  return Object.keys(product)
 }
 
 

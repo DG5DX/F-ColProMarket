@@ -81,7 +81,7 @@
         <div class="card-subtitle">{{ producto.description }}</div>
         <hr class="card-divider">
         <div class="card-footer">
-          <div class="card-price"><span>$</span> {{ producto.price.toFixed(2) }}</div>
+          <div class="card-price"><span>$</span> {{ formatNum(producto.price) }}</div>
           <button class="card-btn" @click.stop="addToTheCart(producto)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
@@ -182,15 +182,15 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <form class="form q-gutter-md">
+      <form class="form q-gutter-md" @submit.prevent="registerUser">
         <div class="input-group">
-          <q-input v-model="user.name" label="Nombre" type="text":rules="[val => !!val || 'El nombre es obligatorio']"/>
+          <q-input v-model="user.name" label="Nombre" type="text":rules="[val => !!val || 'El nombre es obligatorio']" />
           <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El correo es obligatorio', val => /.+@.+\..+/.test(val) || 'Debe ser un correo válido']"/>
           <q-input v-model="user.phone" label="Telefono" type="tel" :rules="[val => !!val || 'El teléfono es obligatorio', val => /^[0-9]{10,15}$/.test(val) || 'Teléfono no válido (10-15 dígitos)']" @keydown="onlyNumbers"/>
-          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules/>
-          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" :rules="[val => !!val || 'Confirma tu contraseña', val => val === user.password || 'Las contraseñas no coinciden']" lazy-rules/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules />
+          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" :rules="[val => !!val || 'Confirma tu contraseña', val => val === user.password || 'Las contraseñas no coinciden']" lazy-rules />
         </div>
-        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser()" :disable="!isRegisterFormValid"/>
+        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser" :disable="!isRegisterFormValid" type="submit"/>
         
         <!-- Enlace para cambiar a login -->
         <div class="text-center q-mt-md">
@@ -205,7 +205,7 @@
 
 
   <!--modal para loguearse-->
-
+<!--modal para loguearse-->
 <q-dialog class="form-container" v-model="store.showLoginDialog">
   <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
     <q-card-section class="q-pb-none">
@@ -213,27 +213,27 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <form class="form q-gutter-md">
+      <form class="form q-gutter-md" @submit.prevent="login">
         <div class="input-group">
           <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El email es requerido', val => /.+@.+\..+/.test(val) || 'Email no válido']" lazy-rules/>
-          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']"lazy-rules/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules />
         </div>
-        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading"  style="background-color: var(--fiv-color--);" @click="login()" :disable="!isLoginFormValid"/>
+        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading" style="background-color: var(--fiv-color--);" @click="login" :disable="!isLoginFormValid" type="submit"/>
         
         <div>
         <!-- Cambiar contraseña-->
-                <div class="text-center q-mt-md">
-          <p class="text-caption"> 
-            <a href="#" class="text-primary" @click.prevent="handlePasswordRecovery">Perdí mi contraseña</a>
-          </p>
-        </div>
+          <div class="text-center q-mt-md">
+            <p class="text-caption"> 
+              <a href="#" class="text-primary" @click.prevent="handlePasswordRecovery">Perdí mi contraseña</a>
+            </p>
+          </div>
 
-        <!-- Enlace para cambiar a registro -->
-        <div class="text-center q-mt-md">
-          <p class="text-caption">¿No tienes una cuenta? 
-            <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Regístrate aquí</a>
-          </p>
-        </div>
+          <!-- Enlace para cambiar a registro -->
+          <div class="text-center q-mt-md">
+            <p class="text-caption">¿No tienes una cuenta? 
+              <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Regístrate aquí</a>
+            </p>
+          </div>
         </div>
       </form>
     </q-card-section>
@@ -246,7 +246,7 @@
 
 <script setup>
 import { onMounted, computed, ref, toRaw } from 'vue'
-import { showNotification, validateToken, scrollToTopInstant } from '../utils/utils.js'
+import { showNotification, validateToken, scrollToTopInstant, formatNum } from '../utils/utils.js'
 import mainBar from '../components/mainBar.vue';
 import { getData, postData } from '../service/service'
 import { useStore } from '../stores/store.js';

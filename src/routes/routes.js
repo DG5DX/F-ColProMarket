@@ -4,6 +4,7 @@ import Seeproduct from "../views/SEEPRODUCT.vue"
 import Admin from "../views/Admin.vue"
 import AdminCategory from "../views/AdminCategory.vue"
 import AdminUsers from "../views/AdminUsers.vue"
+import AdminMoves from "../views/AdminMoves.vue"
 import userProfile from "../views/userProfile.vue"
 import invoice from "../components/invoice.vue"
 import Contact from "../views/Contact.vue"
@@ -13,7 +14,6 @@ import PaymentGateway from "../views/paymentGateway.vue"
 import Search from "../views/Search.vue"
 import Favorite from "../views/FAVORITE.vue"
 import sales from "../views/sales.vue"
-import movements from "../views/movements.vue"
 import {createRouter, createWebHashHistory} from "vue-router"
 
 const routes = [
@@ -24,6 +24,7 @@ const routes = [
   { path: '/admincategories', component: AdminCategory},
   { path: '/adminusers', component: AdminUsers},
   { path: '/adminsales', component: AdminSales},
+  { path: '/adminmoves', component: AdminMoves},
   { path: '/gateway', component: PaymentGateway },
   { path: '/search', component: Search },
   { path: '/sales', component: sales },
@@ -33,10 +34,6 @@ const routes = [
   {path:'/userProfile', component:userProfile},
   {path:'/contact', component: Contact},
   {path:'/password', component: changePassword},
-  {path:'/movements', component: movements},
-  {path:'/password', component: changePassword},
-  {path:'/movements', component: movements},
-
 ]
   
 export const router = createRouter({

@@ -29,7 +29,7 @@
               </q-card-section>
             </q-card> -->
 
-            <!-- Total en Stock -->
+            <!--Total en Stock -->
             <q-card class="col metric-card bg-orange-1">
               <q-card-section>
                 <div class="text-h6">Total en Stock</div>

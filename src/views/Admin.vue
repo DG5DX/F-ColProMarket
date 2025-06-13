@@ -29,7 +29,7 @@
               </q-card-section>
             </q-card> -->
 
-            <!--Total en Stock -->
+            <!-- Total en Stock -->
             <q-card class="col metric-card bg-orange-1">
               <q-card-section>
                 <div class="text-h6">Total en Stock</div>
@@ -95,6 +95,13 @@
             </div>
           </div>
 
+          <!-- Busqueda por categoria -->
+          <div class="row q-mb-md items-center q-gutter-md" style="display: flex; align-items: flex-start">
+            <q-select filled dense v-model="selectedCategory" :options="categories" option-label="name"
+              label="Filtrar por categoría" clearable class="col" @clear="selectedCategory = null" />
+          </div>
+
+
           <q-table :rows="appliedFilters ? filteredProducts : (dataProducts.data || [])"  :columns="columns" row-key="nombre" flat bordered wrap-cells
             class="bg-white my-sticky-table" :filter="search" style="max-height: 400px" separator="cell">
             <template v-slot:body-cell-imagen="props">
@@ -120,165 +127,240 @@
     </q-page-container>
 
     <!-- Diálogo Crear Producto -->
-<q-dialog v-model="productDialog" persistent>
-  <q-card style="min-width: 600px; max-width: 800px">
-    <q-card-section class="bg-primary text-white">
-      <div class="text-h6">Agregar Nuevo Producto</div>
-    </q-card-section>
-    
-    <q-separator />
-    
-    <q-card-section class="q-gutter-md scroll" style="max-height: 70vh">
-      <!-- Sección de información básica -->
-      <div class="text-subtitle1 text-weight-bold q-mb-sm">Información Básica</div>
-      <div class="row q-gutter-md">
-        <q-input 
-          v-model="dataProduct.name" 
-          label="Nombre del Producto *" 
-          class="col" 
-          outlined
-          dense
-          :rules="[val => !!val || 'Campo obligatorio']"
-        />
-        <q-input 
-          v-model="dataProduct.brand" 
-          label="Marca *" 
-          class="col" 
-          outlined
-          dense
-          :rules="[val => !!val || 'Campo obligatorio']"
-        />
+    <q-dialog v-model="productDialog" persistent>
+  <q-card class="product-dialog-card" @keyup.enter="saveProduct">
+    <!-- Header del Dialog -->
+    <q-card-section class="dialog-header">
+      <div class="dialog-title">
+        <q-icon name="add_business" size="24px" class="q-mr-sm" />
+        <span class="text-h5">Agregar Producto</span>
       </div>
-      
-      <q-input 
-        v-model="dataProduct.description" 
-        label="Descripción *" 
-        type="textarea" 
-        outlined
-        dense
-        :rules="[val => !!val || 'Campo obligatorio']"
-      />
-      
-      <div class="row q-gutter-md">
-        <q-input 
-          v-model="dataProduct.price" 
-          label="Precio *" 
-          type="number" 
-          class="col" 
-          outlined
-          dense
-          prefix="$"
-          :rules="[val => val > 0 || 'El precio debe ser mayor a 0']"
-        />
-        
-        <q-input 
-          v-model="dataProduct.stock" 
-          label="Cantidad en Stock *" 
-          type="number" 
-          class="col" 
-          outlined
-          dense
-          :rules="[val => val >= 0 || 'La cantidad no puede ser negativa']"
-        />
-      </div>
-      
-      <div class="row q-gutter-md">
-        <q-select 
-          filled 
-          dense 
-          v-model="dataProduct.category" 
-          :options="categories" 
-          option-label="name" 
-          map-options
-          label="Categoría *" 
-          class="col"
-          :rules="[val => !!val || 'Seleccione una categoría']"
-          @update:model-value="handleCategoryChange"
-        />
-        
-        <q-select 
-          v-model="dataProduct.acceptReturns" 
-          :options="acceptReturns"
-          label="Permite Devoluciones *" 
-          class="col"
-          outlined
-          dense
-          :rules="[val => !!val || 'Seleccione una opción']"
-        />
-      </div>
-      
-      <!-- Características específicas de la categoría -->
-      <template v-if="dataProduct.category">
-        <div class="text-subtitle1 text-weight-bold q-mt-md q-mb-sm">Características Específicas</div>
-        <div class="row q-gutter-md">
-          <q-input 
-            v-for="(element, index) of dataProduct.category.characteristics" 
-            v-model="dataProduct.details[element]"
-            :label="element" 
-            :key="index"
-            class="col"
-            outlined
-            dense
-          />
-        </div>
-      </template>
-      
-      <!-- Sección de imágenes -->
-      <div class="text-subtitle1 text-weight-bold q-mt-md q-mb-sm">Imágenes del Producto</div>
-      <q-file 
-        v-model="files" 
-        label="Seleccionar imágenes (máx. 5)" 
-        multiple 
-        accept="image/*"
-        @update:model-value="handleFiles" 
-        counter
-        :max-files="5"
-        outlined
-        dense
-      >
-        <template v-slot:prepend>
-          <q-icon name="attach_file" />
-        </template>
-        <template v-slot:hint>
-          Formatos soportados: JPG, PNG
-        </template>
-      </q-file>
-
-      <div class="q-mt-md row q-gutter-sm">
-        <div v-for="(image, index) in previewImages" :key="index" class="relative-position">
-          <q-img 
-            :src="image" 
-            style="height: 100px; width: 100px" 
-            class="rounded-borders"
-          />
-          <q-btn 
-            dense 
-            round 
-            icon="close" 
-            color="negative" 
-            class="absolute-top-right" 
-            size="sm"
-            @click="removeImage(index)" 
-          />
-        </div>
-      </div>
-    </q-card-section>
-    
-    <q-separator />
-    
-    <q-card-actions align="right" class="q-pa-md">
       <q-btn 
-        label="Cancelar" 
-        color="grey" 
         flat 
-        @click="resetProductForm"
+        round 
+        dense 
+        icon="close" 
+        class="close-btn"
+        @click="productDialog = false" 
       />
-      <q-btn 
-        label="Guardar Producto" 
-        color="primary" 
-        @click="saveProduct"
-        :disable="!isFormValid"
-      />
+    </q-card-section>
+
+    <!-- Contenido Principal -->
+    <q-card-section class="dialog-content">
+      <div class="form-grid">
+        <!-- Información Básica -->
+        <div class="form-section">
+          <h6 class="section-title">
+            <q-icon name="info" class="q-mr-xs" />
+            Información Básica
+          </h6>
+          
+          <q-input 
+            v-model="dataProduct.name" 
+            label="Nombre del Producto"
+            class="custom-input"
+            filled
+            :rules="[val => !!val || 'Campo requerido']"
+          >
+            <template v-slot:prepend>
+              <q-icon name="shopping_bag" />
+            </template>
+          </q-input>
+
+          <q-input 
+            v-model="dataProduct.description" 
+            label="Descripción" 
+            type="textarea"
+            class="custom-input"
+            filled
+            rows="3"
+          >
+            <template v-slot:prepend>
+              <q-icon name="description" />
+            </template>
+          </q-input>
+
+          <div class="row q-gutter-md">
+            <q-input 
+              v-model="dataProduct.brand" 
+              label="Marca"
+              class="custom-input col"
+              filled
+            >
+              <template v-slot:prepend>
+                <q-icon name="branding_watermark" />
+              </template>
+            </q-input>
+
+            <q-input 
+              v-model="dataProduct.price" 
+              label="Precio" 
+              type="number"
+              class="custom-input col"
+              filled
+              prefix="$"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_money" />
+              </template>
+            </q-input>
+          </div>
+        </div>
+
+        <!-- Categoría y Características -->
+        <div class="form-section">
+          <h6 class="section-title">
+            <q-icon name="category" class="q-mr-xs" />
+            Categoría y Características
+          </h6>
+          
+          <q-select 
+            filled 
+            v-model="dataProduct.category" 
+            :options="categories" 
+            option-label="name" 
+            map-options
+            label="Seleccionar Categoría" 
+            clearable 
+            class="custom-input"
+            @clear="selectedCategory = null"
+          >
+            <template v-slot:prepend>
+              <q-icon name="category" />
+            </template>
+          </q-select>
+
+          <div v-if="dataProduct?.category?.characteristics" class="characteristics-section">
+            <div class="characteristics-title">
+              <q-icon name="tune" class="q-mr-xs" />
+              <span>Características Específicas</span>
+            </div>
+            <q-input 
+              v-for="element of dataProduct?.category?.characteristics" 
+              :key="element"
+              v-model="dataProduct.details[element]"
+              :label="element"
+              class="custom-input characteristic-input"
+              filled
+              dense
+            />
+          </div>
+        </div>
+
+        <!-- Inventario -->
+        <div class="form-section">
+          <h6 class="section-title">
+            <q-icon name="inventory" class="q-mr-xs" />
+            Inventario y Políticas
+          </h6>
+          
+          <div class="row q-gutter-md">
+            <q-input 
+              v-model="dataProduct.stock" 
+              label="Cantidad en Stock"
+              type="number"
+              class="custom-input col"
+              filled
+            >
+              <template v-slot:prepend>
+                <q-icon name="inventory_2" />
+              </template>
+            </q-input>
+
+            <q-select 
+              v-model="dataProduct.acceptReturns" 
+              :options="acceptReturns"
+              label="Permite Devoluciones"
+              class="custom-input col"
+              filled
+            >
+              <template v-slot:prepend>
+                <q-icon name="assignment_return" />
+              </template>
+            </q-select>
+          </div>
+        </div>
+
+        <!-- Imágenes -->
+        <div class="form-section">
+          <h6 class="section-title">
+            <q-icon name="photo_library" class="q-mr-xs" />
+            Imágenes del Producto
+          </h6>
+          
+          <div class="upload-section">
+            <q-file 
+              v-model="files" 
+              label="Seleccionar imágenes" 
+              multiple 
+              accept="image/*"
+              @update:model-value="handleFiles" 
+              class="custom-file-input"
+              filled
+            >
+              <template v-slot:prepend>
+                <q-icon name="cloud_upload" />
+              </template>
+              <template v-slot:append>
+                <q-icon name="add_photo_alternate" />
+              </template>
+            </q-file>
+
+            <div v-if="previewImages.length > 0" class="images-preview">
+              <div class="preview-title">
+                <q-icon name="preview" class="q-mr-xs" />
+                Vista Previa de Imágenes
+              </div>
+              <div class="images-grid">
+                <div 
+                  v-for="(image, index) in previewImages" 
+                  :key="index" 
+                  class="image-container"
+                >
+                  <q-img 
+                    :src="image" 
+                    class="preview-image"
+                    :ratio="1"
+                  >
+                    <div class="absolute-full image-overlay">
+                      <q-btn 
+                        dense 
+                        round 
+                        icon="close" 
+                        color="negative" 
+                        class="remove-image-btn"
+                        @click="removeImage(index)" 
+                      />
+                    </div>
+                  </q-img>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </q-card-section>
+
+    <!-- Footer con Acciones -->
+    <q-card-actions class="dialog-actions">
+      <div class="actions-container">
+        <q-btn 
+          label="Cancelar" 
+          class="cancel-btn"
+          @click="productDialog = false"
+          no-caps
+        >
+          <q-icon name="close" class="q-ml-xs" />
+        </q-btn>
+        <q-btn 
+          label="Guardar Producto" 
+          class="save-btn"
+          @click="saveProduct()"
+          no-caps
+        >
+          <q-icon name="save" class="q-ml-xs" />
+        </q-btn>
+      </div>
     </q-card-actions>
   </q-card>
 </q-dialog>
@@ -476,41 +558,6 @@ onMounted(() => {
   getAllProducts();
 });
 
-// Validaciones
-const isFormValid = computed(() => {
-  return (
-    dataProduct.value.name &&
-    dataProduct.value.description &&
-    dataProduct.value.brand &&
-    dataProduct.value.price > 0 &&
-    dataProduct.value.stock >= 0 &&
-    dataProduct.value.category &&
-    dataProduct.value.acceptReturns &&
-    previewImages.value.length > 0
-  );
-});
-
-function resetProductForm() {
-  dataProduct.value = {
-    name: '',
-    description: '',
-    brand: '',
-    price: 0,
-    stock: 0,
-    category: null,
-    acceptReturns: null,
-    details: {}
-  };
-  files.value = [];
-  previewImages.value = [];
-  productDialog.value = false;
-}
-
-function handleCategoryChange() {
-  // Limpiar detalles anteriores cuando cambia la categoría
-  dataProduct.value.details = {};
-}
-
 const handleFiles = (selectedFiles) => {
   previewImages.value = [];
 
@@ -705,59 +752,4 @@ function deleteProduct(producto) {
 
 <style scoped>
 @import url(../style/Admin.css);
-/* Estilos para el diálogo de producto */
-.q-dialog__card {
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.q-card__section--vert {
-  padding: 20px;
-}
-
-/* Mejoras para los inputs */
-.q-field--outlined .q-field__control {
-  border-radius: 4px;
-}
-
-.q-field--dense .q-field__control, .q-field--dense .q-field__marginal {
-  height: 40px;
-}
-
-/* Estilo para las imágenes de vista previa */
-.relative-position {
-  transition: all 0.3s ease;
-}
-
-.relative-position:hover {
-  transform: scale(1.05);
-  z-index: 1;
-}
-
-/* Estilo para el botón de eliminar imagen */
-.absolute-top-right {
-  top: -8px;
-  right: -8px;
-}
-
-/* Scroll personalizado */
-.scroll {
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #1976D2 #f5f5f5;
-}
-
-.scroll::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scroll::-webkit-scrollbar-track {
-  background: #f5f5f5;
-  border-radius: 10px;
-}
-
-.scroll::-webkit-scrollbar-thumb {
-  background-color: #1976D2;
-  border-radius: 10px;
-}
 </style>

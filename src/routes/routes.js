@@ -4,6 +4,7 @@ import Seeproduct from "../views/SEEPRODUCT.vue"
 import Admin from "../views/Admin.vue"
 import AdminCategory from "../views/AdminCategory.vue"
 import AdminUsers from "../views/AdminUsers.vue"
+import AdminMoves from "../views/AdminMoves.vue"
 import userProfile from "../views/userProfile.vue"
 import invoice from "../components/invoice.vue"
 import Contact from "../views/Contact.vue"
@@ -23,6 +24,7 @@ const routes = [
   { path: '/admincategories', component: AdminCategory},
   { path: '/adminusers', component: AdminUsers},
   { path: '/adminsales', component: AdminSales},
+  { path: '/adminmoves', component: AdminMoves},
   { path: '/gateway', component: PaymentGateway },
   { path: '/search', component: Search },
   { path: '/sales', component: sales },

@@ -97,7 +97,7 @@
 
               <!-- Precio -->
               <div class="price-section">
-                <div class="text-h4 price">{{ dataProduct.price }}</div>
+                <div class="text-h4 price">{{ formatNum(dataProduct.price) }}</div>
                 <div class="text-caption price-note">Precio incluye IVA</div>
               </div>
 
@@ -177,7 +177,7 @@
                 <span class="rating-value">{{ producto.averageRating?.toFixed(1) || 0 }}</span>
               </div>
 
-              <div class="product-price">{{ producto.price }}</div>
+              <div class="product-price">{{ formatNum(producto.price) }}</div>
             </q-card-section>
 
             <q-card-actions class="product-actions">
@@ -198,7 +198,7 @@ import { useStore } from '../stores/store.js'
 import { putData, getData, postData } from '../service/service.js'
 const store = useStore()
 import { useRoute, useRouter } from 'vue-router'
-import { validateToken, scrollToTopInstant } from '../utils/utils.js'
+import { validateToken, scrollToTopInstant, formatNum } from '../utils/utils.js'
 
 const $q = useQuasar()
 const route = useRoute()

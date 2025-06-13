@@ -348,7 +348,7 @@ async function pago() {
         })
         return;
     }
-    window.location.href = 'http://localhost:5173/#/gateway';
+    router.replace('/gateway')
 }
 </script>
 

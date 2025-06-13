@@ -482,6 +482,7 @@
                       label="Apellido"
                       outlined
                       :rules="[
+                        val => !!val || 'El apellido es requerido',
                         val => !val || val.length >= 2 || 'Mínimo 2 caracteres',
                         val => !val || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(val) || 'Solo letras y espacios'
                       ]"
@@ -641,7 +642,7 @@
         </q-dialog>
         <!-- Diálogo maximizado para ver factura -->
 <q-dialog v-model="invoiceDialog" maximized transition-show="slide-up" transition-hide="slide-down">
-  <q-card class="full-height">
+  <q-card class="full-height column">
     <q-toolbar class="bg-primary text-white">
       <q-toolbar-title>
         Factura #{{ selectedMovement?.paypalData ? selectedMovement.paypalData.id : selectedMovement?._id }}
@@ -649,7 +650,7 @@
       <q-btn flat round dense icon="close" v-close-popup />
     </q-toolbar>
 
-    <q-card-section class="scroll invoice-container">
+    <q-card-section class="col scroll invoice-container">
       <div v-if="selectedMovement" class="invoice-content">
         <!-- Encabezado de la factura -->
         <div class="row justify-between items-center q-mb-lg">
@@ -771,11 +772,26 @@
       </div>
     </q-card-section>
 
-    <q-card-actions align="right" class="bg-grey-2">
-      <q-btn label="Descargar" :loading="loadingDownloadInvoice" icon="print" color="primary" @click="downloadInvoice(selectedMovement)" />
-      <q-btn label="Imprimir" icon="print" color="primary" @click="printInvoice" />
-      <q-btn label="Cerrar" color="primary" flat v-close-popup />
-
+    <q-card-actions align="right" class="bg-grey-2 q-pa-md">
+      <q-btn 
+        label="Descargar" 
+        :loading="loadingDownloadInvoice" 
+        icon="download" 
+        color="negative" 
+        @click="downloadInvoice(selectedMovement)" 
+      />
+      <q-btn 
+        label="Imprimir" 
+        icon="print" 
+        color="primary" 
+        @click="printInvoice" 
+      />
+      <q-btn 
+        label="Cerrar" 
+        color="primary" 
+        flat 
+        v-close-popup 
+      />
     </q-card-actions>
   </q-card>
 </q-dialog>
@@ -1070,6 +1086,7 @@ const checkEmptyFields = () => {
   // Verificar campos personales
   const personalFieldsToCheck = [
     { key: 'name', value: user.value.name, label: 'Nombre' },
+    { key: 'lastName', value: user.value.lastName, label: 'Apellido' },
     { key: 'email', value: user.value.email, label: 'Correo electrónico' },
     { key: 'phone', value: user.value.phone, label: 'Teléfono' },
     { key: 'dateOfBirth', value: user.value.dateOfBirth, label: 'Fecha de nacimiento' },
@@ -1495,6 +1512,11 @@ const getStatusIcon = (status) => {
   font-size: 0.8rem;
   padding: 4px 8px;
   border-radius: 4px;
+}
+
+.q-card-actions.footer-actions {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
 }
 
 .q-parallax {

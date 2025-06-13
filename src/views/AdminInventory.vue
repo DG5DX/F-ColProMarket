@@ -24,38 +24,34 @@
         <template v-else>
           <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; background-color: white">
             <div class="text-h5 text-weight-bold" style="display: grid; justify-items: center; padding: 10px">
-              💰 Detalles de Ventas
+              📦 Movimientos de Inventario
             </div>
             <!-- Rectángulos de métricas -->
             <div class="row q-mb-md q-gutter-md">
-              <!-- Ventas Totales -->
+              <!-- Entradas Totales -->
               <q-card class="col metric-card bg-blue-1">
                 <q-card-section>
-                  <div class="text-h6">Ventas Totales</div>
-                  <div class="text-h4 text-weight-bold"></div>
-                  <q-icon name="paid" size="md" class="metric-icon" />
-                  <q-label class="text-h2">{{ salesData.count || 0 }}</q-label>
+                  <div class="text-h6">Entradas Totales</div>
+                  <q-icon name="input" size="md" class="metric-icon" />
+                  <q-label class="text-h2">{{ inventoryData.totalEntries || 0 }}</q-label>
                 </q-card-section>
               </q-card>
 
-              <!-- Ingresos Totales -->
+              <!-- Salidas Totales -->
               <q-card class="col metric-card bg-green-1">
-                <q-card-section style="position: relative; padding: 25px 30px;">
-                  <div class="text-h6 q-mb-sm">Ingresos Totales</div>
-                  <q-icon name="attach_money" size="md" class="metric-icon" />
-                  <div class="total-income-value">
-                    ${{ formatNum(salesData.totalIncome) || 0 }}
-                  </div>
+                <q-card-section>
+                  <div class="text-h6">Salidas Totales</div>
+                  <q-icon name="output" size="md" class="metric-icon" />
+                  <q-label class="text-h2">{{ inventoryData.totalOutputs || 0 }}</q-label>
                 </q-card-section>
               </q-card>
 
-              <!-- Ventas Hoy -->
+              <!-- Movimientos Hoy -->
               <q-card class="col metric-card bg-orange-1">
                 <q-card-section>
-                  <div class="text-h6">Ventas Hoy</div>
-                  <div class="text-h4 text-weight-bold"></div>
-                  <q-icon name="today" size="md" class="metric-icon" />
-                  <q-label class="text-h2">{{ salesData.salesToday || 0 }}</q-label>
+                  <div class="text-h6">Movimientos Hoy</div>
+                  <q-icon name="update" size="md" class="metric-icon" />
+                  <q-label class="text-h2">{{ inventoryData.todayMovements || 0 }}</q-label>
                 </q-card-section>
               </q-card>
             </div>
@@ -65,21 +61,32 @@
         <!-- Filtros de Búsqueda -->
         <q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md" style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px">
           <div class="text-h6 text-weight-bold q-mb-md">
-            🔍 Filtros Avanzados de Ventas
+            🔍 Filtros Avanzados de Inventario
           </div>
 
           <div class="row q-gutter-md items-center" style="display: flex; align-items: center">
             <q-select
               filled
               dense
-              v-model="filters.customer"
-              :options="customers"
+              v-model="filters.product"
+              :options="products"
               option-label="name"
-              label="Filtrar por cliente"
+              label="Filtrar por producto"
               clearable
               class="col"
               style="min-width: 200px"
               :loading="loading"
+            />
+
+            <q-select
+              filled
+              dense
+              v-model="filters.type"
+              :options="movementTypes"
+              label="Tipo de movimiento"
+              clearable
+              class="col"
+              style="min-width: 150px"
             />
 
             <q-input
@@ -126,7 +133,7 @@
           </div>
         </q-card>
 
-        <!-- Skeleton para la tabla de ventas -->
+        <!-- Skeleton para la tabla de movimientos -->
         <template v-if="loading">
           <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; min-height: 600px">
             <div class="row justify-between items-center q-mb-md">
@@ -140,13 +147,13 @@
               flat
               bordered
               :rows="[]"
-              :columns="salesColumns"
+              :columns="movementColumns"
               row-key="id"
               hide-pagination
             >
               <template v-slot:body="props">
                 <q-tr v-for="n in 5" :key="n">
-                  <q-td v-for="col in salesColumns" :key="col.name">
+                  <q-td v-for="col in movementColumns" :key="col.name">
                     <q-skeleton type="text" />
                   </q-td>
                 </q-tr>
@@ -158,24 +165,26 @@
         <template v-else>
           <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; min-height: 600px">
             <div class="row justify-between items-center q-mb-md">
-              <div class="text-h5 text-weight-bold">📊 Historial de Ventas</div>
-              <div
-                class="row q-mb-md items-center q-gutter-md"
-                style="display: flex; align-items: flex-start"
-              >
+              <div class="text-h5 text-weight-bold">📋 Historial de Movimientos</div>
+              <div class="row q-mb-md items-center q-gutter-md">
+                <q-input
+                  v-model="search"
+                  outlined
+                  dense
+                  placeholder="Buscar..."
+                  clearable
+                  class="col"
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
               </div>
             </div>
 
-            <!-- Barra de estadísticas -->
-            <div
-              class="row q-mb-md items-center q-gutter-md"
-              style="display: flex; align-items: flex-start"
-            >
-            </div>
-
             <q-table
-              :rows="filteredSales"
-              :columns="salesColumns"
+              :rows="filteredMovements"
+              :columns="movementColumns"
               row-key="id"
               flat
               bordered
@@ -185,24 +194,26 @@
               style="max-height: 400px"
               separator="cell"
               :loading="loading"
+              :pagination="pagination"
             >
-              <template v-slot:body-cell-detalles="props">
+              <template v-slot:body-cell-tipo="props">
                 <q-td :props="props" class="q-table--cell-center">
-                  <q-btn icon="receipt" flat dense color="info" @click="seeSaleDetails(props.row)" :disable="loading" />
-                </q-td>
-              </template>
-
-              <template v-slot:body-cell-estado="props">
-                <q-td :props="props" class="q-table--cell-center">
-                  <q-badge :color="getStatusColor(props.row.state)">
-                    {{ props.row.state }}
+                  <q-badge :color="props.row.type === 'Entrada' ? 'positive' : 'negative'">
+                    {{ props.row.type }}
                   </q-badge>
                 </q-td>
               </template>
 
-              <template v-slot:body-cell-acciones="props">
+              <template v-slot:body-cell-detalles="props">
                 <q-td :props="props" class="q-table--cell-center">
-                  <q-btn icon="print" flat dense color="grey" @click="printInvoice(props.row)" :disable="loading" />
+                  <q-btn 
+                    icon="visibility" 
+                    flat 
+                    dense 
+                    color="info" 
+                    @click="seeMovementDetails(props.row)" 
+                    :disable="loading" 
+                  />
                 </q-td>
               </template>
             </q-table>
@@ -211,39 +222,45 @@
       </q-page>
     </q-page-container>
 
-    <!-- Diálogo Detalles de Venta -->
-    <q-dialog v-model="saleDetailDialog" persistent>
+    <!-- Diálogo Detalles de Movimiento -->
+    <q-dialog v-model="movementDetailDialog" persistent>
       <q-card class="q-pa-md" style="min-width: 500px; max-width: 700px">
-        <q-card-section class="text-h6 text-primary">Detalle de Venta #{{ selectedSale._id }}</q-card-section>
+        <q-card-section class="text-h6 text-primary">
+          Detalle de Movimiento #{{ selectedMovement._id }}
+        </q-card-section>
         <q-separator />
         
         <q-card-section>
           <div class="row q-mb-sm">
-            <div class="col-6"><strong>Fecha:</strong> {{ formatISODateToSpanish(selectedSale.createdAt) }}</div>
+            <div class="col-6"><strong>Fecha:</strong> {{ formatISODateToSpanish(selectedMovement.date) }}</div>
+            <div class="col-6">
+              <strong>Tipo:</strong> 
+              <q-badge :color="selectedMovement.type === 'Entrada' ? 'positive' : 'negative'">
+                {{ selectedMovement.type }}
+              </q-badge>
+            </div>
           </div>
           
           <div class="row q-mb-sm">
-            <div class="col-6"><strong>Cliente:</strong> {{ selectedSale?.userId?.name }}</div>
-            <div class="col-6"><strong>Método de Pago:</strong>Paypal</div>
+            <div class="col-6"><strong>Producto:</strong> {{ selectedMovement.product?.name }}</div>
+            <div class="col-6"><strong>Cantidad:</strong> {{ selectedMovement.quantity }}</div>
+          </div>
+          
+          <div class="row q-mb-sm">
+            <div class="col-6"><strong>Responsable:</strong> {{ selectedMovement.user?.name || 'Sistema' }}</div>
+            <div class="col-6"><strong>Referencia:</strong> {{ selectedMovement.reference || 'N/A' }}</div>
           </div>
           
           <div class="q-mt-md">
-            <strong>Productos:</strong>
-            <q-table
-              :rows="selectedSale.products"
-              :columns="productColumns"
-              row-key="id"
-              flat
-              bordered
+            <strong>Detalles adicionales:</strong>
+            <q-input
+              v-model="selectedMovement.notes"
+              type="textarea"
+              readonly
+              outlined
               dense
-              hide-pagination
               class="q-mt-sm"
             />
-          </div>
-          
-          <div class="text-right q-mt-md">
-            <div><strong>IVA:</strong> {{ selectedSale?.iva || 'No aplica' }}</div>
-            <div class="text-h6"><strong>Total:</strong> ${{ formatNum(selectedSale.total) }}</div>
           </div>
         </q-card-section>
         
@@ -263,58 +280,101 @@ import adminDrawer from "../components/adminDrawer.vue";
 import { formatISODateToSpanish, formatNum, showNotification } from "../utils/utils.js";
 
 const search = ref("");
-const salesData = ref({});
+const inventoryData = ref({});
 const loading = ref(false);
-const customers = ref([]);
+const products = ref([]);
+const movementTypes = ['Entrada', 'Salida'];
 
 // Filtros
 const filters = ref({
-  customer: null,
+  product: null,
+  type: null,
   startDate: "",
   endDate: ""
 });
 
+// Paginación
+const pagination = ref({
+  sortBy: 'date',
+  descending: true,
+  page: 1,
+  rowsPerPage: 10
+});
 
-// Columnas de la tabla de ventas
-const salesColumns = [
-  { name: "fecha", label: "Fecha", field:(sale)=>formatISODateToSpanish(sale.createdAt), align: "center" },
-  { name: "cliente", label: "Cliente", field: (sale)=> sale.userId?.name || 'User', align: "center" },
-  { name: "productos", label: "Productos", field: row => row.products.length, align: "center" },
-  { name: "total", label: "Total", field: (sale)=> formatNum(sale.total), align: "center", format: val => `$${val}` },
-  { name: "metodoPago", label: "Método Pago", field: (sale)=> 'Paypal', align: "center" },
-  { name: "detalles", label: "Detalles", align: "center" },
-];
-
-// Columnas para los productos en el detalle
-const productColumns = [
-  { name: "nombre", label: "Producto", field: "name", align: "left" },
-  { name: "cantidad", label: "Cantidad", field: "quantity", align: "center" },
-  { name: "precio", label: "Precio Unit.", field: (product)=> formatNum(product.price), align: "right", format: val => `$${val}` },
-  { name: "subtotal", label: "Subtotal", field: row => formatNum(row.quantity * row.price), align: "right", format: val => `$${val}` }
+// Columnas de la tabla de movimientos
+const movementColumns = [
+  { 
+    name: "fecha", 
+    label: "Fecha", 
+    field: row => formatISODateToSpanish(row.date), 
+    align: "center",
+    sortable: true
+  },
+  { 
+    name: "producto", 
+    label: "Producto", 
+    field: row => row.product?.name || 'N/A', 
+    align: "center" 
+  },
+  { 
+    name: "tipo", 
+    label: "Tipo", 
+    field: "type", 
+    align: "center" 
+  },
+  { 
+    name: "cantidad", 
+    label: "Cantidad", 
+    field: "quantity", 
+    align: "center" 
+  },
+  { 
+    name: "responsable", 
+    label: "Responsable", 
+    field: row => row.user?.name || 'Sistema', 
+    align: "center" 
+  },
+  { 
+    name: "referencia", 
+    label: "Referencia", 
+    field: "reference", 
+    align: "center" 
+  },
+  { 
+    name: "detalles", 
+    label: "Detalles", 
+    align: "center" 
+  },
 ];
 
 // Diálogos
-const saleDetailDialog = ref(false);
-const selectedSale = ref({});
-const saleToEdit = ref({});
+const movementDetailDialog = ref(false);
+const selectedMovement = ref({});
 
-const filteredSales = computed(() => {
-  if (!salesData.value.data) return [];
+const filteredMovements = computed(() => {
+  if (!inventoryData.value.movements) return [];
   
-  let filtered = [...salesData.value.data];
+  let filtered = [...inventoryData.value.movements];
   
-  // Filtrar por cliente
-  if (filters.value.customer) {
-    filtered = filtered.filter(sale => 
-      sale.userId?._id === filters.value.customer._id
+  // Filtrar por producto
+  if (filters.value.product) {
+    filtered = filtered.filter(movement => 
+      movement.product?._id === filters.value.product._id
+    );
+  }
+  
+  // Filtrar por tipo de movimiento
+  if (filters.value.type) {
+    filtered = filtered.filter(movement => 
+      movement.type === filters.value.type
     );
   }
   
   // Filtrar por rango de fechas
   if (filters.value.startDate) {
     const startDate = new Date(filters.value.startDate);
-    filtered = filtered.filter(sale => 
-      new Date(sale.createdAt) >= startDate
+    filtered = filtered.filter(movement => 
+      new Date(movement.date) >= startDate
     );
   }
   
@@ -322,8 +382,8 @@ const filteredSales = computed(() => {
     const endDate = new Date(filters.value.endDate);
     // Ajustamos la fecha final para incluir todo el día
     endDate.setHours(23, 59, 59, 999);
-    filtered = filtered.filter(sale => 
-      new Date(sale.createdAt) <= endDate
+    filtered = filtered.filter(movement => 
+      new Date(movement.date) <= endDate
     );
   }
   
@@ -331,46 +391,37 @@ const filteredSales = computed(() => {
 });
 
 onMounted(() => {
-  loadSalesData();
-  loadCustomers();
+  loadInventoryData();
+  loadProducts();
 });
 
-async function loadCustomers() {
+async function loadProducts() {
   try {
-    const response = await getData("/users");
-    customers.value = response.filter(user => user.role === 'customer');
+    const response = await getData("/products");
+    products.value = response;
   } catch (error) {
-    console.error("Error loading customers:", error);
+    console.error("Error loading products:", error);
+    showNotification('negative', 'Error cargando productos');
   }
 }
 
-//salesData
-async function loadSalesData() {
+async function loadInventoryData() {
   try {
     loading.value = true;
-    const response = await getData("/orders");
-    salesData.value = response;
-    showNotification('positive','Datos de ventas cargados');
+    const response = await getData("/inventory/movements");
+    inventoryData.value = response;
+    showNotification('positive', 'Datos de inventario cargados');
   } catch (error) {
-    console.log("[loadSalesData]", error);
-    showNotification('negative','Error cargando datos de ventas');
+    console.error("[loadInventoryData]", error);
+    showNotification('negative', 'Error cargando datos de inventario');
   } finally {
     loading.value = false;
   }
 }
 
-function getStatusColor(status) {
-  switch(status) {
-    case 'Completada': return 'positive';
-    case 'Pendiente': return 'warning';
-    case 'Cancelada': return 'negative';
-    default: return 'grey';
-  }
-}
-
-function seeSaleDetails(sale) {
-  selectedSale.value = { ...sale };
-  saleDetailDialog.value = true;
+function seeMovementDetails(movement) {
+  selectedMovement.value = { ...movement };
+  movementDetailDialog.value = true;
 }
 
 function applyFilters() {
@@ -387,17 +438,16 @@ function applyFilters() {
 
 function clearFilters() {
   filters.value = {
+    product: null,
+    type: null,
     startDate: "",
-    endDate: "",
-    status: "",
-    customer: null
+    endDate: ""
   };
   Notify.create({
     type: "info",
     message: "Filtros limpiados"
   });
 }
-
 </script>
 
 <style scoped>
@@ -425,24 +475,17 @@ function clearFilters() {
   background-color: #f5f5f5;
 }
 
-/* Agrega esto en tu sección de estilos */
-.total-income-value {
-  font-size: 2rem;
-  font-weight: bold;
-  word-break: break-all;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-@media (max-width: 600px) {
-  .total-income-value {
-    font-size: 1.5rem;
-  }
-}
-
 .metric-card {
-  min-width: 200px; /* Ancho mínimo para mantener legibilidad */
-  flex: 1 1 auto; /* Permite que las tarjetas crezcan según necesidad */
+  min-width: 200px;
+  flex: 1 1 auto;
+}
+
+/* Estilos específicos para los badges de tipo */
+.q-badge.positive {
+  background-color: #4CAF50;
+}
+
+.q-badge.negative {
+  background-color: #F44336;
 }
 </style>

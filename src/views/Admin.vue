@@ -95,13 +95,6 @@
             </div>
           </div>
 
-          <!-- Busqueda por categoria -->
-          <div class="row q-mb-md items-center q-gutter-md" style="display: flex; align-items: flex-start">
-            <q-select filled dense v-model="selectedCategory" :options="categories" option-label="name"
-              label="Filtrar por categoría" clearable class="col" @clear="selectedCategory = null" />
-          </div>
-
-
           <q-table :rows="appliedFilters ? filteredProducts : (dataProducts.data || [])"  :columns="columns" row-key="nombre" flat bordered wrap-cells
             class="bg-white my-sticky-table" :filter="search" style="max-height: 400px" separator="cell">
             <template v-slot:body-cell-imagen="props">
@@ -127,50 +120,168 @@
     </q-page-container>
 
     <!-- Diálogo Crear Producto -->
-    <q-dialog v-model="productDialog" persistent>
-      <q-card @keyup.enter="saveProduct" style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">Agregar Producto</div>
-        </q-card-section>
-        <q-card-section>
-          <q-input v-model="dataProduct.name" label="Nombre del Producto" />
-          <q-input v-model="dataProduct.description" label="Descripción" type="textarea" />
-          <q-input v-model="dataProduct.brand" label="Marca" type="textarea" />
-          <q-input v-model="dataProduct.price" label="Precio" type="number" />
-          <q-select filled dense v-model="dataProduct.category" :options="categories" option-label="name" map-options
-            label="Seleccionar Categoria" clearable class="col" @clear="selectedCategory = null" />
-          <q-card-section>
-            <q-input v-for="element of dataProduct?.category?.characteristics" v-model="dataProduct.details[element]"
-              :label="element"></q-input>
-          </q-card-section>
-          <q-input v-model="dataProduct.stock" label="Cantidad"></q-input>
-          <q-select v-model="dataProduct.acceptReturns" :options="acceptReturns"
-            label="Permite Devoluciones"></q-select>
-        </q-card-section>
-
-        <!-- Archivos -->
-        <div class="q-pa-md">
-          <q-file v-model="files" label="Seleccionar imágenes" multiple accept="image/*"
-            @update:model-value="handleFiles" style="max-width: 300px">
-            <template v-slot:prepend>
-              <q-icon name="attach_file" />
-            </template>
-          </q-file>
-
-          <div class="q-mt-md row q-gutter-sm">
-            <q-img v-for="(image, index) in previewImages" :key="index" :src="image" style="height: 100px; width: 100px"
-              class="rounded-borders">
-              <q-btn dense round icon="close" color="negative" class="absolute-top-right" @click="removeImage(index)" />
-            </q-img>
-          </div>
+<q-dialog v-model="productDialog" persistent>
+  <q-card style="min-width: 600px; max-width: 800px">
+    <q-card-section class="bg-primary text-white">
+      <div class="text-h6">Agregar Nuevo Producto</div>
+    </q-card-section>
+    
+    <q-separator />
+    
+    <q-card-section class="q-gutter-md scroll" style="max-height: 70vh">
+      <!-- Sección de información básica -->
+      <div class="text-subtitle1 text-weight-bold q-mb-sm">Información Básica</div>
+      <div class="row q-gutter-md">
+        <q-input 
+          v-model="dataProduct.name" 
+          label="Nombre del Producto *" 
+          class="col" 
+          outlined
+          dense
+          :rules="[val => !!val || 'Campo obligatorio']"
+        />
+        <q-input 
+          v-model="dataProduct.brand" 
+          label="Marca *" 
+          class="col" 
+          outlined
+          dense
+          :rules="[val => !!val || 'Campo obligatorio']"
+        />
+      </div>
+      
+      <q-input 
+        v-model="dataProduct.description" 
+        label="Descripción *" 
+        type="textarea" 
+        outlined
+        dense
+        :rules="[val => !!val || 'Campo obligatorio']"
+      />
+      
+      <div class="row q-gutter-md">
+        <q-input 
+          v-model="dataProduct.price" 
+          label="Precio *" 
+          type="number" 
+          class="col" 
+          outlined
+          dense
+          prefix="$"
+          :rules="[val => val > 0 || 'El precio debe ser mayor a 0']"
+        />
+        
+        <q-input 
+          v-model="dataProduct.stock" 
+          label="Cantidad en Stock *" 
+          type="number" 
+          class="col" 
+          outlined
+          dense
+          :rules="[val => val >= 0 || 'La cantidad no puede ser negativa']"
+        />
+      </div>
+      
+      <div class="row q-gutter-md">
+        <q-select 
+          filled 
+          dense 
+          v-model="dataProduct.category" 
+          :options="categories" 
+          option-label="name" 
+          map-options
+          label="Categoría *" 
+          class="col"
+          :rules="[val => !!val || 'Seleccione una categoría']"
+          @update:model-value="handleCategoryChange"
+        />
+        
+        <q-select 
+          v-model="dataProduct.acceptReturns" 
+          :options="acceptReturns"
+          label="Permite Devoluciones *" 
+          class="col"
+          outlined
+          dense
+          :rules="[val => !!val || 'Seleccione una opción']"
+        />
+      </div>
+      
+      <!-- Características específicas de la categoría -->
+      <template v-if="dataProduct.category">
+        <div class="text-subtitle1 text-weight-bold q-mt-md q-mb-sm">Características Específicas</div>
+        <div class="row q-gutter-md">
+          <q-input 
+            v-for="(element, index) of dataProduct.category.characteristics" 
+            v-model="dataProduct.details[element]"
+            :label="element" 
+            :key="index"
+            class="col"
+            outlined
+            dense
+          />
         </div>
+      </template>
+      
+      <!-- Sección de imágenes -->
+      <div class="text-subtitle1 text-weight-bold q-mt-md q-mb-sm">Imágenes del Producto</div>
+      <q-file 
+        v-model="files" 
+        label="Seleccionar imágenes (máx. 5)" 
+        multiple 
+        accept="image/*"
+        @update:model-value="handleFiles" 
+        counter
+        :max-files="5"
+        outlined
+        dense
+      >
+        <template v-slot:prepend>
+          <q-icon name="attach_file" />
+        </template>
+        <template v-slot:hint>
+          Formatos soportados: JPG, PNG
+        </template>
+      </q-file>
 
-        <q-card-actions style="display: flex; justify-content: flex-end;">
-          <q-btn label="Cerrar" color="secondary" @click="productDialog = false" />
-          <q-btn label="Guardar" color="primary" @click="saveProduct()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+      <div class="q-mt-md row q-gutter-sm">
+        <div v-for="(image, index) in previewImages" :key="index" class="relative-position">
+          <q-img 
+            :src="image" 
+            style="height: 100px; width: 100px" 
+            class="rounded-borders"
+          />
+          <q-btn 
+            dense 
+            round 
+            icon="close" 
+            color="negative" 
+            class="absolute-top-right" 
+            size="sm"
+            @click="removeImage(index)" 
+          />
+        </div>
+      </div>
+    </q-card-section>
+    
+    <q-separator />
+    
+    <q-card-actions align="right" class="q-pa-md">
+      <q-btn 
+        label="Cancelar" 
+        color="grey" 
+        flat 
+        @click="resetProductForm"
+      />
+      <q-btn 
+        label="Guardar Producto" 
+        color="primary" 
+        @click="saveProduct"
+        :disable="!isFormValid"
+      />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
 
     <!-- Diálogo Detalle -->
     <q-dialog v-model="detailDialog" v-close-popup>
@@ -364,6 +475,41 @@ onMounted(() => {
   getAllCategories();
   getAllProducts();
 });
+
+// Validaciones
+const isFormValid = computed(() => {
+  return (
+    dataProduct.value.name &&
+    dataProduct.value.description &&
+    dataProduct.value.brand &&
+    dataProduct.value.price > 0 &&
+    dataProduct.value.stock >= 0 &&
+    dataProduct.value.category &&
+    dataProduct.value.acceptReturns &&
+    previewImages.value.length > 0
+  );
+});
+
+function resetProductForm() {
+  dataProduct.value = {
+    name: '',
+    description: '',
+    brand: '',
+    price: 0,
+    stock: 0,
+    category: null,
+    acceptReturns: null,
+    details: {}
+  };
+  files.value = [];
+  previewImages.value = [];
+  productDialog.value = false;
+}
+
+function handleCategoryChange() {
+  // Limpiar detalles anteriores cuando cambia la categoría
+  dataProduct.value.details = {};
+}
 
 const handleFiles = (selectedFiles) => {
   previewImages.value = [];
@@ -559,4 +705,59 @@ function deleteProduct(producto) {
 
 <style scoped>
 @import url(../style/Admin.css);
+/* Estilos para el diálogo de producto */
+.q-dialog__card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.q-card__section--vert {
+  padding: 20px;
+}
+
+/* Mejoras para los inputs */
+.q-field--outlined .q-field__control {
+  border-radius: 4px;
+}
+
+.q-field--dense .q-field__control, .q-field--dense .q-field__marginal {
+  height: 40px;
+}
+
+/* Estilo para las imágenes de vista previa */
+.relative-position {
+  transition: all 0.3s ease;
+}
+
+.relative-position:hover {
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+/* Estilo para el botón de eliminar imagen */
+.absolute-top-right {
+  top: -8px;
+  right: -8px;
+}
+
+/* Scroll personalizado */
+.scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1976D2 #f5f5f5;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background-color: #1976D2;
+  border-radius: 10px;
+}
 </style>

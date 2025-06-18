@@ -34,7 +34,7 @@
   </div>
   <div class="productos-wrapper">
     <!-- Skeleton Loader -->
-    <div v-if="productos.length === 0" class="productos row q-gutter-xl justify-start q-pa-xl">
+    <div v-if="productos?.length === 0" class="productos row q-gutter-xl justify-start q-pa-xl">
       <div 
         v-for="n in 8" 
         :key="'skeleton-'+n"

@@ -468,6 +468,7 @@ async function convertCurrency() {
       items: toRaw(cartDetails.value.items)
     })
     paymentValues.value = response.data
+    formatItems.value = response.data.items
     console.log('valores de pago', toRaw(paymentValues.value));
 
   } catch (error) {
@@ -475,44 +476,41 @@ async function convertCurrency() {
   }
 }
 
-function formatProducts() {
-  if (cartDetails.value.items && cartDetails.value.items.length > 0) {
-    formatItems.value = cartDetails.value.items.map((product) => {
-      const unitPriceInDollars = (product.price / 3900).toFixed(2); // Asumiendo una tasa de conversión COP a USD
-      return {
-        name: product.name,
-        unit_amount: { value: unitPriceInDollars, currency_code: 'USD' },
-        quantity: product.quantity
-      };
-    });
-  } else {
-    Notify.create({
-      type: 'negative',
-      message: 'No hay datos del carrito'
-    });
-  }
-  console.log("datos de items formateados", toRaw(formatItems.value));
-}
-
 // Observa cambios en el `step` para renderizar el botón de PayPal cuando sea necesario
 watch(step, (newStep) => {
   if (newStep === 3) {
+    console.log('step en valor 3');
     // Intenta renderizar el botón de PayPal solo cuando se esté en el paso de pago
     if (window.paypal && window.paypal.Buttons) {
       renderPayPalButton();
     } else {
       // Si el script de PayPal aún no se ha cargado, lo inyecta y luego renderiza
       const script = document.createElement('script');
-      // **IMPORTANTE**: Reemplaza 'YOUR_PAYPAL_CLIENT_ID' con tu ID de cliente real de PayPal
-      script.src = `https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD`;
-      script.onload = renderPayPalButton;
-      document.head.appendChild(script);
+
+      // ***** ¡ESTA ES LA LÍNEA CRÍTICA QUE DEBES CAMBIAR! *****
+      // Obtiene el Client ID de las variables de entorno.
+      // Vite automáticamente inyectará el valor de .env.development o .env.production
+      const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+
+      // Asegúrate de que el Client ID exista (buena práctica de seguridad)
+      if (!paypalClientId) {
+        console.error("Error: PayPal Client ID no está configurado. Revisa tus variables de entorno.");
+        Notify.create({
+          type: 'negative',
+          message: 'Problema al cargar el método de pago. Contacta a soporte.'
+        });
+        return; 
+        
+      }
+
+      script.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD`;
+      script.onload = renderPayPalButton; // Cuando el script se cargue, renderiza los botones
+      document.head.appendChild(script); // Añade el script al <head> del documento
     }
   }
 });
 
 onMounted(() => {
-  formatProducts()
   convertCurrency()
   console.log("datos del carrito en pagos", toRaw(cartDetails.value));
   console.log("Información del usuario:", toRaw(userInformation));

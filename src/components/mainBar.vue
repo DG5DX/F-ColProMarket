@@ -20,7 +20,7 @@
             <template v-slot:prepend>
             </template>
             <template v-slot:append>
-              <q-btn flat round dense icon="search" @click="productsSearch()" class="search-btn" />
+              <q-btn flat round dense icon="search" @click="productsSearch()" class="search-btn" style="color: black;"/>
             </template>
           </q-input>
         </div>

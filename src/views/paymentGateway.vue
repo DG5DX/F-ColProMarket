@@ -3,19 +3,33 @@
     <q-page-container>
       <q-header elevated class="checkout-header bg-primary text-white">
         <q-toolbar>
+              <q-btn icon="arrow_back" flat round dense class="q-mr-sm" @click="$router.go(-1)"/>
           <q-toolbar-title class="text-h5">
-            <q-avatar circle size="sm" @click="router.push('/')" class="cursor-pointer">
+            <q-avatar circle size="sm" class="cursor-default">
               <img src="../assets/MiniLogo.jpeg">
             </q-avatar>
-            Colpromarket
+            Colproductmarket
           </q-toolbar-title>
         </q-toolbar>
       </q-header>
 
       <q-page class="checkout-page q-pa-md">
-        <q-stepper v-model="step" animated keep-alive flat header-nav class="full-width no-box-shadow" color="primary"
-          active-color="primary" done-color="green">
-          <q-step :name="1" title="Carrito" icon="shopping_cart" :done="step > 1">
+        <q-stepper
+          v-model="step"
+          header-nav
+          ref="stepper"
+          color="primary"
+          animated
+          class="bg-transparent"
+        >
+          <!-- Paso 1: Carrito -->
+          <q-step
+            :name="1"
+            title="Carrito"
+            icon="shopping_cart"
+            :done="step > 1"
+            :header-nav="step > 1"
+          >
             <div class="row q-col-gutter-lg">
               <div class="col-12">
                 <q-card class="order-summary-card">
@@ -48,7 +62,6 @@
                         </q-item-section>
                       </q-item>
                     </q-list>
-
 
                     <div class="order-totals q-mt-lg">
                       <div class="row items-center q-py-sm">
@@ -90,11 +103,18 @@
             </div>
 
             <q-stepper-navigation>
-              <q-btn @click="step = 2" color="primary" label="Siguiente" />
+              <q-btn @click="step = 2" color="primary" label="Continuar" />
             </q-stepper-navigation>
           </q-step>
 
-          <q-step :name="2" title="Información" icon="person" :done="step > 2">
+          <!-- Paso 2: Información -->
+          <q-step
+            :name="2"
+            title="Información Personal"
+            icon="person"
+            :done="step > 2"
+            :header-nav="step > 2"
+          >
             <q-card class="user-info-card">
               <q-card-section>
                 <div class="text-h5 q-mb-md">
@@ -175,11 +195,17 @@
 
             <q-stepper-navigation>
               <q-btn flat @click="step = 1" color="primary" label="Atrás" class="q-ml-sm" />
-              <q-btn @click="validateUserData(store.userInformation)" color="primary" label="Siguiente" />
+              <q-btn @click="validateUserData(store.userInformation)" color="primary" label="Continuar" />
             </q-stepper-navigation>
           </q-step>
 
-          <q-step :name="3" title="Pago" icon="credit_card" :done="step > 3">
+          <!-- Paso 3: Pago -->
+          <q-step
+            :name="3"
+            title="Método de Pago"
+            icon="credit_card"
+            :header-nav="step > 3"
+          >
             <q-card class="payment-methods-card">
               <q-card-section>
                 <div class="text-h5 q-mb-md">
@@ -221,15 +247,20 @@
             </q-stepper-navigation>
           </q-step>
 
-          <q-step :name="4" title="Confirmación" icon="check_circle">
+          <!-- Paso 4: Confirmación -->
+          <q-step
+            :name="4"
+            title="Confirmación"
+            icon="check_circle"
+            :header-nav="false"
+          >
             <div class="q-pa-md text-center">
               <q-icon name="check_circle" size="xl" color="positive" class="q-mb-md" />
               <div class="text-h5 q-mb-md">¡Tu pedido ha sido procesado con éxito!</div>
               <p class="text-grey-7">Recibirás una confirmación por correo electrónico con los detalles de tu compra.
               </p>
-              <q-btn style="margin-left: 2%;" color="primary" label="Volver a la tienda" @click="router.push('/')" class="q-mt-lg" />
+              <q-btn style="margin-right: 10px;" color="primary" label="Volver a la tienda" @click="router.push('/')" class="q-mt-lg" />
               <q-btn color="primary" label="Ir a movimientos" @click="router.push('/userProfile')" class="q-mt-lg" />
-
             </div>
             <q-stepper-navigation>
               <q-btn flat @click="step = 3" color="primary" label="Atrás" class="q-ml-sm" />
@@ -262,15 +293,14 @@ import { useStore } from '../stores/store.js';
 import { Notify } from 'quasar';
 import { postData, putData } from '../service/service.js';
 import { showNotification, showNotification2 } from '../utils/utils.js';
-import { router } from '../routes/routes.js'; // Asegúrate de que esta importación sea correcta
+import { router } from '../routes/routes.js';
 
 const paypalRef = ref(null)
 const store = useStore()
-// userInformation se obtiene directamente del store
 const userInformation = store.userInformation;
 const cartDetails = ref(store.cart);
 
-const step = ref(1); // Inicia en el primer paso (Carrito)
+const step = ref(1);
 const couponCode = ref('');
 const paymentMethod = ref('paypal');
 const paymentOptions = [
@@ -285,7 +315,6 @@ const paymentOptions = [
     icon: 'credit_card'
   }
 ];
-
 
 function validateUserData(userData) {
   const missingFields = [];
@@ -350,7 +379,6 @@ function validateUserData(userData) {
   return { isValid, missingFields };
 }
 
-
 const formatPrice = (price) => {
   if (!price) return '$0';
   return new Intl.NumberFormat('es-CO', {
@@ -360,7 +388,6 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-
 const paymentDetails = ref({
   userId: store.userId,
   products: cartDetails.value.items,
@@ -368,18 +395,15 @@ const paymentDetails = ref({
   total: cartDetails.value.total
 })
 
-const paymentValues = ref({}); // Inicializa paymentValues
-const formatItems = ref([]); // Inicializa formatItems
+const paymentValues = ref({});
+const formatItems = ref([]);
 
 const renderPayPalButton = () => {
-  // Solo intenta renderizar si paypalRef.value existe y el script de PayPal está cargado
   if (!window.paypal || !window.paypal.Buttons || !paypalRef.value) {
-    // Si no está listo, reintenta después de un breve retraso
     setTimeout(renderPayPalButton, 250);
     return;
   }
 
-  // Limpiar cualquier botón existente para evitar duplicados en re-renderizados
   if (paypalRef.value.innerHTML !== '') {
     paypalRef.value.innerHTML = '';
   }
@@ -396,19 +420,18 @@ const renderPayPalButton = () => {
               discount: { value: String(paymentValues.value.discount), currency_code: 'USD' }
             }
           },
-          items: formatItems.value // Asegúrate de que `formatItems` esté correctamente formateado para PayPal
+          items: formatItems.value
         }]
       })
     },
     onApprove: async (data, actions) => {
-
       const paymentId = await savePendingPayment()
       const details = await actions.order.capture()
 
       if (details.status === 'COMPLETED') {
         paymentDetails.value.paypalData = details;
         await updatePayment(paymentId, 'paid');
-        step.value = 4; // Mover al paso de confirmación al éxito del pago
+        step.value = 4;
       } else {
         await updatePayment(paymentId, 'canceled');
         return showNotification('negative', 'Error al pagar, intenta nuevamente')
@@ -420,7 +443,6 @@ const renderPayPalButton = () => {
         type: 'positive',
         message: `Pago completado por: ${details.payer.name.given_name}`
       })
-
     },
     onError: (err) => {
       console.error('Error en PayPal:', err)
@@ -462,7 +484,6 @@ async function updatePayment(id, status) {
 
 async function convertCurrency() {
   try {
-    // Por el momento el descuento es estático, luego cuando se complete la lógica de ofertas hay que arreglarlo
     const response = await postData(`/orders/convertCurrency`, {
       discount: cartDetails.value.discount,
       items: toRaw(cartDetails.value.items)
@@ -470,42 +491,32 @@ async function convertCurrency() {
     paymentValues.value = response.data
     formatItems.value = response.data.items
     console.log('valores de pago', toRaw(paymentValues.value));
-
   } catch (error) {
     console.log('error al convertir valores', error);
   }
 }
 
-// Observa cambios en el `step` para renderizar el botón de PayPal cuando sea necesario
 watch(step, (newStep) => {
   if (newStep === 3) {
     console.log('step en valor 3');
-    // Intenta renderizar el botón de PayPal solo cuando se esté en el paso de pago
     if (window.paypal && window.paypal.Buttons) {
       renderPayPalButton();
     } else {
-      // Si el script de PayPal aún no se ha cargado, lo inyecta y luego renderiza
       const script = document.createElement('script');
-
-      // ***** ¡ESTA ES LA LÍNEA CRÍTICA QUE DEBES CAMBIAR! *****
-      // Obtiene el Client ID de las variables de entorno.
-      // Vite automáticamente inyectará el valor de .env.development o .env.production
       const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID;
 
-      // Asegúrate de que el Client ID exista (buena práctica de seguridad)
       if (!paypalClientId) {
         console.error("Error: PayPal Client ID no está configurado. Revisa tus variables de entorno.");
         Notify.create({
           type: 'negative',
           message: 'Problema al cargar el método de pago. Contacta a soporte.'
         });
-        return; 
-        
+        return;
       }
 
       script.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD`;
-      script.onload = renderPayPalButton; // Cuando el script se cargue, renderiza los botones
-      document.head.appendChild(script); // Añade el script al <head> del documento
+      script.onload = renderPayPalButton;
+      document.head.appendChild(script);
     }
   }
 });
@@ -521,29 +532,24 @@ onMounted(() => {
 /* Importa tus estilos existentes */
 @import url("../style/paymentGateway.css");
 
-/* Nuevos estilos o ajustes para el stepper y la información del usuario */
-
-/* Ajustes generales para el stepper */
+/* Ajustes para el stepper */
 .checkout-page .q-stepper {
-  background: none;
-  /* Hace el fondo del stepper transparente */
+  background: transparent;
   box-shadow: none;
-  /* Elimina la sombra del stepper */
 }
 
-/* Espacio entre el encabezado del stepper y el contenido del paso */
 .checkout-page .q-stepper__header {
   margin-bottom: 24px;
 }
 
-/* Tarjeta para la información del usuario */
-.user-info-card {
+/* Estilos para las tarjetas */
+.user-info-card, .order-summary-card, .payment-methods-card, .guarantee-card {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-bottom: 24px;
 }
 
-/* Asegura un espaciado y alineación adecuados para las listas en la tarjeta de información */
+/* Asegura un espaciado y alineación adecuados para las listas */
 .user-info-card .q-list .q-item {
   padding: 12px 16px;
 }
@@ -551,47 +557,53 @@ onMounted(() => {
 .user-info-card .q-item-label.caption {
   font-weight: 500;
   color: #757575;
-  /* Color de texto más oscuro para los labels de caption */
 }
 
-/* Ajusta los márgenes para los títulos dentro de las secciones */
+/* Ajusta los márgenes para los títulos */
 .user-info-card .text-h5,
 .user-info-card .text-h6 {
   margin-top: 16px;
   margin-bottom: 12px;
 }
 
-/* Ajusta el padding/margen de las tarjetas dentro de los pasos del stepper */
-.q-step>div:not(.q-stepper-navigation) {
-  padding-top: 16px;
-  padding-bottom: 16px;
-}
-
-/* Espaciado de los botones de navegación del stepper */
-.q-stepper-navigation .q-btn {
-  margin-right: 8px;
-  /* Espacio entre botones */
-}
-
 /* Resaltar colores de totales */
 .order-totals .text-negative {
   color: #e53935 !important;
-  /* Rojo Material Design */
 }
 
 .order-totals .text-primary {
   color: var(--q-primary) !important;
-  /* Usa la variable de color primario de Quasar */
 }
 
 /* Ajustes para imágenes de productos en el carrito */
 .q-item-section.avatar .q-img {
   margin-right: 16px;
-  /* Espacio entre la imagen y el texto */
 }
 
 /* Asegura que los detalles del producto en el carrito se vean bien */
 .q-item-label.caption .text-caption {
   line-height: 1.3;
+}
+
+/* Estilos para los botones de navegación */
+.q-stepper-navigation {
+  padding-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Estilos para el footer */
+.checkout-footer {
+  padding: 16px 0;
+}
+
+.footer-links a {
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.copyright {
+  font-size: 0.8rem;
+  opacity: 0.8;
 }
 </style>

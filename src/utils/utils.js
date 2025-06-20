@@ -37,7 +37,7 @@ export function validateToken() {
                 componentProps: {
                     title: "Acceder a la Cuenta",
                     message:
-                        "¿Aún no tienes cuenta? Regístrate. Si ya eres miembro, ¡ingresa aquí!",
+                        "¿Aún no tienes cuenta?",
                 },
             })
                 .onOk((payload) => {

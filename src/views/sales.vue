@@ -6,11 +6,11 @@
             <div class="container">
                 <div class="row items-center justify-between q-py-lg">
                     <div class="col-auto">
-                        <h1 class="page-title">
+                        <h1 class="page-title" style="color: black;">
                             <q-icon name="local_offer" class="q-mr-sm" />
                             Productos en Rebaja
                         </h1>
-                        <p class="page-subtitle">Encuentra las mejores ofertas disponibles</p>
+                        <p class="page-subtitle" style="color: black;">Encuentra las mejores ofertas disponibles</p>
                     </div>
                     <div class="col-auto">
                         <q-chip color="red" text-color="white" icon="flash_on" class="offer-chip">
@@ -359,7 +359,7 @@ onMounted(() => {
 
 /* Header Section */
 .header-section {
-    background: var(--five-color--);
+    background: url(../assets/Rebajas-BG.jpg) center/cover no-repeat;
     color: white;
     padding: 2rem 0;
     margin-bottom: 2rem;

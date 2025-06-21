@@ -91,13 +91,13 @@
             <q-card-section>
               <!-- Nombre y marca -->
               <div class="product-header">
-                <div class="text-h4 product-name">{{ dataProduct.name }}</div>
+                <div class="text-h4 product-name">{{ dataProduct.name || 'Producto#' }}</div>
                 <div class="text-subtitle1 brand" v-if="dataProduct.brand">{{ dataProduct.brand }}</div>
               </div>
 
               <!-- Precio -->
               <div class="price-section">
-                <div class="text-h4 price">{{ formatNum(dataProduct.price) }}</div>
+                <div class="text-h4 price">{{ formatNum(dataProduct.price || 0) }}</div>
                 <div class="text-caption price-note">Precio incluye IVA</div>
               </div>
 
@@ -168,7 +168,7 @@
             </q-img>
 
             <q-card-section>
-              <div class="product-title">{{ producto.name }}</div>
+              <div class="product-title">{{ producto.name || 'Producto#' }}</div>
               <div class="product-brand" v-if="producto.brand">{{ producto.brand }}</div>
 
               <div class="product-rating">
@@ -343,7 +343,7 @@ function obtainDataProduct() {
 // Función para inicializar el producto
 async function initializeProduct() {
   // Primero verificar si hay un ID en la query
-  const productId = route.query.id;
+  const productId = route.query._id;
   if (productId) {
     await loadProductById(productId);
     return;

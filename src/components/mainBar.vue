@@ -63,7 +63,7 @@
             </template>
             <q-btn flat class="full-width" icon="favorite" style="box-shadow: 0%;" @click="goToFavorites()">
               <q-badge v-if="store.dataFavorites?.length > 0" color="red" floating rounded>
-                {{ store.dataFavorites.length }}
+                {{ store.dataFavorites?.length }}
               </q-badge>
             </q-btn>
 
@@ -129,18 +129,87 @@
         </div>
       </q-toolbar>
     </q-header>
+
+    <!--modal register-->
+    <q-dialog class="form-container" v-model="store.showRegisterDialog">
+  <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
+    <q-card-section class="q-pb-none">
+      <p class="title">Registrate</p>
+    </q-card-section>
+
+    <q-card-section class="q-pt-none">
+      <form class="form q-gutter-md" @submit.prevent="registerUser">
+        <div class="input-group">
+          <q-input v-model="user.name" label="Nombre" type="text":rules="[val => !!val || 'El nombre es obligatorio']" />
+          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El correo es obligatorio', val => /.+@.+\..+/.test(val) || 'Debe ser un correo válido']"/>
+          <q-input v-model="user.phone" label="Telefono" type="tel" :rules="[val => !!val || 'El teléfono es obligatorio', val => /^[0-9]{10,15}$/.test(val) || 'Teléfono no válido (10-15 dígitos)']" @keydown="onlyNumbers"/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules />
+          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" :rules="[val => !!val || 'Confirma tu contraseña', val => val === user.password || 'Las contraseñas no coinciden']" lazy-rules />
+        </div>
+        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser" :disable="!isRegisterFormValid" type="submit"/>
+        
+        <!-- Enlace para cambiar a login -->
+        <div class="text-center q-mt-md">
+          <p class="text-caption">¿Ya tienes una cuenta? 
+            <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Inicia sesión aquí</a>
+          </p>
+        </div>
+      </form>
+    </q-card-section>
+  </q-card>
+</q-dialog>
+
+
+<!--modal para loguearse-->
+<q-dialog class="form-container" v-model="store.showLoginDialog">
+  <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
+    <q-card-section class="q-pb-none">
+      <p class="title">Entra a tu cuenta</p>
+    </q-card-section>
+
+    <q-card-section class="q-pt-none">
+      <form class="form q-gutter-md" @submit.prevent="login">
+        <div class="input-group">
+          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El email es requerido', val => /.+@.+\..+/.test(val) || 'Email no válido']" lazy-rules/>
+          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules />
+        </div>
+        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading" style="background-color: var(--fiv-color--);" @click="login" :disable="!isLoginFormValid" type="submit"/>
+        
+        <div>
+        <!-- Cambiar contraseña-->
+          <div class="text-center q-mt-md">
+            <p class="text-caption"> 
+              <a href="#" class="text-primary" @click.prevent="handlePasswordRecovery">Perdí mi contraseña</a>
+            </p>
+          </div>
+
+          <!-- Enlace para cambiar a registro -->
+          <div class="text-center q-mt-md">
+            <p class="text-caption">¿No tienes una cuenta? 
+              <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Regístrate aquí</a>
+            </p>
+          </div>
+        </div>
+      </form>
+    </q-card-section>
+  </q-card>
+</q-dialog>
+
   </q-layout>
 </template>
 
 <script setup>
 import { router } from '../routes/routes';
 import { useStore } from '../stores/store.js';
+import { postData, getData } from '../service/service.js';
 import { showNotification, validateToken } from '../utils/utils.js';
 import { ref, computed } from 'vue';
-
+import { Notify } from 'quasar';
 const store = useStore();
 const mobileMenuOpen = ref(false);
 const searchQuery = ref('');
+const user = ref({});
+const loading = ref(false);
 
 function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -175,6 +244,7 @@ function closeSession() {
   showNotification('positive', 'Has cerrado tu sesión.')
   router.replace("/");
 }
+
 async function favorite() {
   router.push('/favorite');
 }
@@ -183,6 +253,157 @@ async function cart() {
   if (!canProceed) return
   router.push('/cart');
 }
+
+const onlyNumbers = (e) => {
+  // Permitir: teclas de control, números y teclado numérico
+  if (
+    ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key) ||
+    (e.key >= '0' && e.key <= '9') ||
+    (e.key >= 'NumPad0' && e.key <= 'NumPad9')
+  ) {
+    return; // Permitir la entrada
+  }
+  e.preventDefault(); // Bloquear otros caracteres
+};
+
+
+// Validación para el formulario de login
+const isLoginFormValid = computed(() => {
+  return (
+    user.value.email && 
+    user.value.password && 
+    /.+@.+\..+/.test(user.value.email) && 
+    user.value.password.length >= 6
+  );
+});
+
+// Validación para el formulario de registro (ahora incluye teléfono)
+const isRegisterFormValid = computed(() => {
+  return (
+    user.value.name &&
+    user.value.email && 
+    user.value.phone &&
+    user.value.password && 
+    user.value.ConfirmPassword && 
+    /.+@.+\..+/.test(user.value.email) &&
+    /^[0-9]{10,15}$/.test(user.value.phone) &&
+    user.value.password.length >= 6 &&
+    user.value.password === user.value.ConfirmPassword
+  );
+});
+
+
+
+// Función para registrar usuario
+async function registerUser() {
+  try {
+    if(user.value.password !== user.value.ConfirmPassword){
+      Notify.create({
+        type:'negative',
+        message:'Las contraseñas deben ser iguales'
+      })
+      throw new Error ('Contraseñas deben ser iguales')
+    }
+
+    const response = await postData("/users",{
+      data:toRaw(user.value)
+    })
+
+    if(response.success == true){
+      Notify.create({
+        type:'positive',
+        message:'¡Cuenta creada con éxito! Inicia sesión para continuar.'
+      });
+
+      await postData("/email/welcome",{
+        to:response.user.email,
+        subject:'!Bienvenido a ColproMarket',
+        templateFile:'welcome.ejs',
+        data:{
+          userName:response.user.name,
+          dashboardLink:"https://backend-proyectofinal-vrso.onrender.com/userProfile",
+          currentYear:2025
+        }
+      })
+    }
+
+    store.showRegister = false;
+    store.showRegisterDialog = false
+
+    console.log(response);
+    Dialog('closeRegister');
+
+  }catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+async function login() {
+  try {
+    loading.value = true
+    const response = await postData("users/login",{
+      user:user.value.email,
+      password:String(user.value.password)
+    })
+
+    store.save_Token(response.data.token)
+    if(response.data.user.role === 0){
+      router.push('/admin')
+      showNotification('positive', `Hola ${response.data.user.name} ¡Bienvenido al panel de administración! Gestiona la tienda y las ventas.`)
+    }else{
+    showNotification('positive', `Bienvenido/a ${response.data.user.name} Explora nuestra amplia selección de electrodomésticos`)
+    }
+    user.value = {}
+    await getUserInformation()
+  } catch (error) {
+    showNotification('negative', 'Inicio de sesion fallido')
+    user.value = {}
+    console.log(error);
+  }
+  finally{
+    loading.value = false
+    store.showLoginDialog = false
+  }
+}
+
+async function getUserInformation(){
+  try {
+    const response = await getData(`/users/${store.userId}`)
+    store.userInformation = response.user
+    console.log("informacion de usuario encontrada", store.userInformation);
+  } catch (error) {
+    console.error('error getting user information',error)
+    store.userInformation = false
+  }
+}
+
+
+
+const handlePasswordRecovery = () => {
+  // Cierra el modal
+  store.showLoginDialog = false;
+  
+  // Pequeño delay para asegurar que el modal se cierre antes de la navegación
+  setTimeout(() => {
+    router.push('/password')
+      .then(() => console.log('Redirección exitosa a /password'))
+      .catch(err => {
+        console.error('Error en redirección:', err);
+        // Fallback por si hay error en la navegación programática
+        window.location.href = '/password';
+      });
+  }, 100);
+};
+
+// Funcion para abrir modales en modales
+const toggleAuthModals = () => {
+  store.showLoginDialog = !store.showLoginDialog;
+  store.showRegisterDialog = !store.showRegisterDialog;
+};
+
+
+
 </script>
 
 <style scoped>

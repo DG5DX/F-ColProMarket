@@ -1199,7 +1199,7 @@ const saveAddressInfo = async () => {
 async function dataMovements(){
   try {
     const response = await getData(`/orders/${store.userId}`)
-    movements.value = response.data
+    movements.value = response.data.reverse();
   } catch (error) {
     showNotification('negative','Error cargando movimientos')
     console.log('error en movimientos', error);

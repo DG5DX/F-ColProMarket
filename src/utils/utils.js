@@ -42,11 +42,9 @@ export function validateToken() {
             })
                 .onOk((payload) => {
                     if (payload && payload.action === "register") {
-                        router.push('/')
                         store.showRegisterDialog = true;
                         console.log("Usuario eligió Registrarse");
                     } else if (payload && payload.action === "login") {
-                        router.push('/')
                         store.showLoginDialog = true;
                         console.log("Usuario eligió Ingresar");
                     }

@@ -3,7 +3,7 @@
     <q-page-container>
       <q-header elevated class="checkout-header bg-primary text-white">
         <q-toolbar>
-              <q-btn icon="arrow_back" flat round dense class="q-mr-sm" @click="$router.go(-1)"/>
+          <q-btn icon="arrow_back" flat round dense class="q-mr-sm" @click="$router.go(-1)" />
           <q-toolbar-title class="text-h5">
             <q-avatar circle size="sm" class="cursor-default">
               <img src="../assets/MiniLogo.jpeg">
@@ -14,22 +14,9 @@
       </q-header>
 
       <q-page class="checkout-page q-pa-md">
-        <q-stepper
-          v-model="step"
-          header-nav
-          ref="stepper"
-          color="primary"
-          animated
-          class="bg-transparent"
-        >
+        <q-stepper v-model="step" header-nav ref="stepper" color="primary" animated class="bg-transparent">
           <!-- Paso 1: Carrito -->
-          <q-step
-            :name="1"
-            title="Carrito"
-            icon="shopping_cart"
-            :done="step > 1"
-            :header-nav="step > 1"
-          >
+          <q-step :name="1" title="Carrito" icon="shopping_cart" :done="step > 1" :header-nav="step > 1">
             <div class="row q-col-gutter-lg">
               <div class="col-12">
                 <q-card class="order-summary-card">
@@ -108,13 +95,7 @@
           </q-step>
 
           <!-- Paso 2: Información -->
-          <q-step
-            :name="2"
-            title="Información Personal"
-            icon="person"
-            :done="step > 2"
-            :header-nav="step > 2"
-          >
+          <q-step :name="2" title="Información Personal" icon="person" :done="step > 2" :header-nav="step > 2">
             <q-card class="user-info-card">
               <q-card-section>
                 <div class="text-h5 q-mb-md">
@@ -200,12 +181,7 @@
           </q-step>
 
           <!-- Paso 3: Pago -->
-          <q-step
-            :name="3"
-            title="Método de Pago"
-            icon="credit_card"
-            :header-nav="step > 3"
-          >
+          <q-step :name="3" title="Método de Pago" icon="credit_card" :header-nav="step > 3">
             <q-card class="payment-methods-card">
               <q-card-section>
                 <div class="text-h5 q-mb-md">
@@ -248,18 +224,14 @@
           </q-step>
 
           <!-- Paso 4: Confirmación -->
-          <q-step
-            :name="4"
-            title="Confirmación"
-            icon="check_circle"
-            :header-nav="false"
-          >
+          <q-step :name="4" title="Confirmación" icon="check_circle" :header-nav="false">
             <div class="q-pa-md text-center">
               <q-icon name="check_circle" size="xl" color="positive" class="q-mb-md" />
               <div class="text-h5 q-mb-md">¡Tu pedido ha sido procesado con éxito!</div>
               <p class="text-grey-7">Recibirás una confirmación por correo electrónico con los detalles de tu compra.
               </p>
-              <q-btn style="margin-right: 10px;" color="primary" label="Volver a la tienda" @click="router.push('/')" class="q-mt-lg" />
+              <q-btn style="margin-right: 10px;" color="primary" label="Volver a la tienda" @click="router.push('/')"
+                class="q-mt-lg" />
               <q-btn color="primary" label="Ir a movimientos" @click="router.push('/userProfile')" class="q-mt-lg" />
             </div>
             <q-stepper-navigation>
@@ -340,8 +312,8 @@ function validateUserData(userData) {
   });
 
   if (userData.dateOfBirth === null) {
-      missingFields.push('dateOfBirth');
-      isValid = false;
+    missingFields.push('dateOfBirth');
+    isValid = false;
   }
 
   if (!userData.shippingAddress || typeof userData.shippingAddress !== 'object' || Object.keys(userData.shippingAddress).length === 0) {
@@ -428,23 +400,24 @@ const renderPayPalButton = () => {
       const paymentId = await savePendingPayment()
       const details = await actions.order.capture()
 
+      if(paymentId === false) return ;
+
       if (details.status === 'COMPLETED') {
         paymentDetails.value.paypalData = details;
         await updatePayment(paymentId, 'paid');
         step.value = 4;
+      console.log("detalles de pago", toRaw(paymentDetails.value.paypalData));
+        return Notify.create({
+          type: 'positive',
+          message: `Pago completado por: ${details.payer.name.given_name}`
+        })
       } else {
         await updatePayment(paymentId, 'canceled');
         return showNotification('negative', 'Error al pagar, intenta nuevamente')
       }
-
-      console.log("detalles de pago", toRaw(paymentDetails.value.paypalData));
-
-      return Notify.create({
-        type: 'positive',
-        message: `Pago completado por: ${details.payer.name.given_name}`
-      })
     },
     onError: (err) => {
+      
       console.error('Error en PayPal:', err)
       showNotification('negative', 'Error al procesar pago con PayPal.')
     },
@@ -466,6 +439,10 @@ async function savePendingPayment() {
     console.log("Datos de pago pendiente guardado", response.data);
     return response.data._id
   } catch (error) {
+    if (error.response.status === 401) {
+      showNotification('negative', 'Su sesion ha expirado');
+      return false
+    }
     showNotification('negative', 'Error al procesar pago')
     console.log("Error en pagos:", error);
   }
@@ -543,7 +520,10 @@ onMounted(() => {
 }
 
 /* Estilos para las tarjetas */
-.user-info-card, .order-summary-card, .payment-methods-card, .guarantee-card {
+.user-info-card,
+.order-summary-card,
+.payment-methods-card,
+.guarantee-card {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-bottom: 24px;

@@ -130,28 +130,88 @@
       </q-toolbar>
     </q-header>
 
-    <!--modal register-->
-    <q-dialog class="form-container" v-model="store.showRegisterDialog">
-  <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
-    <q-card-section class="q-pb-none">
-      <p class="title">Registrate</p>
+<!--modal register-->
+<q-dialog v-model="store.showRegisterDialog">
+  <q-card class="auth-card">
+    <q-card-section class="auth-header">
+      <p class="auth-title">Regístrate</p>
+      <p class="auth-subtitle">Crea tu cuenta para comenzar</p>
     </q-card-section>
 
-    <q-card-section class="q-pt-none">
-      <form class="form q-gutter-md" @submit.prevent="registerUser">
-        <div class="input-group">
-          <q-input v-model="user.name" label="Nombre" type="text":rules="[val => !!val || 'El nombre es obligatorio']" />
-          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El correo es obligatorio', val => /.+@.+\..+/.test(val) || 'Debe ser un correo válido']"/>
-          <q-input v-model="user.phone" label="Telefono" type="tel" :rules="[val => !!val || 'El teléfono es obligatorio', val => /^[0-9]{10,15}$/.test(val) || 'Teléfono no válido (10-15 dígitos)']" @keydown="onlyNumbers"/>
-          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules />
-          <q-input v-model="user.ConfirmPassword" label="Confirmar contraseña" type="password" :rules="[val => !!val || 'Confirma tu contraseña', val => val === user.password || 'Las contraseñas no coinciden']" lazy-rules />
+    <q-card-section>
+      <form class="auth-form" @submit.prevent="registerUser">
+        <div class="input-group q-gutter-md">
+          <q-input 
+            v-model="user.name" 
+            label="Nombre" 
+            type="text"
+            outlined
+            dense
+            :rules="[val => !!val || 'El nombre es obligatorio']" 
+          />
+          <q-input 
+            v-model="user.email" 
+            label="Correo Electrónico" 
+            type="text" 
+            outlined
+            dense
+            :rules="[val => !!val || 'El correo es obligatorio', val => /.+@.+\..+/.test(val) || 'Debe ser un correo válido']"
+          />
+          <q-input 
+            v-model="user.phone" 
+            label="Teléfono" 
+            type="tel" 
+            outlined
+            dense
+            :rules="[val => !!val || 'El teléfono es obligatorio', val => /^[0-9]{10,15}$/.test(val) || 'Teléfono no válido (10-15 dígitos)']" 
+            @keydown="onlyNumbers"
+          />
+          <q-input 
+            v-model="user.password" 
+            label="Contraseña" 
+            :type="showPassword ? 'text' : 'password'" 
+            outlined
+            dense
+            :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" 
+            lazy-rules
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showPassword = !showPassword"
+              />
+            </template>
+          </q-input>
+          <q-input 
+            v-model="user.ConfirmPassword" 
+            label="Confirmar contraseña" 
+            :type="showConfirmPassword ? 'text' : 'password'" 
+            outlined
+            dense
+            :rules="[val => !!val || 'Confirma tu contraseña', val => val === user.password || 'Las contraseñas no coinciden']" 
+            lazy-rules
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="showConfirmPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showConfirmPassword = !showConfirmPassword"
+              />
+            </template>
+          </q-input>
         </div>
-        <q-btn class="sign q-mt-md" label="Registrarse" style="background-color: var(--fiv-color--);" @click="registerUser" :disable="!isRegisterFormValid" type="submit"/>
+        <q-btn 
+          class="auth-btn q-mt-md" 
+          label="Registrarse" 
+          unelevated
+          :disable="!isRegisterFormValid" 
+          type="submit"
+        />
         
-        <!-- Enlace para cambiar a login -->
-        <div class="text-center q-mt-md">
+        <div class="auth-footer text-center q-mt-md">
           <p class="text-caption">¿Ya tienes una cuenta? 
-            <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Inicia sesión aquí</a>
+            <a href="#" class="auth-link" @click.prevent="toggleAuthModals">Inicia sesión aquí</a>
           </p>
         </div>
       </form>
@@ -161,32 +221,60 @@
 
 
 <!--modal para loguearse-->
-<q-dialog class="form-container" v-model="store.showLoginDialog">
-  <q-card class="q-pa-md" style=" max-width: 600px; width: 500px;">
-    <q-card-section class="q-pb-none">
-      <p class="title">Entra a tu cuenta</p>
+<q-dialog v-model="store.showLoginDialog">
+  <q-card class="auth-card">
+    <q-card-section class="auth-header">
+      <p class="auth-title">Inicia sesión</p>
+      <p class="auth-subtitle">Bienvenido de nuevo</p>
     </q-card-section>
 
-    <q-card-section class="q-pt-none">
-      <form class="form q-gutter-md" @submit.prevent="login">
-        <div class="input-group">
-          <q-input v-model="user.email" label="Correo Electronico" type="text" :rules="[val => !!val || 'El email es requerido', val => /.+@.+\..+/.test(val) || 'Email no válido']" lazy-rules/>
-          <q-input v-model="user.password" label="Contraseña" type="password" :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" lazy-rules />
+    <q-card-section>
+      <form class="auth-form" @submit.prevent="login">
+        <div class="input-group q-gutter-md">
+          <q-input 
+            v-model="user.email" 
+            label="Correo Electrónico" 
+            type="text" 
+            outlined
+            dense
+            :rules="[val => !!val || 'El email es requerido', val => /.+@.+\..+/.test(val) || 'Email no válido']" 
+            lazy-rules
+          />
+          <q-input 
+            v-model="user.password" 
+            label="Contraseña" 
+            :type="showPassword ? 'text' : 'password'" 
+            outlined
+            dense
+            :rules="[val => !!val || 'La contraseña es requerida', val => val.length >= 6 || 'Mínimo 6 caracteres']" 
+            lazy-rules 
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showPassword = !showPassword"
+              />
+            </template>
+          </q-input>
         </div>
-        <q-btn class="sign q-mt-md" label="Entrar" :loading="loading" style="background-color: var(--fiv-color--);" @click="login" :disable="!isLoginFormValid" type="submit"/>
+        <q-btn 
+          class="auth-btn q-mt-md" 
+          label="Entrar" 
+          :loading="loading" 
+          unelevated
+          :disable="!isLoginFormValid" 
+          type="submit"
+        />
         
-        <div>
-        <!-- Cambiar contraseña-->
-          <div class="text-center q-mt-md">
-            <p class="text-caption"> 
-              <a href="#" class="text-primary" @click.prevent="handlePasswordRecovery">Perdí mi contraseña</a>
-            </p>
+        <div class="auth-footer">
+          <div class="text-center q-mt-sm">
+            <a href="#" class="auth-link" @click.prevent="handlePasswordRecovery">¿Olvidaste tu contraseña?</a>
           </div>
 
-          <!-- Enlace para cambiar a registro -->
           <div class="text-center q-mt-md">
             <p class="text-caption">¿No tienes una cuenta? 
-              <a href="#" class="text-primary" @click.prevent="toggleAuthModals">Regístrate aquí</a>
+              <a href="#" class="auth-link" @click.prevent="toggleAuthModals">Regístrate aquí</a>
             </p>
           </div>
         </div>
@@ -210,6 +298,11 @@ const mobileMenuOpen = ref(false);
 const searchQuery = ref('');
 const user = ref({});
 const loading = ref(false);
+
+
+// Mostrar contraseña
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -770,6 +863,74 @@ const toggleAuthModals = () => {
 
   .search-section {
     margin-left: 4px;
+  }
+}
+/* Estilos para los modales de autenticación */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+}
+
+.auth-header {
+  text-align: center;
+  padding-bottom: 0;
+}
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--q-primary);
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0;
+}
+
+.auth-form {
+  padding: 0 16px;
+}
+
+.auth-btn {
+  width: 100%;
+  background-color: #1976d2 ;
+  color: white !important;
+  border-radius: 8px;
+  padding: 8px;
+  font-weight: 500;
+}
+
+.auth-btn:hover {
+  opacity: 0.9;
+}
+
+.auth-link {
+  color: var(--q-primary) !important;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.input-group .q-field--outlined .q-field__control {
+  border-radius: 8px;
+}
+
+.input-group .q-field--dense .q-field__control, 
+.input-group .q-field--dense .q-field__marginal {
+  height: 40px;
+}
+
+/* Ajustes para móviles */
+@media (max-width: 600px) {
+  .auth-card {
+    width: 90%;
+    margin: 0 auto;
   }
 }
 </style>

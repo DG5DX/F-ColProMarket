@@ -20,7 +20,7 @@
             </div>
           </q-card>
         </template>
-        
+
         <template v-else>
           <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; background-color: white">
             <div class="text-h5 text-weight-bold" style="display: grid; justify-items: center; padding: 10px">
@@ -28,12 +28,22 @@
             </div>
             <!-- Rectángulos de métricas -->
             <div class="row q-mb-md q-gutter-md">
+
+              <q-card class="col metric-card bg-orange-1">
+                <q-card-section>
+                  <div class="text-h6">Movimientos totales</div>
+                  <q-icon name="update" size="md" class="metric-icon" />
+                  <q-label class="text-h2">{{ inventoryData.count || 0 }}</q-label>
+                </q-card-section>
+              </q-card>
+
+
               <!-- Entradas Totales -->
               <q-card class="col metric-card bg-blue-1">
                 <q-card-section>
                   <div class="text-h6">Entradas Totales</div>
                   <q-icon name="input" size="md" class="metric-icon" />
-                  <q-label class="text-h2">{{ inventoryData.totalEntries || 0 }}</q-label>
+                  <q-label class="text-h2">{{ inventoryData.incomingsCount || 0 }}</q-label>
                 </q-card-section>
               </q-card>
 
@@ -42,7 +52,7 @@
                 <q-card-section>
                   <div class="text-h6">Salidas Totales</div>
                   <q-icon name="output" size="md" class="metric-icon" />
-                  <q-label class="text-h2">{{ inventoryData.totalOutputs || 0 }}</q-label>
+                  <q-label class="text-h2">{{ inventoryData.outboundsCount || 0 }}</q-label>
                 </q-card-section>
               </q-card>
 
@@ -51,84 +61,40 @@
                 <q-card-section>
                   <div class="text-h6">Movimientos Hoy</div>
                   <q-icon name="update" size="md" class="metric-icon" />
-                  <q-label class="text-h2">{{ inventoryData.todayMovements || 0 }}</q-label>
+                  <q-label class="text-h2">{{ inventoryData.movementsToday || 0 }}</q-label>
                 </q-card-section>
               </q-card>
+
+
             </div>
           </q-card>
         </template>
 
         <!-- Filtros de Búsqueda -->
-        <q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md" style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px">
+        <q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md"
+          style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px">
           <div class="text-h6 text-weight-bold q-mb-md">
             🔍 Filtros Avanzados de Inventario
           </div>
 
           <div class="row q-gutter-md items-center" style="display: flex; align-items: center">
-            <q-select
-              filled
-              dense
-              v-model="filters.product"
-              :options="products"
-              option-label="name"
-              label="Filtrar por producto"
-              clearable
-              class="col"
-              style="min-width: 200px"
-              :loading="loading"
-            />
+            <q-select filled dense v-model="filters.product" :options="products" option-label="name"
+              label="Filtrar por producto" clearable class="col" style="min-width: 200px" :loading="loading" />
 
-            <q-select
-              filled
-              dense
-              v-model="filters.type"
-              :options="movementTypes"
-              label="Tipo de movimiento"
-              clearable
-              class="col"
-              style="min-width: 150px"
-            />
+            <q-select filled dense v-model="filters.type" :options="movementTypes" label="Tipo de movimiento" clearable
+              class="col" style="min-width: 150px" />
 
-            <q-input
-              filled
-              dense
-              v-model="filters.startDate"
-              label="Fecha inicial"
-              type="date"
-              clearable
-              class="col"
-              style="min-width: 150px"
-            />
+            <q-input filled dense v-model="filters.startDate" label="Fecha inicial" type="date" clearable class="col"
+              style="min-width: 150px" />
 
-            <q-input
-              filled
-              dense
-              v-model="filters.endDate"
-              label="Fecha final"
-              type="date"
-              clearable
-              class="col"
-              style="min-width: 150px"
-            />
+            <q-input filled dense v-model="filters.endDate" label="Fecha final" type="date" clearable class="col"
+              style="min-width: 150px" />
 
             <div class="row q-gutter-sm" style="margin-top: 0%">
-              <q-btn
-                label="Aplicar Filtros"
-                color="primary"
-                dense
-                style="height: 40px"
-                @click="applyFilters"
-                :loading="loading"
-              />
-              <q-btn
-                label="Limpiar Filtros"
-                color="negative"
-                outline
-                dense
-                style="height: 40px"
-                @click="clearFilters"
-                :disable="loading"
-              />
+              <q-btn label="Aplicar Filtros" color="primary" dense style="height: 40px" @click="applyFilters"
+                :loading="loading" />
+              <q-btn label="Limpiar Filtros" color="negative" outline dense style="height: 40px" @click="clearFilters"
+                :disable="loading" />
             </div>
           </div>
         </q-card>
@@ -142,15 +108,8 @@
                 <q-skeleton type="text" width="300px" height="40px" />
               </div>
             </div>
-            
-            <q-table
-              flat
-              bordered
-              :rows="[]"
-              :columns="movementColumns"
-              row-key="id"
-              hide-pagination
-            >
+
+            <q-table flat bordered :rows="[]" :columns="movementColumns" row-key="id" hide-pagination>
               <template v-slot:body="props">
                 <q-tr v-for="n in 5" :key="n">
                   <q-td v-for="col in movementColumns" :key="col.name">
@@ -161,59 +120,41 @@
             </q-table>
           </q-card>
         </template>
-        
+
         <template v-else>
           <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; min-height: 600px">
             <div class="row justify-between items-center q-mb-md">
-              <div class="text-h5 text-weight-bold">📋 Historial de Movimientos</div>
+              <h5 class="q-my-md">
+                Lista de
+                <q-badge :color="tableMovements.type === 'incomings' ? 'positive' : 'negative'"
+                  :label="tableMovements.type === 'incomings' ? 'entradas' : 'salidas'"
+                  class="q-px-sm q-py-xs text-bold" style="font-size: 1em;" />
+              </h5>
               <div class="row q-mb-md items-center q-gutter-md">
-                <q-input
-                  v-model="search"
-                  outlined
-                  dense
-                  placeholder="Buscar..."
-                  clearable
-                  class="col"
-                >
-                  <template v-slot:append>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
+
+                <q-btn label="Cargar salidas" color="primary" icon="outbox"
+                  @click="tableMovements.data = inventoryData.outbounds; tableMovements.type = 'outbounds'"></q-btn>
+                <q-btn label="Cargar entradas" color="primary" icon="move_to_inbox"
+                  @click="tableMovements.data = inventoryData.incomings; tableMovements.type = 'incomings'"></q-btn>
+
               </div>
             </div>
 
-            <q-table
-              :rows="filteredMovements"
-              :columns="movementColumns"
-              row-key="id"
-              flat
-              bordered
-              wrap-cells
-              class="bg-white my-sticky-table"
-              :filter="search"
-              style="max-height: 400px"
-              separator="cell"
-              :loading="loading"
-              :pagination="pagination"
-            >
+            <q-table :rows="tableMovements.data" :columns="movementColumns" row-key="id" flat bordered wrap-cells
+              class="bg-white my-sticky-table" :filter="search" style="max-height: 400px" separator="cell"
+              :loading="loading" :pagination="pagination">
               <template v-slot:body-cell-tipo="props">
                 <q-td :props="props" class="q-table--cell-center">
-                  <q-badge :color="props.row.type === 'Entrada' ? 'positive' : 'negative'">
-                    {{ props.row.type }}
+                  <q-badge :color="props.row.type === 'incoming' ? 'positive' : 'negative'">
+                    {{ props.row.type === 'incoming' ? 'Entrada':'Salida' }}
                   </q-badge>
                 </q-td>
               </template>
 
               <template v-slot:body-cell-detalles="props">
                 <q-td :props="props" class="q-table--cell-center">
-                  <q-btn 
-                    icon="visibility" 
-                    flat 
-                    dense 
-                    color="info" 
-                    @click="seeMovementDetails(props.row)" 
-                    :disable="loading" 
-                  />
+                  <q-btn icon="visibility" flat dense color="info" @click="seeMovementDetails(props.row)"
+                    :disable="loading" />
                 </q-td>
               </template>
             </q-table>
@@ -224,48 +165,208 @@
 
     <!-- Diálogo Detalles de Movimiento -->
     <q-dialog v-model="movementDetailDialog" persistent>
-      <q-card class="q-pa-md" style="min-width: 500px; max-width: 700px">
-        <q-card-section class="text-h6 text-primary">
-          Detalle de Movimiento #{{ selectedMovement._id }}
+      <q-card class="modern-dialog" style="min-width: 600px; max-width: 900px; max-height: 90vh;">
+        <!-- Header con gradiente -->
+        <q-card-section class="dialog-header text-white">
+          <div class="text-h5 flex items-center">
+            <q-icon name="receipt_long" class="q-mr-sm" size="md" />
+            Detalle de Movimiento #{{ selectedMovement._id }}
+          </div>
         </q-card-section>
-        <q-separator />
-        
-        <q-card-section>
-          <div class="row q-mb-sm">
-            <div class="col-6"><strong>Fecha:</strong> {{ formatISODateToSpanish(selectedMovement.date) }}</div>
-            <div class="col-6">
-              <strong>Tipo:</strong> 
-              <q-badge :color="selectedMovement.type === 'Entrada' ? 'positive' : 'negative'">
-                {{ selectedMovement.type }}
-              </q-badge>
+
+        <!-- Contenido principal con scroll -->
+        <q-card-section class="dialog-content scroll" style="max-height: calc(90vh - 160px);">
+
+          <!-- Card de Información del Movimiento -->
+          <div class="info-card q-mb-lg">
+            <div class="card-title">
+              <q-icon name="info" class="q-mr-sm" />
+              Información del Movimiento
+            </div>
+            <div class="card-content">
+              <div class="row q-col-gutter-md">
+                <div class="col-xs-12 col-sm-6">
+                  <div class="info-item">
+                    <span class="info-label">Fecha:</span>
+                    <span class="info-value">{{ formatISODateToSpanish(selectedMovement.date) }}</span>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  <div class="info-item">
+                    <span class="info-label">Tipo:</span>
+                    <q-badge :color="selectedMovement.type === 'incoming' ? 'positive' : 'negative'"
+                      class="movement-badge">
+                      {{ selectedMovement.type === 'incoming' ? 'Entrada' : 'Salida' }}
+                    </q-badge>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  <div class="info-item">
+                    <span class="info-label">Cantidad:</span>
+                    <span class="info-value quantity">{{ selectedMovement.quantity }}</span>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  <div class="info-item">
+                    <span class="info-label">Motivo/Razón:</span>
+                    <span class="info-value">{{ selectedMovement.reason || 'N/A' }}</span>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  <div class="info-item">
+                    <span class="info-label">Fecha de Creación:</span>
+                    <span class="info-value">{{ formatISODateToSpanish(selectedMovement.createdAt) }}</span>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  <div class="info-item">
+                    <span class="info-label">Última Actualización:</span>
+                    <span class="info-value">{{ formatISODateToSpanish(selectedMovement.updatedAt) }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          
-          <div class="row q-mb-sm">
-            <div class="col-6"><strong>Producto:</strong> {{ selectedMovement.product?.name }}</div>
-            <div class="col-6"><strong>Cantidad:</strong> {{ selectedMovement.quantity }}</div>
+
+          <!-- Card de Detalles del Producto -->
+          <div class="info-card q-mb-lg">
+            <div class="card-title">
+              <q-icon name="inventory_2" class="q-mr-sm" />
+              Detalles del Producto
+            </div>
+            <div class="card-content">
+              <div v-if="selectedMovement.productId">
+                <div class="row q-col-gutter-md q-mb-md">
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Nombre Producto:</span>
+                      <span class="info-value product-name">{{ selectedMovement.productId.name }}</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Marca:</span>
+                      <span class="info-value">{{ selectedMovement.productId.brand || 'N/A' }}</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Precio:</span>
+                      <span class="info-value price">
+                        ${{ selectedMovement.productId.price ? selectedMovement.productId.price.toLocaleString('es-CO')
+                        :
+                        'N/A' }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Stock Actual:</span>
+                      <span class="info-value stock">{{ selectedMovement.productId.stock || 'N/A' }}</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-12">
+                    <div class="info-item">
+                      <span class="info-label">Descripción:</span>
+                      <p class="info-value description">{{ selectedMovement.productId.description || 'Sin descripción'
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Especificaciones -->
+                <div v-if="selectedMovement.productId.details" class="specifications q-mb-md">
+                  <h6 class="spec-title">Especificaciones:</h6>
+                  <div class="spec-list">
+                    <div v-for="(value, key) in selectedMovement.productId.details" :key="key" class="spec-item">
+                      <span class="spec-key">{{ key }}:</span>
+                      <span class="spec-value">{{ value }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Imágenes -->
+                <div v-if="selectedMovement.productId.images && selectedMovement.productId.images.length > 0"
+                  class="images-section">
+                  <h6 class="images-title">Imágenes:</h6>
+                  <div class="images-grid">
+                    <div v-for="image in selectedMovement.productId.images" :key="image.publicId"
+                      class="image-container">
+                      <q-img :src="image.urlImage" spinner-color="primary" class="product-image" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="no-data">
+                <q-icon name="info" class="q-mr-sm" />
+                No se encontró información del producto asociado.
+              </div>
+            </div>
           </div>
-          
-          <div class="row q-mb-sm">
-            <div class="col-6"><strong>Responsable:</strong> {{ selectedMovement.user?.name || 'Sistema' }}</div>
-            <div class="col-6"><strong>Referencia:</strong> {{ selectedMovement.reference || 'N/A' }}</div>
+
+          <!-- Card de Información del Responsable -->
+          <div class="info-card">
+            <div class="card-title">
+              <q-icon name="person" class="q-mr-sm" />
+              Información del Cliente
+            </div>
+            <div class="card-content">
+              <div v-if="selectedMovement.userId">
+                <div class="row q-col-gutter-md">
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Nombre Completo:</span>
+                      <span class="info-value user-name">{{ selectedMovement.userId.name }} {{
+                        selectedMovement.userId.lastName }}</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Email:</span>
+                      <span class="info-value">{{ selectedMovement.userId.email }}</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Teléfono:</span>
+                      <span class="info-value">{{ selectedMovement.userId.phone || 'N/A' }}</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="info-item">
+                      <span class="info-label">Rol:</span>
+                      <q-badge :color="selectedMovement.userId.role === 0 ? 'primary' : 'secondary'">
+                        {{ selectedMovement.userId.role === 0 ? 'Administrador' : 'Usuario' }}
+                      </q-badge>
+                    </div>
+                  </div>
+                  <div v-if="selectedMovement.userId.shippingAddress" class="col-xs-12">
+                    <div class="info-item">
+                      <span class="info-label">Dirección:</span>
+                      <span class="info-value address">
+                        {{ selectedMovement.userId.shippingAddress.street }},
+                        {{ selectedMovement.userId.shippingAddress.city }},
+                        {{ selectedMovement.userId.shippingAddress.state }},
+                        {{ selectedMovement.userId.shippingAddress.country }} -
+                        {{ selectedMovement.userId.shippingAddress.zipCode }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="no-data">
+                <q-icon name="info" class="q-mr-sm" />
+                No se encontró información del usuario.
+              </div>
+            </div>
           </div>
-          
-          <div class="q-mt-md">
-            <strong>Detalles adicionales:</strong>
-            <q-input
-              v-model="selectedMovement.notes"
-              type="textarea"
-              readonly
-              outlined
-              dense
-              class="q-mt-sm"
-            />
-          </div>
+
         </q-card-section>
-        
-        <q-card-actions align="right">
-          <q-btn label="Cerrar" color="primary" v-close-popup />
+
+        <!-- Footer con acciones -->
+        <q-card-actions class="dialog-footer">
+          <q-btn label="Cerrar" color="primary" unelevated class="close-btn" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -273,17 +374,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { Notify } from "quasar";
-import { getData, postData } from "../service/service.js";
+import { getData } from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
-import { formatISODateToSpanish, formatNum, showNotification } from "../utils/utils.js";
+import { formatISODateToSpanish, showNotification } from "../utils/utils.js";
 
 const search = ref("");
 const inventoryData = ref({});
+const tableMovements = ref({
+  type: null,
+  data: []
+});
 const loading = ref(false);
 const products = ref([]);
 const movementTypes = ['Entrada', 'Salida'];
+
+onMounted(() => {
+  loadInventoryData();
+  /*   loadProducts(); */
+});
 
 // Filtros
 const filters = ref({
@@ -303,47 +413,47 @@ const pagination = ref({
 
 // Columnas de la tabla de movimientos
 const movementColumns = [
-  { 
-    name: "fecha", 
-    label: "Fecha", 
-    field: row => formatISODateToSpanish(row.date), 
+  {
+    name: "fecha",
+    label: "Fecha",
+    field: row => formatISODateToSpanish(row.date),
     align: "center",
     sortable: true
   },
-  { 
-    name: "producto", 
-    label: "Producto", 
-    field: row => row.product?.name || 'N/A', 
-    align: "center" 
+  {
+    name: "producto",
+    label: "Producto",
+    field: row => row.productId?.name || 'N/A',
+    align: "center"
   },
-  { 
-    name: "tipo", 
-    label: "Tipo", 
-    field: "type", 
-    align: "center" 
+  {
+    name: "tipo",
+    label: "Tipo",
+    field: "type",
+    align: "center"
   },
-  { 
-    name: "cantidad", 
-    label: "Cantidad", 
-    field: "quantity", 
-    align: "center" 
+  {
+    name: "cantidad",
+    label: "Cantidad",
+    field: "quantity",
+    align: "center"
   },
-  { 
-    name: "responsable", 
-    label: "Responsable", 
-    field: row => row.user?.name || 'Sistema', 
-    align: "center" 
+  {
+    name: "responsable",
+    label: "Responsable",
+    field: row => row.user?.name || 'Sistema',
+    align: "center"
   },
-  { 
-    name: "referencia", 
-    label: "Referencia", 
-    field: "reference", 
-    align: "center" 
+  {
+    name: "referencia",
+    label: "Referencia",
+    field: () => 'Danielito aqui que dato se supone que quiere que ponga 🤺',
+    align: "center"
   },
-  { 
-    name: "detalles", 
-    label: "Detalles", 
-    align: "center" 
+  {
+    name: "detalles",
+    label: "Detalles",
+    align: "center"
   },
 ];
 
@@ -351,51 +461,9 @@ const movementColumns = [
 const movementDetailDialog = ref(false);
 const selectedMovement = ref({});
 
-const filteredMovements = computed(() => {
-  if (!inventoryData.value.movements) return [];
-  
-  let filtered = [...inventoryData.value.movements];
-  
-  // Filtrar por producto
-  if (filters.value.product) {
-    filtered = filtered.filter(movement => 
-      movement.product?._id === filters.value.product._id
-    );
-  }
-  
-  // Filtrar por tipo de movimiento
-  if (filters.value.type) {
-    filtered = filtered.filter(movement => 
-      movement.type === filters.value.type
-    );
-  }
-  
-  // Filtrar por rango de fechas
-  if (filters.value.startDate) {
-    const startDate = new Date(filters.value.startDate);
-    filtered = filtered.filter(movement => 
-      new Date(movement.date) >= startDate
-    );
-  }
-  
-  if (filters.value.endDate) {
-    const endDate = new Date(filters.value.endDate);
-    // Ajustamos la fecha final para incluir todo el día
-    endDate.setHours(23, 59, 59, 999);
-    filtered = filtered.filter(movement => 
-      new Date(movement.date) <= endDate
-    );
-  }
-  
-  return filtered;
-});
 
-onMounted(() => {
-  loadInventoryData();
-  loadProducts();
-});
 
-async function loadProducts() {
+/* async function loadProducts() {
   try {
     const response = await getData("/products");
     products.value = response;
@@ -403,13 +471,14 @@ async function loadProducts() {
     console.error("Error loading products:", error);
     showNotification('negative', 'Error cargando productos');
   }
-}
+} */
 
 async function loadInventoryData() {
   try {
     loading.value = true;
     const response = await getData("/inventory/movements");
-    inventoryData.value = response;
+    inventoryData.value = response.data;
+    tableMovements.value.data = response.data.outbounds;
     showNotification('positive', 'Datos de inventario cargados');
   } catch (error) {
     console.error("[loadInventoryData]", error);
@@ -452,6 +521,230 @@ function clearFilters() {
 
 <style scoped>
 @import url(../style/Admin.css);
+
+
+.modern-dialog {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  background: var(--one-color--);
+}
+
+.dialog-header {
+  background: var(--five-color--);
+  padding: 20px 24px;
+  margin: 0;
+}
+
+.dialog-content {
+  padding: 24px;
+  background: var(--one-color--);
+}
+
+.info-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.card-title {
+  background: var(--two-color--);
+  padding: 16px 20px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.info-item {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 15px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.info-value.product-name {
+  color: var(--fiv-color--);
+  font-weight: 600;
+}
+
+.info-value.price {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.info-value.quantity,
+.info-value.stock {
+  background: var(--six-color--);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.info-value.user-name {
+  color: var(--cambio--);
+  font-weight: 600;
+}
+
+.info-value.description {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.info-value.address {
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.movement-badge {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.specifications {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+}
+
+.spec-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.spec-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 8px;
+}
+
+.spec-item {
+  background: var(--background);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+}
+
+.spec-key {
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 80px;
+}
+
+.spec-value {
+  color: var(--text-primary);
+}
+
+.images-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+}
+
+.images-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.images-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.image-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.no-data {
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+  background: var(--background);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-footer {
+  background: var(--background);
+  padding: 16px 24px;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-color);
+}
+
+.close-btn {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  background: var(--fiv-color--);
+}
+
+.close-btn:hover {
+  background: var(--primary-button-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .modern-dialog {
+    margin: 16px;
+    min-width: calc(100vw - 32px);
+  }
+
+  .dialog-content {
+    padding: 16px;
+  }
+
+  .card-content {
+    padding: 16px;
+  }
+
+  .images-grid {
+    justify-content: center;
+  }
+
+  .spec-list {
+    grid-template-columns: 1fr;
+  }
+}
 
 .metric-card {
   border-radius: 10px;

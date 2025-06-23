@@ -101,6 +101,7 @@
         <q-route-tab label="PRODUCTOS" to="/" exact />
         <q-route-tab label="REBAJAS" to="/sales" exact />
         <q-route-tab label="CONTACTO" to="/Contact" exact />
+        <q-route-tab label="CATEGORIAS" to="/morecategories" exact/>
       </q-tabs>
     </div>
   </q-toolbar>

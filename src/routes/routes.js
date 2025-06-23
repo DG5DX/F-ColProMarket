@@ -13,6 +13,7 @@ import PaymentGateway from "../views/paymentGateway.vue"
 import Search from "../views/Search.vue"
 import Favorite from "../views/FAVORITE.vue"
 import sales from "../views/sales.vue"
+import morecategories from "../views/morecategories.vue"
 import {createRouter, createWebHashHistory} from "vue-router"
 
 const routes = [
@@ -29,6 +30,7 @@ const routes = [
   { path: '/sales', component: sales },
   { path:'/contact', component: Contact},
   { path:'/favorite',component: Favorite},
+  { path:'/morecategories', component: morecategories},
   {path:'/userProfile', component:userProfile},
   {path:'/contact', component: Contact},
   {path:'/password', component: changePassword},

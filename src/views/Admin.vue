@@ -641,7 +641,7 @@ const columns = [
   { name: "categoria", label: "ID Categoria", field: (product) => product.categoryId?.name || 'Sin categoria', align: "center" },
   { name: "precio", label: "Precio", field: "price", align: "center" },
   { name: "imagen", label: "Imagen", align: "center" },
-  { name: "acciones", label: "Acciones", field: "acciones", align: "center" },
+  { name: "acciones", label: "Acciones", field: "acciones", align: "center", style: "width: 5px" },
 ];
 
 // Ver detalles del producto

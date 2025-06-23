@@ -339,6 +339,18 @@
   .actions-container {
     flex-direction: column;
   }
+
+  .action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 4px; /* Espacio uniforme entre botones */
+  flex-wrap: nowrap; /* Evitar que los botones se envuelvan */
+}
+
+.action-buttons .q-btn {
+  min-width: 36px; /* Ancho mínimo para cada botón */
+  padding: 0 8px;
+}
   
   .cancel-btn,
   .save-btn {

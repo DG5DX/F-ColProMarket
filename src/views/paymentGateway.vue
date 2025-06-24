@@ -181,47 +181,50 @@
           </q-step>
 
           <!-- Paso 3: Pago -->
-          <q-step :name="3" title="Método de Pago" icon="credit_card" :header-nav="step > 3">
-            <q-card class="payment-methods-card">
+      <q-step :name="3" title="Método de Pago" icon="credit_card" :header-nav="step > 3">
+        <q-card class="payment-methods-card">
+          <q-card-section>
+            <div class="text-h5 q-mb-md">
+              <q-icon name="credit_card" class="q-mr-sm" />
+              Método de pago
+            </div>
+
+            <q-option-group v-model="paymentMethod" :options="paymentOptions" type="radio" inline class="q-mb-md" />
+
+            <div class="paypal-container q-mt-lg">
+              <div v-if="!paypalLoaded" class="q-mb-md">
+                <q-skeleton type="QBtn" width="100%" height="48px" />
+              </div>
+              <div v-show="paypalLoaded" ref="paypalRef" class="paypal-button"></div>
+              <div class="text-caption text-center q-mt-sm">
+                <q-icon name="lock" color="positive" />
+                Pago seguro con encriptación SSL
+              </div>
+            </div>
+
+            <q-card class="support-card q-mt-md">
               <q-card-section>
-                <div class="text-h5 q-mb-md">
-                  <q-icon name="credit_card" class="q-mr-sm" />
-                  Método de pago
+                <div class="text-h6">
+                  <q-icon name="help" class="q-mr-sm" />
+                  ¿Necesitas ayuda?
                 </div>
-
-                <q-option-group v-model="paymentMethod" :options="paymentOptions" type="radio" inline class="q-mb-md" />
-
-                <div class="paypal-container q-mt-lg">
-                  <div ref="paypalRef" class="paypal-button"></div>
-                  <div class="text-caption text-center q-mt-sm">
-                    <q-icon name="lock" color="positive" />
-                    Pago seguro con encriptación SSL
-                  </div>
+                <div class="q-mt-sm">
+                  <q-icon name="email" size="sm" class="q-mr-xs" />
+                  soporte@academiaonline.com
                 </div>
-
-                <q-card class="support-card q-mt-md">
-                  <q-card-section>
-                    <div class="text-h6">
-                      <q-icon name="help" class="q-mr-sm" />
-                      ¿Necesitas ayuda?
-                    </div>
-                    <div class="q-mt-sm">
-                      <q-icon name="email" size="sm" class="q-mr-xs" />
-                      soporte@academiaonline.com
-                    </div>
-                    <div>
-                      <q-icon name="schedule" size="sm" class="q-mr-xs" />
-                      L-V de 9:00 a 18:00
-                    </div>
-                  </q-card-section>
-                </q-card>
+                <div>
+                  <q-icon name="schedule" size="sm" class="q-mr-xs" />
+                  L-V de 9:00 a 18:00
+                </div>
               </q-card-section>
             </q-card>
+          </q-card-section>
+        </q-card>
 
-            <q-stepper-navigation>
-              <q-btn flat @click="step = 2" color="primary" label="Atrás" class="q-ml-sm" />
-            </q-stepper-navigation>
-          </q-step>
+        <q-stepper-navigation>
+          <q-btn flat @click="step = 2" color="primary" label="Atrás" class="q-ml-sm" />
+        </q-stepper-navigation>
+      </q-step>
 
           <!-- Paso 4: Confirmación -->
           <q-step :name="4" title="Confirmación" icon="check_circle" :header-nav="false">
@@ -275,6 +278,7 @@ const cartDetails = ref(store.cart);
 const step = ref(1);
 const couponCode = ref('');
 const paymentMethod = ref('paypal');
+const paypalLoaded = ref(false);
 const paymentOptions = [
   {
     label: 'PayPal',
@@ -417,9 +421,12 @@ const renderPayPalButton = () => {
       }
     },
     onError: (err) => {
-      
+      paypalLoaded.value = false; // En caso de error, volvemos a mostrar el skeleton
       console.error('Error en PayPal:', err)
       showNotification('negative', 'Error al procesar pago con PayPal.')
+    },
+    onRendered: () => { // <-- Nuevo hook para saber cuándo se renderizó el botón
+      paypalLoaded.value = true;
     },
     style: {
       layout: 'vertical',
@@ -475,6 +482,7 @@ async function convertCurrency() {
 
 watch(step, (newStep) => {
   if (newStep === 3) {
+    paypalLoaded.value = false; // <-- Resetear a false cada vez que se entra al paso 3
     console.log('step en valor 3');
     if (window.paypal && window.paypal.Buttons) {
       renderPayPalButton();
@@ -493,6 +501,13 @@ watch(step, (newStep) => {
 
       script.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD`;
       script.onload = renderPayPalButton;
+      script.onerror = () => { // <-- Manejar errores de carga del script
+        paypalLoaded.value = false;
+        Notify.create({
+          type: 'negative',
+          message: 'No se pudo cargar el script de PayPal. Intenta de nuevo.'
+        });
+      };
       document.head.appendChild(script);
     }
   }

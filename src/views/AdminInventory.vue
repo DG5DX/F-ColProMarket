@@ -81,8 +81,8 @@
             <q-select filled dense v-model="filters.product" :options="products" option-label="name"
               label="Filtrar por producto" clearable class="col" style="min-width: 200px" :loading="loading" />
 
-            <q-select filled dense v-model="filters.type" :options="movementTypes" label="Tipo de movimiento" clearable
-              class="col" style="min-width: 150px" />
+            <!-- <q-select filled dense v-model="filters.type" :options="movementTypes" label="Tipo de movimiento" clearable
+              class="col" style="min-width: 150px" /> -->
 
             <q-input filled dense v-model="filters.startDate" label="Fecha inicial" type="date" clearable class="col"
               style="min-width: 150px" />
@@ -447,7 +447,7 @@ const movementColumns = [
   {
     name: "referencia",
     label: "Referencia",
-    field: () => 'Danielito aqui que dato se supone que quiere que ponga 🤺',
+    field: row => row._id || 'N/A',
     align: "center"
   },
   {

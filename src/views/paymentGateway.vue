@@ -407,6 +407,7 @@ const renderPayPalButton = () => {
         await updatePayment(paymentId, 'paid');
         step.value = 4;
       console.log("detalles de pago", toRaw(paymentDetails.value.paypalData));
+      store.cart.items = [];
         return Notify.create({
           type: 'positive',
           message: `Pago completado por: ${details.payer.name.given_name}`

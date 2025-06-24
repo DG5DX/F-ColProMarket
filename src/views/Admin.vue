@@ -559,6 +559,8 @@ const saveProduct = async () => {
         type: "positive",
         message: "producto creado correctamente",
       });
+      productDialog.value = false;
+      resetProductForm();
     }
 
     files.value = [];

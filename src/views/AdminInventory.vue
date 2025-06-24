@@ -126,8 +126,8 @@
             <div class="row justify-between items-center q-mb-md">
               <h5 class="q-my-md">
                 Lista de
-                <q-badge :color="tableMovements.type === 'incomings' ? 'positive' : 'negative'"
-                  :label="tableMovements.type === 'incomings' ? 'entradas' : 'salidas'"
+                <q-badge :color="tableMovements.type === 'inbounds' ? 'positive' : 'negative'"
+                  :label="tableMovements.type === 'inbounds' ? 'entradas' : 'salidas'"
                   class="q-px-sm q-py-xs text-bold" style="font-size: 1em;" />
               </h5>
               <div class="row q-mb-md items-center q-gutter-md">
@@ -135,7 +135,7 @@
                 <q-btn label="Cargar salidas" color="primary" icon="outbox"
                   @click="tableMovements.data = inventoryData.outbounds; tableMovements.type = 'outbounds'"></q-btn>
                 <q-btn label="Cargar entradas" color="primary" icon="move_to_inbox"
-                  @click="tableMovements.data = inventoryData.incomings; tableMovements.type = 'incomings'"></q-btn>
+                  @click="tableMovements.data = inventoryData.incomings; tableMovements.type = 'inbounds'"></q-btn>
 
               </div>
             </div>
@@ -145,8 +145,8 @@
               :loading="loading" :pagination="pagination">
               <template v-slot:body-cell-tipo="props">
                 <q-td :props="props" class="q-table--cell-center">
-                  <q-badge :color="props.row.type === 'incoming' ? 'positive' : 'negative'">
-                    {{ props.row.type === 'incoming' ? 'Entrada':'Salida' }}
+                  <q-badge :color="props.row.type === 'inbound' ? 'positive' : 'negative'">
+                    {{ props.row.type === 'inbound' ? 'Entrada':'Salida' }}
                   </q-badge>
                 </q-td>
               </template>
@@ -194,9 +194,9 @@
                 <div class="col-xs-12 col-sm-6">
                   <div class="info-item">
                     <span class="info-label">Tipo:</span>
-                    <q-badge :color="selectedMovement.type === 'incoming' ? 'positive' : 'negative'"
+                    <q-badge :color="selectedMovement.type === 'inbound' ? 'positive' : 'negative'"
                       class="movement-badge">
-                      {{ selectedMovement.type === 'incoming' ? 'Entrada' : 'Salida' }}
+                      {{ selectedMovement.type === 'inbound' ? 'Entrada' : 'Salida' }}
                     </q-badge>
                   </div>
                 </div>

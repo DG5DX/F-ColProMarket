@@ -393,8 +393,10 @@ import { ref, onMounted, computed, toRaw } from "vue";
 import { Notify } from "quasar";
 import { getData, postData, putData } from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
+import { useStore } from "../stores/store.js";
 import { formatNum, showNotification, showNotification2 } from "../utils/utils.js";
 
+const store = useStore();
 const files = ref([]);
 const dataProduct = ref({
   details: {}
@@ -545,6 +547,7 @@ const saveProduct = async () => {
     });
 
     dataProduct.value.categoryId = dataProduct.value.category._id
+    dataProduct.value.adminId = store.userId;
     delete dataProduct.value.category
 
     formData.append("data", JSON.stringify(dataProduct.value));
@@ -556,6 +559,8 @@ const saveProduct = async () => {
         type: "positive",
         message: "producto creado correctamente",
       });
+      productDialog.value = false;
+      resetProductForm();
     }
 
     files.value = [];

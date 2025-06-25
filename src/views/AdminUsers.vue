@@ -80,6 +80,7 @@
             class="row q-gutter-md items-center"
             style="display: flex; align-items: center"
           >
+          <!-- no le pude hacer filtros a esto, miren a ver si le pueden hacer o si no pues borrenlos -->
             <q-select
               filled
               dense

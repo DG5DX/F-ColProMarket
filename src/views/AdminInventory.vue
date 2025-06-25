@@ -3,7 +3,6 @@
     <admin-drawer />
     <q-page-container>
       <q-page class="q-pa-md flex flex-center">
-        <!-- Skeleton para la tarjeta de métricas -->
         <template v-if="loading">
           <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; background-color: white">
             <div class="text-h5 text-weight-bold" style="display: grid; justify-items: center; padding: 10px">
@@ -12,9 +11,13 @@
             <div class="row q-mb-md q-gutter-md">
               <q-card v-for="n in 3" :key="n" class="col metric-card">
                 <q-card-section>
-                  <div class="text-h6"><q-skeleton type="text" width="120px" /></div>
+                  <div class="text-h6">
+                    <q-skeleton type="text" width="120px" />
+                  </div>
                   <q-skeleton type="QAvatar" size="md" class="metric-icon" />
-                  <q-label class="text-h2"><q-skeleton type="text" width="80px" height="60px" /></q-label>
+                  <q-label class="text-h2">
+                    <q-skeleton type="text" width="80px" height="60px" />
+                  </q-label>
                 </q-card-section>
               </q-card>
             </div>
@@ -26,7 +29,6 @@
             <div class="text-h5 text-weight-bold" style="display: grid; justify-items: center; padding: 10px">
               📦 Movimientos de Inventario
             </div>
-            <!-- Rectángulos de métricas -->
             <div class="row q-mb-md q-gutter-md">
 
               <q-card class="col metric-card bg-orange-1">
@@ -38,6 +40,7 @@
               </q-card>
 
 
+
               <!-- Entradas Totales -->
               <q-card class="col metric-card bg-blue-1">
                 <q-card-section>
@@ -47,7 +50,6 @@
                 </q-card-section>
               </q-card>
 
-              <!-- Salidas Totales -->
               <q-card class="col metric-card bg-green-1">
                 <q-card-section>
                   <div class="text-h6">Salidas Totales</div>
@@ -56,7 +58,6 @@
                 </q-card-section>
               </q-card>
 
-              <!-- Movimientos Hoy -->
               <q-card class="col metric-card bg-orange-1">
                 <q-card-section>
                   <div class="text-h6">Movimientos Hoy</div>
@@ -70,6 +71,7 @@
           </q-card>
         </template>
 
+
         <!-- Filtros de Búsqueda -->
         <q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md"
           style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px">
@@ -78,17 +80,17 @@
           </div>
 
           <div class="row q-gutter-md items-center" style="display: flex; align-items: center">
-            <q-select filled dense v-model="filters.product" :options="products" option-label="name"
-              label="Filtrar por producto" clearable class="col" style="min-width: 200px" :loading="loading" />
 
-            <!-- <q-select filled dense v-model="filters.type" :options="movementTypes" label="Tipo de movimiento" clearable
-              class="col" style="min-width: 150px" /> -->
+            <q-btn label="Cargar salidas" color="primary" icon="outbox" @click="loadOutbounds"></q-btn>
+            <q-btn label="Cargar entradas" color="primary" icon="move_to_inbox" @click="loadIncomings"></q-btn>
 
-            <q-input filled dense v-model="filters.startDate" label="Fecha inicial" type="date" clearable class="col"
+            <q-input filled dense v-model="filters.startDate" label="Fecha de inicio" type="date" clearable class="col"
+
               style="min-width: 150px" />
 
             <q-input filled dense v-model="filters.endDate" label="Fecha final" type="date" clearable class="col"
               style="min-width: 150px" />
+
 
             <div class="row q-gutter-sm" style="margin-top: 0%">
               <q-btn label="Aplicar Filtros" color="primary" dense style="height: 40px" @click="applyFilters"
@@ -99,11 +101,12 @@
           </div>
         </q-card>
 
-        <!-- Skeleton para la tabla de movimientos -->
         <template v-if="loading">
           <q-card class="q-pa-md shadow-2 q-mx-auto" style="width: 100%; min-height: 600px">
             <div class="row justify-between items-center q-mb-md">
-              <div class="text-h5 text-weight-bold"><q-skeleton type="text" width="200px" /></div>
+              <div class="text-h5 text-weight-bold">
+                <q-skeleton type="text" width="200px" />
+              </div>
               <div class="row q-mb-md items-center q-gutter-md">
                 <q-skeleton type="text" width="300px" height="40px" />
               </div>
@@ -127,15 +130,11 @@
               <h5 class="q-my-md">
                 Lista de
                 <q-badge :color="tableMovements.type === 'inbounds' ? 'positive' : 'negative'"
-                  :label="tableMovements.type === 'inbounds' ? 'entradas' : 'salidas'"
-                  class="q-px-sm q-py-xs text-bold" style="font-size: 1em;" />
+
+                  :label="tableMovements.type === 'inbounds' ? 'entradas' : 'salidas'" class="q-px-sm q-py-xs text-bold"
+                  style="font-size: 1em;" />
               </h5>
               <div class="row q-mb-md items-center q-gutter-md">
-
-                <q-btn label="Cargar salidas" color="primary" icon="outbox"
-                  @click="tableMovements.data = inventoryData.outbounds; tableMovements.type = 'outbounds'"></q-btn>
-                <q-btn label="Cargar entradas" color="primary" icon="move_to_inbox"
-                  @click="tableMovements.data = inventoryData.incomings; tableMovements.type = 'inbounds'"></q-btn>
 
               </div>
             </div>
@@ -146,7 +145,9 @@
               <template v-slot:body-cell-tipo="props">
                 <q-td :props="props" class="q-table--cell-center">
                   <q-badge :color="props.row.type === 'inbound' ? 'positive' : 'negative'">
-                    {{ props.row.type === 'inbound' ? 'Entrada':'Salida' }}
+
+                    {{ props.row.type === 'inbound' ? 'Entrada' : 'Salida' }}
+
                   </q-badge>
                 </q-td>
               </template>
@@ -163,9 +164,9 @@
       </q-page>
     </q-page-container>
 
-    <!-- Diálogo Detalles de Movimiento -->
     <q-dialog v-model="movementDetailDialog" persistent>
       <q-card class="modern-dialog" style="min-width: 600px; max-width: 900px; max-height: 90vh;">
+
         <!-- Header con gradiente -->
         <q-card-section class="dialog-header text-white">
           <div class="text-h5 flex items-center">
@@ -174,10 +175,9 @@
           </div>
         </q-card-section>
 
-        <!-- Contenido principal con scroll -->
+
         <q-card-section class="dialog-content scroll" style="max-height: calc(90vh - 160px);">
 
-          <!-- Card de Información del Movimiento -->
           <div class="info-card q-mb-lg">
             <div class="card-title">
               <q-icon name="info" class="q-mr-sm" />
@@ -228,7 +228,9 @@
             </div>
           </div>
 
+
           <!-- Card de Detalles del Producto -->
+
           <div class="info-card q-mb-lg">
             <div class="card-title">
               <q-icon name="inventory_2" class="q-mr-sm" />
@@ -275,7 +277,9 @@
                   </div>
                 </div>
 
+
                 <!-- Especificaciones -->
+
                 <div v-if="selectedMovement.productId.details" class="specifications q-mb-md">
                   <h6 class="spec-title">Especificaciones:</h6>
                   <div class="spec-list">
@@ -286,7 +290,9 @@
                   </div>
                 </div>
 
+
                 <!-- Imágenes -->
+
                 <div v-if="selectedMovement.productId.images && selectedMovement.productId.images.length > 0"
                   class="images-section">
                   <h6 class="images-title">Imágenes:</h6>
@@ -305,7 +311,9 @@
             </div>
           </div>
 
+
           <!-- Card de Información del Responsable -->
+
           <div class="info-card">
             <div class="card-title">
               <q-icon name="person" class="q-mr-sm" />
@@ -364,7 +372,9 @@
 
         </q-card-section>
 
+
         <!-- Footer con acciones -->
+
         <q-card-actions class="dialog-footer">
           <q-btn label="Cerrar" color="primary" unelevated class="close-btn" v-close-popup />
         </q-card-actions>
@@ -383,7 +393,9 @@ import { formatISODateToSpanish, showNotification } from "../utils/utils.js";
 const search = ref("");
 const inventoryData = ref({});
 const tableMovements = ref({
-  type: null,
+
+  type: 'outbounds', // Por defecto, mostramos las salidas al cargar
+
   data: []
 });
 const loading = ref(false);
@@ -392,7 +404,6 @@ const movementTypes = ['Entrada', 'Salida'];
 
 onMounted(() => {
   loadInventoryData();
-  /*   loadProducts(); */
 });
 
 // Filtros
@@ -400,7 +411,7 @@ const filters = ref({
   product: null,
   type: null,
   startDate: "",
-  endDate: ""
+  endDate: "", // Agregamos un filtro para la fecha final
 });
 
 // Paginación
@@ -441,7 +452,7 @@ const movementColumns = [
   {
     name: "responsable",
     label: "Responsable",
-    field: row => row.user?.name || 'Sistema',
+    field: row => row.userId ? `${row.userId.name} ${row.userId.lastName}` : 'Sistema', // Ajustado para el responsable
     align: "center"
   },
   {
@@ -462,23 +473,25 @@ const movementDetailDialog = ref(false);
 const selectedMovement = ref({});
 
 
+// Data original de los movimientos (sin filtrar)
+const rawIncomings = ref([]);
+const rawOutbounds = ref([]);
 
-/* async function loadProducts() {
-  try {
-    const response = await getData("/products");
-    products.value = response;
-  } catch (error) {
-    console.error("Error loading products:", error);
-    showNotification('negative', 'Error cargando productos');
-  }
-} */
 
 async function loadInventoryData() {
   try {
     loading.value = true;
     const response = await getData("/inventory/movements");
     inventoryData.value = response.data;
-    tableMovements.value.data = response.data.outbounds;
+
+    rawIncomings.value = response.data.incomings; // Guardamos las entradas originales
+    rawOutbounds.value = response.data.outbounds; // Guardamos las salidas originales
+
+    // Inicialmente mostramos las salidas y aplicamos los filtros si ya existen
+    tableMovements.value.data = applyFiltersToData(rawOutbounds.value, 'outbounds');
+    tableMovements.value.type = 'outbounds';
+
+
     showNotification('positive', 'Datos de inventario cargados');
   } catch (error) {
     console.error("[loadInventoryData]", error);
@@ -488,21 +501,70 @@ async function loadInventoryData() {
   }
 }
 
-function seeMovementDetails(movement) {
-  selectedMovement.value = { ...movement };
-  movementDetailDialog.value = true;
+// Función para aplicar los filtros a un conjunto de datos
+function applyFiltersToData(data, type) {
+  let filteredData = [...data]; // Hacemos una copia para no modificar el original
+
+  // Filtrar por fecha de inicio
+  if (filters.value.startDate) {
+    const startDate = new Date(filters.value.startDate);
+    startDate.setHours(0, 0, 0, 0); // Establecer la hora al inicio del día
+    filteredData = filteredData.filter(movement => {
+      const movementDate = new Date(movement.date);
+      movementDate.setHours(0, 0, 0, 0); // Establecer la hora al inicio del día
+      return movementDate >= startDate;
+    });
+  }
+
+  // Filtrar por fecha de fin
+  if (filters.value.endDate) {
+    const endDate = new Date(filters.value.endDate);
+    endDate.setHours(23, 59, 59, 999); // Establecer la hora al final del día
+    filteredData = filteredData.filter(movement => {
+      const movementDate = new Date(movement.date);
+      movementDate.setHours(0, 0, 0, 0); // Establecer la hora al inicio del día
+      return movementDate <= endDate;
+    });
+  }
+
+  // Puedes agregar más filtros aquí (producto, tipo de movimiento, etc.)
+  // Por ejemplo, para filtrar por tipo (aunque ya se maneja con los botones de "cargar salidas/entradas"):
+  if (filters.value.type && type !== 'all') { // 'all' sería si tuvieras un solo arreglo de movimientos
+     filteredData = filteredData.filter(movement => movement.type === filters.value.type.toLowerCase());
+  }
+
+  return filteredData;
 }
 
+// Función que se llama al hacer clic en "Aplicar Filtros"
 function applyFilters() {
   loading.value = true;
-  // Simulamos un pequeño delay para mostrar el loading
+  // Aplicamos los filtros al tipo de datos que se está mostrando actualmente
+  if (tableMovements.value.type === 'inbounds') {
+    tableMovements.value.data = applyFiltersToData(rawIncomings.value, 'inbounds');
+  } else if (tableMovements.value.type === 'outbounds') {
+    tableMovements.value.data = applyFiltersToData(rawOutbounds.value, 'outbounds');
+  } else {
+    // Si no hay un tipo seleccionado, podrías cargar un arreglo combinado o el predeterminado
+    tableMovements.value.data = applyFiltersToData(rawOutbounds.value, 'outbounds');
+  }
+
   setTimeout(() => {
     loading.value = false;
-    Notify.create({
-      type: "info",
-      message: "Filtros aplicados"
-    });
+    showNotification('info', 'Filtros aplicados');
   }, 500);
+}
+
+// Función para cargar salidas con filtros aplicados
+function loadOutbounds() {
+  tableMovements.value.data = applyFiltersToData(rawOutbounds.value, 'outbounds');
+  tableMovements.value.type = 'outbounds';
+}
+
+// Función para cargar entradas con filtros aplicados
+function loadIncomings() {
+  tableMovements.value.data = applyFiltersToData(rawIncomings.value, 'inbounds');
+  tableMovements.value.type = 'inbounds';
 }
 
 function clearFilters() {
@@ -510,12 +572,20 @@ function clearFilters() {
     product: null,
     type: null,
     startDate: "",
-    endDate: ""
+    endDate: "", // Limpiar también la fecha final
   };
-  Notify.create({
-    type: "info",
-    message: "Filtros limpiados"
-  });
+  // Volver a cargar los datos originales sin filtrar para el tipo actual
+  if (tableMovements.value.type === 'inbounds') {
+    tableMovements.value.data = [...rawIncomings.value];
+  } else {
+    tableMovements.value.data = [...rawOutbounds.value];
+  }
+  showNotification('info', 'Filtros limpiados');
+}
+
+function seeMovementDetails(movement) {
+  selectedMovement.value = { ...movement };
+  movementDetailDialog.value = true;
 }
 </script>
 

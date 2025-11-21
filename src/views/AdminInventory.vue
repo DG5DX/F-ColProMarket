@@ -40,8 +40,6 @@
               </q-card>
 
 
-
-              <!-- Entradas Totales -->
               <q-card class="col metric-card bg-blue-1">
                 <q-card-section>
                   <div class="text-h6">Entradas Totales</div>
@@ -71,8 +69,6 @@
           </q-card>
         </template>
 
-
-        <!-- Filtros de Búsqueda -->
         <q-card class="q-pa-md shadow-2 q-mx-auto q-mt-md"
           style="width: 100%; background-color: #f5f5f5; margin-bottom: 16px">
           <div class="text-h6 text-weight-bold q-mb-md">
@@ -80,12 +76,10 @@
           </div>
 
           <div class="row q-gutter-md items-center" style="display: flex; align-items: center">
-
             <q-btn label="Cargar salidas" color="primary" icon="outbox" @click="loadOutbounds"></q-btn>
             <q-btn label="Cargar entradas" color="primary" icon="move_to_inbox" @click="loadIncomings"></q-btn>
 
             <q-input filled dense v-model="filters.startDate" label="Fecha de inicio" type="date" clearable class="col"
-
               style="min-width: 150px" />
 
             <q-input filled dense v-model="filters.endDate" label="Fecha final" type="date" clearable class="col"
@@ -130,7 +124,6 @@
               <h5 class="q-my-md">
                 Lista de
                 <q-badge :color="tableMovements.type === 'inbounds' ? 'positive' : 'negative'"
-
                   :label="tableMovements.type === 'inbounds' ? 'entradas' : 'salidas'" class="q-px-sm q-py-xs text-bold"
                   style="font-size: 1em;" />
               </h5>
@@ -145,9 +138,7 @@
               <template v-slot:body-cell-tipo="props">
                 <q-td :props="props" class="q-table--cell-center">
                   <q-badge :color="props.row.type === 'inbound' ? 'positive' : 'negative'">
-
                     {{ props.row.type === 'inbound' ? 'Entrada' : 'Salida' }}
-
                   </q-badge>
                 </q-td>
               </template>
@@ -166,15 +157,12 @@
 
     <q-dialog v-model="movementDetailDialog" persistent>
       <q-card class="modern-dialog" style="min-width: 600px; max-width: 900px; max-height: 90vh;">
-
-        <!-- Header con gradiente -->
         <q-card-section class="dialog-header text-white">
           <div class="text-h5 flex items-center">
             <q-icon name="receipt_long" class="q-mr-sm" size="md" />
             Detalle de Movimiento #{{ selectedMovement._id }}
           </div>
         </q-card-section>
-
 
         <q-card-section class="dialog-content scroll" style="max-height: calc(90vh - 160px);">
 
@@ -228,9 +216,6 @@
             </div>
           </div>
 
-
-          <!-- Card de Detalles del Producto -->
-
           <div class="info-card q-mb-lg">
             <div class="card-title">
               <q-icon name="inventory_2" class="q-mr-sm" />
@@ -277,9 +262,6 @@
                   </div>
                 </div>
 
-
-                <!-- Especificaciones -->
-
                 <div v-if="selectedMovement.productId.details" class="specifications q-mb-md">
                   <h6 class="spec-title">Especificaciones:</h6>
                   <div class="spec-list">
@@ -289,9 +271,6 @@
                     </div>
                   </div>
                 </div>
-
-
-                <!-- Imágenes -->
 
                 <div v-if="selectedMovement.productId.images && selectedMovement.productId.images.length > 0"
                   class="images-section">
@@ -310,9 +289,6 @@
               </div>
             </div>
           </div>
-
-
-          <!-- Card de Información del Responsable -->
 
           <div class="info-card">
             <div class="card-title">
@@ -372,9 +348,6 @@
 
         </q-card-section>
 
-
-        <!-- Footer con acciones -->
-
         <q-card-actions class="dialog-footer">
           <q-btn label="Cerrar" color="primary" unelevated class="close-btn" v-close-popup />
         </q-card-actions>
@@ -384,7 +357,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { Notify } from "quasar";
 import { getData } from "../service/service.js";
 import adminDrawer from "../components/adminDrawer.vue";
@@ -393,9 +366,7 @@ import { formatISODateToSpanish, showNotification } from "../utils/utils.js";
 const search = ref("");
 const inventoryData = ref({});
 const tableMovements = ref({
-
   type: 'outbounds', // Por defecto, mostramos las salidas al cargar
-
   data: []
 });
 const loading = ref(false);
@@ -472,25 +443,21 @@ const movementColumns = [
 const movementDetailDialog = ref(false);
 const selectedMovement = ref({});
 
-
 // Data original de los movimientos (sin filtrar)
 const rawIncomings = ref([]);
 const rawOutbounds = ref([]);
-
 
 async function loadInventoryData() {
   try {
     loading.value = true;
     const response = await getData("/inventory/movements");
     inventoryData.value = response.data;
-
     rawIncomings.value = response.data.incomings; // Guardamos las entradas originales
     rawOutbounds.value = response.data.outbounds; // Guardamos las salidas originales
 
     // Inicialmente mostramos las salidas y aplicamos los filtros si ya existen
     tableMovements.value.data = applyFiltersToData(rawOutbounds.value, 'outbounds');
     tableMovements.value.type = 'outbounds';
-
 
     showNotification('positive', 'Datos de inventario cargados');
   } catch (error) {

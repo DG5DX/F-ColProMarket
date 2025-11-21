@@ -78,7 +78,7 @@
                 </div>
                 <q-input v-model="review" outlined type="textarea" placeholder="Escribe tu reseña..." class="q-mt-md"
                   rows="3" />
-                <q-btn label="Enviar reseña" :loading="loadinReview" color="primary" class="q-mt-md" @click="addReview(dataProduct._id)"
+                <q-btn label="Enviar reseña" color="primary" class="q-mt-md" @click="addReview(dataProduct._id)"
                   :disable="!review || productQualification === 0" />
               </div>
             </q-card-section>
@@ -203,8 +203,6 @@ import { validateToken, scrollToTopInstant, formatNum } from '../utils/utils.js'
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
-
-const loadinReview = ref(false);
 
 // Variables de estado
 const dataProduct = ref({});
@@ -363,25 +361,9 @@ async function initializeProduct() {
 const buttonColor = ref('primary');
 
 async function colorButton() {
-  // Verificar si el usuario está logueado
-  const canProceed = await validateToken();
-  if (!canProceed) {
-    registerDialog.value = true; // Mostrar modal de registro
-    return;
-  }
-  
-  // Si está logueado, proceder con agregar a favoritos
-  try {
-    await addToFavorites(dataProduct.value._id);
-    buttonColor.value = 'red';
-    Notify.create({ type: 'positive', message: 'Producto agregado a favoritos' });
-  } catch (error) {
-    console.error('Error al agregar a favoritos:', error);
-    Notify.create({
-      type: 'negative',
-      message: 'Error al agregar a favoritos'
-    });
-  }
+  await addToFavorites(dataProduct.value._id);
+  buttonColor.value = 'red';
+  Notify.create({ type: 'positive', message: 'favorito agregado con exito' })
 }
 // Función para agregar al carrito
 
@@ -422,7 +404,6 @@ const selectImage = (index) => {
 
 async function addReview(id) {
   try {
-    loadinReview.value = true;
     const canProceed = await validateToken()
     if (!canProceed) return;
     const response = await putData(`/product/reviews/${id}`, {
@@ -447,8 +428,6 @@ async function addReview(id) {
       type: 'negative',
       message: 'Error al crear reseña'
     })
-  }finally{
-    loadinReview.value = false;
   }
 }
 

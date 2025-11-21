@@ -679,9 +679,9 @@
           </div>
           <div class="col">
             <div class="text-subtitle1 q-mb-sm">Dirección de envío:</div>
-            <div>{{ user.shippingAddress?.street }}</div>
-            <div>{{ user.shippingAddress?.city }}, {{ user.shippingAddress?.state }}</div>
-            <div>{{ user.shippingAddress?.country }} - {{ user.shippingAddress?.zipCode }}</div>
+            <div>{{ user.shippingAddress.street }}</div>
+            <div>{{ user.shippingAddress.city }}, {{ user.shippingAddress.state }}</div>
+            <div>{{ user.shippingAddress.country }} - {{ user.shippingAddress.zipCode }}</div>
           </div>
         </div>
 

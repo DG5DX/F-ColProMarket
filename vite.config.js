@@ -1,23 +1,19 @@
-// FILE: vite.config.js
+// vite.config.js (¡IMPORTANTE: Usar path.resolve!)
 
-import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { quasar, transformAssetUrls } from '@quasar/vite-plugin';
+import { fileURLToPath, URL } from 'node:url'; // Usamos URL para compatibilidad
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue({
       template: { transformAssetUrls }
     }),
 
-    // @quasar/plugin-vite options list:
-    // https://github.com/quasarframework/quasar/blob/dev/vite-plugin/index.d.ts
     quasar({
-      sassVariables: fileURLToPath(
-        new URL('./src/quasar-variables.sass', import.meta.url)
-      )
+      // Usamos el helper de Node.js para construir una ruta absoluta
+      sassVariables: fileURLToPath(new URL('./src/assets/quasar-variables.sass', import.meta.url)),
     })
-  ]
-})
+  ],
+});
